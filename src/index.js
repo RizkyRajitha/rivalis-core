@@ -1,11 +1,17 @@
 import Rivalis from './Rivalis'
-import StorageAdapter from './adapters/StorageAdapter'
-import MessagingAdapter from './adapters/MessagingAdapter'
-import QueueAdapter from './adapters/QueueAdapter'
-import AdapterHolder from './adapters/AdapterHolder'
-import Entity from './models/Entity'
-import Action from './models/Action'
-import Event from './models/Event'
-import Agent from './agent'
 
-export { Rivalis, StorageAdapter, MessagingAdapter, QueueAdapter, AdapterHolder, Entity, Action, Event, Agent }
+import MessagingAdapter from './adapters/MessagingAdapter'
+import LoggingAdapter from './adapters/LoggingAdapter'
+
+import Event from './models/Event'
+import Action from './models/Action'
+
+export {
+    Rivalis,
+
+    MessagingAdapter,
+    LoggingAdapter,
+
+    Event,
+    Action
+}

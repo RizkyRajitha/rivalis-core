@@ -2,16 +2,18 @@ import { Signal } from 'signals'
 import Event from '../models/Event'
 import MessagingAdapter from '../adapters/MessagingAdapter'
 
-class MessageBroker {
+/**
+ * @callback EventCallback
+ * @param {Event} event
+ */
 
-    /** @private */
-    PREFIX = '_mb@rivalis:'
+class MessageBroker {
 
     /**
      * @private
      * @type {Signal<Event>}
      */
-    signal = new Signal()
+    eventReceiver = new Signal()
 
     /**
      * @private
@@ -31,13 +33,14 @@ class MessageBroker {
      */
     messagingAdapter = null
 
-    /**
-     * 
-     * @param {string} namespace 
-     * @param {MessagingAdapter} broadcastProvider 
-     */
+   /**
+    * 
+    * @param {string} namespace 
+    * @param {string} channel 
+    * @param {MessagingAdapter} messagingAdapter 
+    */
     constructor(namespace, channel, messagingAdapter) {
-        this.namespace = this.PREFIX + namespace
+        this.namespace = namespace
         this.channel = channel
         this.messagingAdapter = messagingAdapter
     }
@@ -49,9 +52,19 @@ class MessageBroker {
         return this.messagingAdapter.subscribe(this.namespace, this.channel, this.callback)
     }
 
-    add = (listener) => this.signal.add(listener)
+    /**
+     * 
+     * @param {EventCallback} listener 
+     * @param {Object} context 
+     */
+    add = (listener, context) => this.eventReceiver.add(listener, context)
 
-    addOnce = (listener) => this.signal.addOnce(listener)
+    /**
+     * 
+     * @param {EventCallback} listener 
+     * @param {Object} context 
+     */
+    addOnce = (listener, context) => this.eventReceiver.addOnce(listener, context)
 
     /**
      * 
@@ -75,8 +88,6 @@ class MessageBroker {
         return this.messagingAdapter.unsubscribe(this.namespace, this.channel)
     }
 
-
-
     /**
      * @private
      * @type {Function}
@@ -84,7 +95,7 @@ class MessageBroker {
     callback = message => {
         const { type, data, receiver } = message
         const event = new Event(type, data, receiver)
-        this.signal.dispatch(event)
+        this.eventReceiver.dispatch(event)
     }
 }
 

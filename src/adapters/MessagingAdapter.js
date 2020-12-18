@@ -9,7 +9,9 @@ class MessagingAdapter {
      * 
      * @returns {Promise<boolean>}
      */
-    initialize() {}
+    initialize() {
+        return Promise.resolve(true)
+    }
 
     /**
      * 
