@@ -1,0 +1,126 @@
+class VectorClock {
+
+    /**
+     * @type {string}
+     */
+    nodeId = null
+
+    /**
+     * @private
+     * @type {object}
+     */
+    data = {}
+
+    /**
+     * 
+     * @param {string} nodeId 
+     * @param {object} data 
+     */
+    constructor(nodeId, data = {}) {
+        this.nodeId = nodeId
+        this.data = data
+    }
+
+    /**
+     * 
+     */
+    increment() {
+        this.data[this.nodeId] = this.getVersion(this.nodeId) + 1
+    }
+
+    /**
+     * 
+     * @param {VectorClock} vectorClock 
+     */
+    update(vectorClock) {
+        const updated = {}
+        for (let nodeId of VectorClock.getNodeIds(this, vectorClock)) {
+            updated[nodeId] = Math.max(this.getVersion(nodeId), vectorClock.getVersion(nodeId))
+        }
+        this.data = updated
+    }
+
+    /**
+     * 
+     * @param {VectorClock} vectorClock
+     * @returns {boolean} 
+     */
+    isAfter(vectorClock) {
+        return VectorClock.isAfter(this, vectorClock)
+    }
+
+    /**
+     * 
+     * @param {VectorClock} vectorClock
+     * @returns {boolean} 
+     */
+    isConcurrent(vectorClock) {
+        return VectorClock.isConcurrent(this, vectorClock)
+    }
+
+    /**
+     * 
+     * @param {string} nodeId
+     * @returns {number}
+     */
+    getVersion(nodeId) {
+        return this.data[nodeId] || 0
+    }
+
+    /**
+     * 
+     * @returns {object}
+     */
+    getClock() {
+        return { ...this.data }
+    }
+}
+
+/**
+ * 
+ * @param {VectorClock} vectorClock1 
+ * @param {VectorClock} vectorClock2
+ * @returns {Array.<string>} 
+ */
+VectorClock.getNodeIds = (vectorClock1, vectorClock2) => {
+    const map = { ...vectorClock1.getClock(), ...vectorClock2.getClock() }
+    return Object.keys(map)
+}
+
+/**
+ * 
+ * @param {VectorClock} vectorClock1 
+ * @param {VectorClock} vectorClock2
+ * @returns {boolean} 
+ */
+VectorClock.isAfter = (vectorClock1, vectorClock2) => {
+    let isAfter = true
+    for (let nodeId of VectorClock.getNodeIds(vectorClock1, vectorClock2)) {
+        if (vectorClock1.getVersion(nodeId) < vectorClock2.getVersion(nodeId)) {
+            isAfter = false
+        }
+    }
+    return isAfter
+}
+
+VectorClock.isConcurrent = (vectorClock1, vectorClock2) => {
+    return !(VectorClock.isAfter(vectorClock1, vectorClock2) || VectorClock.isAfter(vectorClock2, vectorClock1))
+}
+
+/**
+ * 
+ * @param {VectorClock} vectorClock1 
+ * @param {VectorClock} vectorClock2
+ * @returns {number} 
+ */
+VectorClock.compare = (vectorClock1, vectorClock2) => {
+    if (VectorClock.isAfter(vectorClock1, vectorClock2)) {
+        return 1
+    } else if (VectorClock.isConcurrent(vectorClock1, vectorClock2)) {
+        return vectorClock1.nodeId > vectorClock2.nodeId ? -1 : 1
+    } else {
+        return -1
+    }
+}
+
+export default VectorClock

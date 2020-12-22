@@ -2,7 +2,8 @@ import { Adapters } from '../Rivalis'
 import ContextOptions from './ContextOptions'
 import MessageBroker from '../core/MessageBroker'
 import Node from '../node/Node'
-import Action from '../models/Action'
+import Action from '../struct/Action'
+import Event from '../struct/Event'
 class Context {
 
     /**
@@ -19,7 +20,7 @@ class Context {
     /**
      * @type {MessageBroker}
      */
-    messageBroker = null
+    eventBroker = null
 
     /**
      * 
@@ -28,7 +29,7 @@ class Context {
      */
     constructor(id, adapters, actionHandlers) {
         this.id = id
-        this.messageBroker = new MessageBroker(this.id, 'events', adapters.messaging)
+        this.eventBroker = new MessageBroker(this.id, 'events', adapters.messaging)
     }
 
     /**
@@ -36,6 +37,7 @@ class Context {
      * @returns {Promise.<boolean>}
      */
     initialize() {
+        this.eventBroker.initialize()
         return Promise.resolve()
     }
 
@@ -45,7 +47,9 @@ class Context {
      * @param {Action} action 
      */
     executeAction(node, action) {
-
+        node.vectorClock.increment()
+        let event = new Event(action.type, node.vectorClock.getClock(), node.id, action.data)
+        this.eventBroker.publish(event)
     }
 
     /**
@@ -54,7 +58,7 @@ class Context {
      * @returns {Node}
      */
     connect(id) {
-
+        return new Node(id, this)
     }
 
 }

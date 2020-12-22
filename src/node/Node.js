@@ -1,8 +1,8 @@
 import { Signal } from 'signals'
 import Context from '../context/Context'
-import Action from '../models/Action'
-import Event from '../models/Event'
-import VectorClock from './VectorClock'
+import Action from '../struct/Action'
+import Event from '../struct/Event'
+import VectorClock from '../struct/VectorClock'
 
 /**
  * @callback EventCallback
@@ -17,12 +17,9 @@ class Node {
     id = null
 
     /**
-     * @private
      * @type {VectorClock}
      */
     vectorClock = null
-
-    // TODO: implement event stack
 
     /**
      * @private
@@ -46,7 +43,7 @@ class Node {
         this.context = context
         this.vectorClock = new VectorClock(id)
 
-        this.context.messageBroker.add(this.processEvent)
+        this.context.eventBroker.add(this.processEvent)
     }
 
     /**
@@ -54,6 +51,9 @@ class Node {
      * @param {Action} action 
      */
     execute(action) {
+        if (!(action instanceof Action)) {
+            throw new Error('action must be object from type Action')
+        }
         this.context.executeAction(this, action)
     }
 
@@ -80,7 +80,11 @@ class Node {
      * @param {Event} event 
      */
     processEvent = event => {
-        this.eventReceiver.dispatch(event)
+        this.vectorClock.update(new VectorClock(event.senderId, event.clock))
+        setTimeout(() => {
+            this.eventReceiver.dispatch(event)
+        }, Math.floor(Math.random() * 1200))
+        
     }
 
 }

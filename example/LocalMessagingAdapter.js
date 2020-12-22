@@ -1,3 +1,4 @@
+import { time } from 'console'
 import EventEmitter from 'eventemitter3'
 import { MessagingAdapter } from '../src'
 
@@ -24,7 +25,9 @@ class LocalMessagingAdapter extends MessagingAdapter {
         this.createNamespace(namespace)
         /** @type {EventEmitter} */
         let emitter = this.events[namespace]
-        emitter.on(channel, callback)
+        emitter.on(channel, data => {
+            callback(data)
+        })
         return Promise.resolve(true)
     }
 
@@ -50,11 +53,15 @@ class LocalMessagingAdapter extends MessagingAdapter {
      * @returns {Promise<boolean>}
      */
     publish(namespace, channel, data) {
-        this.createNamespace(namespace)
-        /** @type {EventEmitter} */
-        let emitter = this.events[namespace]
-        emitter.emit(channel, data)
-        Promise.resolve(true)
+        new Promise(resolve => {
+            setTimeout(() => {
+                this.createNamespace(namespace)
+                /** @type {EventEmitter} */
+                let emitter = this.events[namespace]
+                emitter.emit(channel, data)
+                resolve(true)
+            }, 0)
+        })
     }
 
     /**

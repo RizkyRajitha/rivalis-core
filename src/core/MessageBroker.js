@@ -1,5 +1,5 @@
 import { Signal } from 'signals'
-import Event from '../models/Event'
+import Event from '../struct/Event'
 import MessagingAdapter from '../adapters/MessagingAdapter'
 
 /**
@@ -72,13 +72,9 @@ class MessageBroker {
      * @param {Event} event
      * @returns {Promise<boolean>}
      */
-    publish(channel, event)  {
+    publish(event)  {
         //TODO: check for your channel
-        return this.messagingAdapter.publish(this.namespace, channel, event)
-    }
-
-    emit(event) {
-        return this.messagingAdapter.emit(this.namespace, event)
+        return this.messagingAdapter.publish(this.namespace, this.channel, event)
     }
 
     /**
@@ -93,8 +89,8 @@ class MessageBroker {
      * @type {Function}
      */
     callback = message => {
-        const { type, data, receiver } = message
-        const event = new Event(type, data, receiver)
+        const { type, clock, senderId, data } = message
+        const event = new Event(type, clock, senderId, data)
         this.eventReceiver.dispatch(event)
     }
 }

@@ -1,6 +1,6 @@
 const MODE = {
-    STRICT,
-    OPEN
+    STRICT: 'strict',
+    OPEN: 'open'
 }
 
 export { MODE }

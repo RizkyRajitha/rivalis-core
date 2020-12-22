@@ -31,7 +31,8 @@ class Rivalis {
      * @returns {Context}
      */
     getContext(id) {
-        return new Context(id, this.adapters)
+        const context = new Context(id, this.adapters)
+        return context
     }
 
     deleteContext(id) {
@@ -47,7 +48,7 @@ class Rivalis {
      * @param {MessagingAdapter} messagingAdapter 
      */
     setMessaging(messagingAdapter) {
-
+        this.adapters.messaging = messagingAdapter
     }
 
     /**

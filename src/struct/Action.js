@@ -1,19 +1,16 @@
 class Action {
 
     /**
-     * @type {string|Symbol}
+     * 
+     * @type {string}
      */
     type = null
 
     /**
+     * 
      * @type {any}
      */
     data = null
-
-    /**
-     * @type {string}
-     */
-    sender = null
 
     constructor(type, data) {
         this.type = type
