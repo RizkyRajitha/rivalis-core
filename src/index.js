@@ -1,17 +1,5 @@
 import Rivalis from './Rivalis'
+import Protocol from './Protocol'
+import Node from './Node'
 
-import MessagingAdapter from './adapters/MessagingAdapter'
-import LoggingAdapter from './adapters/LoggingAdapter'
-
-import Event from './struct/Event'
-import Action from './struct/Action'
-
-export {
-    Rivalis,
-
-    MessagingAdapter,
-    LoggingAdapter,
-
-    Event,
-    Action
-}
+export { Rivalis, Protocol }

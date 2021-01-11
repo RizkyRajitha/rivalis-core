@@ -1,51 +1,42 @@
 /**
- * @callback subscribeCallback
+ * @callback MessageListener
  * @param {any} message
  */
 
 class MessagingAdapter {
-    
-    /**
-     * 
-     * @returns {Promise<boolean>}
-     */
-    initialize() {
-        return Promise.resolve(true)
-    }
 
     /**
-     * 
-     * @param {string} namespace 
-     * @param {string} channel 
-     * @param {subscribeCallback} callback
-     * @returns {Promise<boolean>}
+     * Initalizing connection to messaging server
+     * @returns {Promise.<any>}
      */
-    subscribe(namespace, channel, callback) {}
+    initalize() {}
 
     /**
-     * 
+     * subscribe to specific address for receiving messages
      * @param {string} namespace 
-     * @param {string} channel 
-     * @returns {Promise<boolean>}
+     * @param {string} address 
+     * @param {MessageListener} listener
+     * @returns {Promise.<any>} 
      */
-    unsubscribe(namespace, channel) {}
+    subscribe(namespace, address, listener) {}
 
     /**
-     * 
+     * unsubscribe of already subscribed address
      * @param {string} namespace 
-     * @param {string} channel 
-     * @param {any} data
-     * @returns {Promise<boolean>}
+     * @param {string} address
+     * @param {MessageListener} listener
+     * @returns {Promise.<any>}
      */
-    publish(namespace, channel, data) {}
+    unsubscribe(namespace, address, listener) {}
 
     /**
-     * 
+     * publish message to ant address
      * @param {string} namespace 
-     * @param {string} data 
-     * @returns {Promise<boolean>}
+     * @param {string} address 
+     * @param {any} message
+     * @returns {Promise.<any>} 
      */
-    emit(namespace, data) {}
+    publish(namespace, address, message) {}
 
 }
 

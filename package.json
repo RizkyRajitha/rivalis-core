@@ -5,13 +5,15 @@
   "main": "lib/index.js",
   "scripts": {
     "start": "npm run dev",
-    "dev": "npm run test && nodemon -w src -w example --exec babel-node --inspect example/index.js",
+    "dev": "npm run test && npm run run:server",
+    "run:server": "nodemon -w src -w example --ignore example/client/client.js --exec \"npm run build:client && babel-node example/server/index.js\"",
+    "build:client": "parcel build example/client/index.js --no-minify --no-source-maps --bundle-node-modules -d example/client --out-file client.js",
     "prepublishOnly": "npm run test && npm run prepublish:build && npm run prepublish:typeGen",
     "prepublish:build": "npx rmdir-cli lib && babel src --out-dir lib",
     "prepublish:typeGen": "npx typescript -d --allowJs --emitDeclarationOnly --outDir ./lib src/*.js",
     "test": "npm run test:linter && npm run test:unit",
     "test:linter": "eslint src",
-    "test:unit": "mocha --require @babel/register"
+    "test:unit": "mocha --recursive --require @babel/register"
   },
   "repository": {
     "type": "git",
@@ -40,9 +42,13 @@
     "@types/node": "^14.14.12",
     "chai": "^4.2.0",
     "eslint": "^7.15.0",
+    "express": "^4.17.1",
     "mocha": "^8.2.1",
     "nodemon": "^2.0.6",
-    "sinon": "^9.2.1"
+    "sinon": "^9.2.1",
+    "socket.io": "^3.0.5",
+    "socket.io-client": "^3.0.5",
+    "ws": "^7.4.2"
   },
   "dependencies": {
     "eventemitter3": "^4.0.7",

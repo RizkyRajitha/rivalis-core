@@ -1,80 +1,55 @@
-import { v4 as uuid } from 'uuid'
-import LoggingAdapter from './adapters/LoggingAdapter'
-import MessagingAdapter from './adapters/MessagingAdapter'
-import Context from './context/Context'
-import ContextOptions from './context/ContextOptions'
+import ProtocolManager from './core/ProtocolManager'
+import ContextProvider from './core/ContextProvider'
+import Options from './Options'
 
 class Rivalis {
 
     /**
+     * 
      * @private
-     * @type {Adapters}
+     * @type {Options}
      */
-    adapters = new Adapters()
+    options = null
 
+    /**
+     * 
+     * @type {ContextProvider}
+     */
+    contexts = null
+
+    /**
+     * 
+     * @type {ProtocolManager}
+     */
+    protocols = null
+
+    /**
+     * 
+     * @type {ActionManager}
+     */
+    actions = null
+
+    /**
+     * 
+     * @param {Options} options 
+     */
+    constructor(options = {}) {
+        this.options = new Options(options)
+        this.contexts = new ContextProvider(this.options.adapters, this.actions)
+        this.protocols = new ProtocolManager(this.contexts)
+    }
+
+    /**
+     * 
+     * @returns {Promise.<any>}
+     */
     initalize() {
-        
+        return this.protocols.initialize().then(() => {
+            return this.options.adapters.messaging.initalize()
+        }).then(() => {
+            return this.options.adapters.storage.initalize()
+        })
     }
-
-    /**
-     * 
-     * @param {ContextOptions} options 
-     */
-    createContext(options) {
-        const id = uuid()
-        return id
-    }
-
-    /**
-     * 
-     * @param {string} id 
-     * @returns {Context}
-     */
-    getContext(id) {
-        const context = new Context(id, this.adapters)
-        return context
-    }
-
-    deleteContext(id) {
-        return null
-    }
-
-    addActionHandler(key, actionHandler) {
-        
-    }
-
-    /**
-     * 
-     * @param {MessagingAdapter} messagingAdapter 
-     */
-    setMessaging(messagingAdapter) {
-        this.adapters.messaging = messagingAdapter
-    }
-
-    /**
-     * 
-     * @param {LoggingAdapter} loggingAdapter 
-     */
-    setLogging(loggingAdapter) {
-        
-    }
-
 }
 
 export default Rivalis
-
-export const Adapters = class Adapters {
-
-    /**
-     * 
-     * @type {MessagingAdapter}
-     */
-    messaging = new MessagingAdapter()
-
-    /**
-     * 
-     * @type {LoggingAdapter}
-     */
-    logging = new LoggingAdapter()
-
-}

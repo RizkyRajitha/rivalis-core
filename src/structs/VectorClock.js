@@ -1,20 +1,23 @@
 class VectorClock {
 
     /**
+     * unique identifier of the node
+     * @readonly
      * @type {string}
      */
     nodeId = null
 
     /**
+     * clock data
      * @private
      * @type {object}
      */
     data = {}
 
     /**
-     * 
-     * @param {string} nodeId 
-     * @param {object} data 
+     * Vector Clock implementation used for synchronization of the events
+     * @param {string} nodeId unique identifier of the node
+     * @param {object} data clock data
      */
     constructor(nodeId, data = {}) {
         this.nodeId = nodeId
@@ -22,15 +25,49 @@ class VectorClock {
     }
 
     /**
-     * 
+     * override vector clock data with a new one
+     * @param {Object} object vector clock object that contains versions
+     */
+    setClock(clock = {}) {
+        this.data = clock
+    }
+
+    /**
+     * returns new object of clock data
+     * @returns {object}
+     */
+    getClock() {
+        return { ...this.data }
+    }
+
+    /**
+     * override clock version, if nodeId is not provided
+     * @param {number} version
+     * @param {string} nodeId 
+     */
+    setVersion(version, nodeId = this.nodeId) {
+        this.data[nodeId] = version
+    }
+
+    /**
+     * returns clock version of provided node, if nodeId is not provided, version of the current vector clock is returned
+     * @param {string} nodeId
+     * @returns {number}
+     */
+    getVersion(nodeId = this.nodeId) {
+        return this.data[nodeId] || 0
+    }
+
+    /**
+     * increment version of clock for node that owns the instance
      */
     increment() {
         this.data[this.nodeId] = this.getVersion(this.nodeId) + 1
     }
 
     /**
-     * 
-     * @param {VectorClock} vectorClock 
+     * can be used for updating the vector clock using merge operation between current vector clock and provided one, clock data of the instace is overwritten
+     * @param {VectorClock} vectorClock second vector clock used in merge operation
      */
     update(vectorClock) {
         const updated = {}
@@ -41,8 +78,8 @@ class VectorClock {
     }
 
     /**
-     * 
-     * @param {VectorClock} vectorClock
+     * returns true if this vector clock is chronically after provided vector clock
+     * @param {VectorClock} vectorClock second vector clock for comparation
      * @returns {boolean} 
      */
     isAfter(vectorClock) {
@@ -50,7 +87,7 @@ class VectorClock {
     }
 
     /**
-     * 
+     * returns true if vector clock is concurrent with provided vector clock
      * @param {VectorClock} vectorClock
      * @returns {boolean} 
      */
@@ -59,20 +96,11 @@ class VectorClock {
     }
 
     /**
-     * 
-     * @param {string} nodeId
-     * @returns {number}
+     * returns true if instance is before passed vector clock instance
+     * @param {VectorClock} vectorClock 
      */
-    getVersion(nodeId) {
-        return this.data[nodeId] || 0
-    }
-
-    /**
-     * 
-     * @returns {object}
-     */
-    getClock() {
-        return { ...this.data }
+    isBefore(vectorClock) {
+        return VectorClock.isBefore(this, vectorClock)
     }
 }
 
@@ -103,8 +131,23 @@ VectorClock.isAfter = (vectorClock1, vectorClock2) => {
     return isAfter
 }
 
+/**
+ * 
+ * @param {VectorClock} vectorClock1 
+ * @param {VectorClock} vectorClock2 
+ */
 VectorClock.isConcurrent = (vectorClock1, vectorClock2) => {
     return !(VectorClock.isAfter(vectorClock1, vectorClock2) || VectorClock.isAfter(vectorClock2, vectorClock1))
+}
+
+
+/**
+ * 
+ * @param {VectorClock} vectorClock1 
+ * @param {VectorClock} vectorClock2 
+ */
+VectorClock.isBefore = (vectorClock1, vectorClock2) => {
+    return !VectorClock.isAfter(vectorClock1, vectorClock2) && !VectorClock.isConcurrent(vectorClock1, vectorClock2)
 }
 
 /**
@@ -117,7 +160,7 @@ VectorClock.compare = (vectorClock1, vectorClock2) => {
     if (VectorClock.isAfter(vectorClock1, vectorClock2)) {
         return 1
     } else if (VectorClock.isConcurrent(vectorClock1, vectorClock2)) {
-        return vectorClock1.nodeId > vectorClock2.nodeId ? -1 : 1
+        return 0
     } else {
         return -1
     }
