@@ -34,20 +34,6 @@ class Node {
     /**
      * 
      * @private
-     * @type {boolean}
-     */
-    synchronized = false
-
-    /**
-     * 
-     * @private
-     * @type {Array.<Events>}
-     */
-    receivedEvents = []
-
-    /**
-     * 
-     * @private
      * @type {Signal.<Event>}
      */
     eventReceiver = new Signal()
@@ -57,6 +43,14 @@ class Node {
         this.clock = new VectorClock(nodeId)
         this.context = context
         this.context.eventBroker.add(this.processEvent)
+    }
+
+    sync() {
+        this.context.eventStorage.getAll().then(eventList => {
+            for (let event of eventList) {
+                this.eventReceiver.dispatch(event)
+            }
+        })
     }
 
     execute(action) {
@@ -84,11 +78,7 @@ class Node {
      */
     processEvent = event => {
         this.clock.update(event.getVectorClock())
-        if (!this.synchronized) {
-            this.receivedEvents.push(event)
-        } else {
-            this.eventReceiver.dispatch(event)
-        }
+        this.eventReceiver.dispatch(event)
     }
 }
 

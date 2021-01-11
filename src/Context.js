@@ -33,6 +33,8 @@ class Context {
 
     /**
      * 
+     * @private
+     * @readonly
      * @type {Array.<Node>}
      */
     liveNodes = []
