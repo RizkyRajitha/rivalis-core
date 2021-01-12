@@ -1,5 +1,5 @@
 import { Signal } from 'signals'
-import MessagingAdapter from '../adapters/MessagingAdapter'
+import Config from '../Config'
 import Event from '../structs/Event'
 
 /**
@@ -8,7 +8,7 @@ import Event from '../structs/Event'
  */
 
 
-class EventBroker {
+class EventProvider {
 
     /**
      * 
@@ -21,9 +21,9 @@ class EventBroker {
     /**
      * 
      * @private
-     * @type {MessagingAdapter}
+     * @type {Config}
      */
-    messagingAdapter = null
+    config = null
 
     /**
      * 
@@ -36,15 +36,34 @@ class EventBroker {
     /**
      * 
      * @param {string} namespace 
-     * @param {MessagingAdapter} messagingAdapter 
+     * @param {Config} config 
      */
-    constructor(namespace, messagingAdapter) {
+    constructor(namespace, config) {
         this.namespace = namespace
-        this.messagingAdapter = messagingAdapter
+        this.config = config
     }
 
+    /**
+     * 
+     * @protected
+     * @returns {Promise.<any>}
+     */
     initalize() {
-        this.messagingAdapter.subscribe(this.namespace, 'events', this.messageHandler)
+        this.config.adapters.messaging.subscribe(this.namespace, 'events', this.messageHandler)
+    }
+
+    /**
+     * 
+     * @returns {Promise.<Array.<Event>>}
+     */
+    getEvents() {
+        return this.config.adapters.listStorage.getAll(this.namespace).then(itemList => {
+            const eventList = []
+            for (let item of itemList) {
+                eventList.push(new Event(item))
+            }
+            return eventList
+        })
     }
 
     /**
@@ -64,9 +83,13 @@ class EventBroker {
     /**
      * 
      * @param {Event} event 
+     * @returns {Promise.<any>}
      */
     emit(event) {
-        this.messagingAdapter.publish(this.namespace, 'events', event)
+        return Promise.all([
+            this.config.adapters.messaging.publish(this.namespace, 'events', event),
+            this.config.adapters.listStorage.push(this.namespace, event)
+        ])
     }
 
     /**
@@ -74,7 +97,7 @@ class EventBroker {
      * @returns {Promise.<any>}
      */
     dispose() {
-        return this.messagingAdapter.unsubscribe(this.namespace, 'events', this.messageHandler)
+        return this.config.adapters.messaging.unsubscribe(this.namespace, 'events', this.messageHandler)
     }
 
     /**
@@ -82,11 +105,11 @@ class EventBroker {
      * @private
      * @param {any} message 
      */
-    messageHandler = (message) => {
+    messageHandler = message => {
         const event = new Event(message)
         this.eventReceiver.dispatch(event)
     }
 
 }
 
-export default EventBroker
+export default EventProvider

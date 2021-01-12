@@ -1,54 +1,40 @@
-import ProtocolManager from './core/ProtocolManager'
-import ContextProvider from './core/ContextProvider'
-import Options from './Options'
+import Config from './Config'
+import ActionHandlerRepository from './core/ActionHandlerRepository'
+import ContextRepository from './core/ContextRepository'
 
 class Rivalis {
 
     /**
      * 
-     * @private
-     * @type {Options}
-     */
-    options = null
-
-    /**
-     * 
-     * @type {ContextProvider}
-     */
-    contexts = null
-
-    /**
-     * 
-     * @type {ProtocolManager}
-     */
-    protocols = null
-
-    /**
-     * 
-     * @type {ActionManager}
+     * @type {ActionHandlerRepository}
      */
     actions = null
 
     /**
      * 
-     * @param {Options} options 
+     * @type {ContextRepository}
      */
-    constructor(options = {}) {
-        this.options = new Options(options)
-        this.contexts = new ContextProvider(this.options.adapters, this.actions)
-        this.protocols = new ProtocolManager(this.contexts)
-    }
+    contexts = null
 
     /**
      * 
-     * @returns {Promise.<any>}
+     * @private
+     * @type {Config}
      */
-    initalize() {
-        return this.protocols.initialize().then(() => {
-            return this.options.adapters.messaging.initalize()
-        }).then(() => {
-            return this.options.adapters.storage.initalize()
-        })
+    config = null
+
+    /**
+     * 
+     * @param {Config} config 
+     */
+    constructor(config = {}) {
+        this.config = new Config(config)
+        this.actions = new ActionHandlerRepository(this)
+        this.contexts = new ContextRepository(this)
+    }
+
+    run() {
+
     }
 }
 

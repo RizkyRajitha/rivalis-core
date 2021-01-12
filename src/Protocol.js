@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
-import ContextProvider from './core/ContextProvider'
-import Node from './Node'
+import ContextProvider from './providers/ContextProvider'
+import Node from './Actor'
 
 class Protocol {
 

@@ -1,5 +1,10 @@
+class KVStorageAdapter {
 
-class KeyValueStore {
+    /**
+     * 
+     * @returns {Promise.<any>}
+     */
+    initalize() {}
 
     /**
      * 
@@ -37,9 +42,10 @@ class KeyValueStore {
      * 
      * @param {string} namespace 
      * @param {string} key
+     * @param {number} timeMs
      * @returns {Promise.<any>} 
      */
-    expire(namespace, key) {}
+    expire(namespace, key, timeMs) {}
 
     /**
      * 
@@ -73,79 +79,4 @@ class KeyValueStore {
     clear(namespace) {}
 }
 
-class ListStore {
-
-    /**
-     * 
-     * @param {string} namespace 
-     * @param {any} value 
-     * @returns {Promise.<any>}
-     */
-    push(namespace, value) {}
-
-    /**
-     * 
-     * @param {string} namespace 
-     * @returns {Promise.<any>}
-     */
-    pop(namespace) {}
-
-    /**
-     * 
-     * @param {string} namespace 
-     * @returns {Promise.<any>}
-     */
-    shift(namespace) {}
-
-    /**
-     * 
-     * @param {string} namespace 
-     * @param {any} value 
-     * @returns {Promise.<any>}
-     */
-    unshift(namespace, value) {}
-
-    /**
-     * 
-     * @param {string} namespace 
-     * @returns {Promise.<Array.<any>>}
-     */
-    getAll(namespace) {}
-
-    /**
-     * 
-     * @param {string} namespace 
-     * @returns {Promise.<any>}
-     */
-    delete(namespace) {}
-}
-
-class StorageAdapter {
-
-    /**
-     * 
-     * @returns {Promise.<any>}
-     */
-    initalize() {}
-
-    /**
-     * 
-     * @type {KeyValueStore}
-     */
-    keyValue = new StorageAdapter.KeyValueStore()
-
-    /**
-     * 
-     * @type {ListStore}
-     */
-    list = new StorageAdapter.ListStore()
-
-}
-
-/** @typedef */
-StorageAdapter.KeyValueStore = KeyValueStore
-
-/** @typedef */
-StorageAdapter.ListStore = ListStore
-
-export default StorageAdapter
+export default KVStorageAdapter
