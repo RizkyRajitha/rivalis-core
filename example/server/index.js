@@ -8,7 +8,6 @@ import WebSocketProtocol from './protocol/WebSocketProtocol'
 const app = express()
 app.use('/', express.static(path.join(__dirname, '../client')))
 const server = http.createServer(app)
-server.listen(3000)
 
 const rivalis = new Rivalis({
     protocols: [
@@ -16,6 +15,13 @@ const rivalis = new Rivalis({
     ]
 })
 
-rivalis.initalize().then(() => {
+rivalis.actions.register('chat', () => 'yes boss')
+
+rivalis.run().then(() => {
+    server.listen(3000)
     console.log('rivalis initalized!')
+    rivalis.contexts.createContext().then(contextInfo => {
+        console.log('created context', contextInfo.id)
+    })
 })
+

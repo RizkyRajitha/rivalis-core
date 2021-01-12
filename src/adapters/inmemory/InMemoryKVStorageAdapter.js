@@ -150,7 +150,8 @@ class InMemoryKVStorageAdapter extends KVStorageAdapter {
         const keyList = key === null ? [key] : Object.keys(this.expire[namespace])
         const currentTime = new Date().getTime()
         for (let key of keyList) {
-            const { set, timeMs } = this.expire[namespace][key]
+            console.log(this.expire[namespace][key], key, namespace)
+            const { set, timeMs } = this.expire[namespace][key] || {}
             if (set + timeMs <= currentTime) {
                 delete this.data[namespace][key]
                 delete this.expire[namespace][key]

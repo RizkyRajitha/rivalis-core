@@ -41,23 +41,23 @@ class Event {
 
     /**
      * 
-     * @private
-     * @type {VectorClock} 
+     * @readonly
+     * @type {Array.<number>}
      */
-    vectorClock = null
+    time = []
 
     /**
      * 
      * @param {Event} event 
      */
     constructor(event = {}) {
-        const { uid, type, clock, senderId, data } = event
+        const { uid, type, clock, senderId, data, time } = event
         this.uid = typeof uid === 'string' ? uid : uuid()
         this.type = type
         this.clock = clock
         this.senderId = senderId
         this.data = data
-        this.vectorClock = new VectorClock(senderId, clock)
+        this.time = time
     }
 
     /**
@@ -65,7 +65,7 @@ class Event {
      * @returns {VectorClock}
      */
     getVectorClock() {
-        return this.vectorClock
+        return new VectorClock(this.senderId, this.clock)
     }
 }
 

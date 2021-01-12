@@ -1,5 +1,6 @@
 import { Signal } from 'signals'
 import Context from './Context'
+import Action from './structs/Action'
 import Event from './structs/Event'
 import VectorClock from './structs/VectorClock'
 
@@ -33,7 +34,7 @@ class Actor {
      * @protected
      * @type {Signal.<Event>}
      */
-    eventDispatcher = Signal()
+    eventReceiver = null
 
     /**
      * 
@@ -44,7 +45,8 @@ class Actor {
         this.id = id
         this.context = context
         this.clock = new VectorClock(id)
-        this.context.events.add(this.eventReceiver)
+        this.eventReceiver = new Signal()
+        this.context.events.add(this.eventHandler)
     }
 
     /**
@@ -52,14 +54,14 @@ class Actor {
      * @param {EventListener} listener 
      * @param {object} context 
      */
-    add = (listener, context) => this.eventDispatcher.add(listener, context)
+    add = (listener, context) => this.eventReceiver.add(listener, context)
 
     /**
      * 
      * @param {EventListener} listener 
      * @param {object} context 
      */
-    remove = (listener, context) => this.eventDispatcher.remove(listener, context)
+    remove = (listener, context) => this.eventReceiver.remove(listener, context)
 
     /**
      * 
@@ -68,16 +70,26 @@ class Actor {
     synctronize() {
         return this.context.events.getEvents().then(eventList => {
             for (let event of eventList) {
-                this.eventReceiver(event)
+                this.eventHandler(event)
             }
         })
     }
 
     /**
      * 
+     * @param {Action} action 
+     * @returns {Promise.<any>}
+     */
+    execute(action) {
+        return this.context.execute(this, action)
+    }
+
+    /**
+     * 
      */
     dispose() {
-        this.context.events.remove(this.eventReceiver)
+        this.context.events.remove(this.eventHandler)
+        this.eventReceiver.removeAll()
     }
 
     /**
@@ -85,9 +97,10 @@ class Actor {
      * @private
      * @param {Event} event 
      */
-    eventReceiver = event => {
+    eventHandler = event => {
         this.clock.update(event.getVectorClock())
-        this.eventDispatcher.dispatch(event)
+        event.time.push(new Date().getTime())
+        this.eventReceiver.dispatch(event)
     }
 
 }

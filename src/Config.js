@@ -41,8 +41,9 @@ class Config {
      * 
      * @param {Config} config 
      */
-    constructor(config) {
-        
+    constructor(config = {}) {
+        this.protocols = config.protocols
+        // TODO: implement validation
     }
 
 }

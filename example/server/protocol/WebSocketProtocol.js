@@ -1,16 +1,9 @@
-import { IncomingMessage } from 'http'
+import url from 'url'
 import WebSocket, { Server as WSServer, ServerOptions } from 'ws'
-import { Protocol } from '../../../src'
+import { Action, Protocol } from '../../../src'
+import Actor from '../../../src/Actor'
 
 class WebSocketProtocol extends Protocol {
-
-    nodes = []
-
-    /**
-     * 
-     * @type {WSServer}
-     */
-    server = null
 
     /**
      * 
@@ -21,32 +14,47 @@ class WebSocketProtocol extends Protocol {
         this.server = new WSServer(options)
     }
 
-    initalize() {
-        this.server.on('connection', (socket, request) => {
-            this.onConnect(socket, request, node)
+    run() {
+        this.server.on('connection',(websocket, request) => {
+            const queries = {}
+            for (let queryParam of url.parse(request.url).query.split('&')) {
+                const [key, value] = queryParam.split('=')
+                queries[key] = value
+            }
+            
+            const { contextId, actorId } = queries
+            
+            this.getActor(contextId, actorId).then(actor => {
+                this.handleConnection(websocket, actor)
+            }).catch(error => {
+                console.error(error)
+                const code = error.code || 1008
+                websocket.send(error.stack, () => {
+                    websocket.close(code, error.message)
+                })
+            })
         })
     }
-
-    getNodes() {}
 
     /**
      * 
-     * @private
-     * @param {WebSocket} socket 
-     * @param {IncomingMessage} request 
+     * @param {WebSocket} websocket 
+     * @param {Actor} actor 
      */
-    onConnect = (socket, request, node) => {
-        socket.on('message', message => {
-            
-            console.log(message)
-            // node.execute(message)
+    handleConnection(websocket, actor) {
+        actor.synctronize()
+        websocket.on('message', message => {
+            const data = JSON.parse(message)
+            const action = new Action(data)
+            actor.execute(action).catch(error => {
+                
+            })
         })
 
-        socket.on('close', () => {
-            
+        actor.add(event => {
+            websocket.send(JSON.stringify(event))
         })
     }
-
 }
 
 export default WebSocketProtocol

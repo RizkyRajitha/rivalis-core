@@ -1,5 +1,6 @@
 import Rivalis from './Rivalis'
 import Protocol from './Protocol'
-import Node from './Node'
+import Action from './structs/Action'
+import Event from './structs/Event'
 
-export { Rivalis, Protocol }
+export { Rivalis, Protocol, Action, Event }

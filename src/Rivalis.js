@@ -34,7 +34,18 @@ class Rivalis {
     }
 
     run() {
-
+        return this.config.adapters.kvStorage.initalize().then(() => {
+            this.config.adapters.listStorage.initalize()
+        }).then(() => {
+            this.config.adapters.messaging.initalize()
+        }).then(() => {
+            const promises = []
+            for (let protocol of this.config.protocols) {
+                const promise = protocol.initalize(this.contexts)
+                promises.push(promise)
+            }
+            return Promise.all(promises)
+        })
     }
 }
 

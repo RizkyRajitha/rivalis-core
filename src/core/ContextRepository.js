@@ -68,6 +68,9 @@ class ContextRepository {
 
     getContext(contextId) {
         return this.kvStorage.get(this.namespace, contextId).then(contextInfo => {
+            if (contextInfo === null) {
+                throw new Error('NOT IMPLEMENTED!')
+            }
             return new ContextInfo(contextInfo)
         })
     }
@@ -89,7 +92,7 @@ class ContextRepository {
     /**
      * 
      * @param {ContextInfo} contextInfo 
-     * @returns {Context}
+     * @returns {Promise.<Context>}
      */
     resolve(contextInfo) {
         const { id: contextId } = contextInfo
@@ -98,7 +101,6 @@ class ContextRepository {
             return Promise.resolve(context)
         }
         
-        let context = null
         return this.kvStorage.exist(this.namespace, contextInfo.id).then(exist => {
             if (!exist) {
                 throw new Error(`context with id (${contextInfo.id}) doesn't exist!`)

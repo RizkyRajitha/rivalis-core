@@ -1,6 +1,5 @@
 import { v4 as uuid } from 'uuid'
-import ContextProvider from './providers/ContextProvider'
-import Node from './Actor'
+import ContextRepository from './core/ContextRepository'
 
 class Protocol {
 
@@ -18,8 +17,8 @@ class Protocol {
 
     /**
      * 
-     * @protected
-     * @type {ContextProvider}
+     * @private
+     * @type {ContextRepository}
      */
     contexts = null
 
@@ -34,9 +33,29 @@ class Protocol {
 
     /**
      * 
+     * @private
+     * @param {ContextRepository} contexts 
+     */
+    initalize(contexts) {
+        this.contexts = contexts
+        return this.run()
+    }
+
+    
+    getActor(contextId, actorId) {
+        // TODO: implement middleware and integrate data
+        return this.contexts.getContext(contextId).then(contextInfo => {
+            return this.contexts.resolve(contextInfo)
+        }).then(context => {
+            return context.connect(actorId)
+        })
+    }
+
+    /**
+     * 
      * @returns {Promise.<any>}
      */
-    initalize() {}
+    run() {}
 
 }
 
