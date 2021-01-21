@@ -1,20 +1,27 @@
 import Config from './Config'
-import ActionHandlerRepository from './core/ActionHandlerRepository'
-import ContextRepository from './core/ContextRepository'
+import ContextPool from './core/ContextPool'
+import ContextProvider from './core/ContextProvider'
+import ActionHandlerGroup from './core/ActionHandlerGroup'
 
 class Rivalis {
 
     /**
      * 
-     * @type {ActionHandlerRepository}
+     * @type {ContextProvider}
+     */
+    contexts = null
+
+    /**
+     * 
+     * @type {ActionHandlerGroup}
      */
     actions = null
 
     /**
      * 
-     * @type {ContextRepository}
+     * @type {ContextPool}
      */
-    contexts = null
+    pool = null
 
     /**
      * 
@@ -29,19 +36,25 @@ class Rivalis {
      */
     constructor(config = {}) {
         this.config = new Config(config)
-        this.actions = new ActionHandlerRepository(this)
-        this.contexts = new ContextRepository(this)
+        this.contexts = new ContextProvider(this.config)
+        this.actions = new ActionHandlerGroup()
+        this.pool = new ContextPool(this.config, this.contexts, this.actions)
     }
 
-    run() {
+    initialize() {
+        try {
+            this.config.validate()
+        } catch (error) {
+            return Promise.reject(new Error(`rivalis can not be initialized, reason: ${error.message}`))
+        }
         return this.config.adapters.kvStorage.initalize().then(() => {
             this.config.adapters.listStorage.initalize()
         }).then(() => {
             this.config.adapters.messaging.initalize()
         }).then(() => {
             const promises = []
-            for (let protocol of this.config.protocols) {
-                const promise = protocol.initalize(this.contexts)
+            for (let connector of this.config.connectors) {
+                const promise = connector.initalize(this)
                 promises.push(promise)
             }
             return Promise.all(promises)

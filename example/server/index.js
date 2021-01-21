@@ -2,26 +2,34 @@ import path from 'path'
 import http from 'http'
 import express from 'express'
 import { Rivalis } from '../../src'
-import WebSocketProtocol from './protocol/WebSocketProtocol'
+import WebSocketConnector from './connector/WebSocketConnector'
+import InMemoryListStorageAdapter from './adapters/InMemoryListStorageAdapter'
+import InMemoryKVStorageAdapter from './adapters/InMemoryKVStorageAdapter'
+import InMemoryMessagingAdapter from './adapters/InMemoryMessagingAdapter'
 
+import chat from './actions/chat'
+
+import context from './routes/context'
 
 const app = express()
-app.use('/', express.static(path.join(__dirname, '../client')))
 const server = http.createServer(app)
 
 const rivalis = new Rivalis({
-    protocols: [
-        new WebSocketProtocol({ server })
+    adapters: {
+        kvStorage: new InMemoryKVStorageAdapter(),
+        listStorage: new InMemoryListStorageAdapter(),
+        messaging: new InMemoryMessagingAdapter()
+    },
+    connectors: [
+        new WebSocketConnector({ server })
     ]
 })
 
-rivalis.actions.register('chat', () => 'yes boss')
+app.use('/', express.static(path.join(__dirname, '../client')))
+app.use('/contexts', context(rivalis))
 
-rivalis.run().then(() => {
-    server.listen(3000)
-    console.log('rivalis initalized!')
-    rivalis.contexts.createContext().then(contextInfo => {
-        console.log('created context', contextInfo.id)
-    })
+rivalis.actions.use('chat', chat)
+
+rivalis.initialize().then(() => server.listen(3000)).catch(error => {
+    console.log(error.message)
 })
-

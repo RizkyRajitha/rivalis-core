@@ -1,9 +1,9 @@
 import url from 'url'
 import WebSocket, { Server as WSServer, ServerOptions } from 'ws'
-import { Action, Protocol } from '../../../src'
+import { Action, Connector } from '../../../src'
 import Actor from '../../../src/Actor'
 
-class WebSocketProtocol extends Protocol {
+class WebSocketConnector extends Connector {
 
     /**
      * 
@@ -24,7 +24,7 @@ class WebSocketProtocol extends Protocol {
             
             const { contextId, actorId } = queries
             
-            this.getActor(contextId, actorId).then(actor => {
+            this.obrainActor(contextId, actorId).then(actor => {
                 this.handleConnection(websocket, actor)
             }).catch(error => {
                 console.error(error)
@@ -51,10 +51,10 @@ class WebSocketProtocol extends Protocol {
             })
         })
 
-        actor.add(event => {
-            websocket.send(JSON.stringify(event))
+        actor.add(events => {
+            websocket.send(JSON.stringify(events))
         })
     }
 }
 
-export default WebSocketProtocol
+export default WebSocketConnector

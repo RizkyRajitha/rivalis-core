@@ -1,5 +1,5 @@
 import EventEmitter from 'eventemitter3'
-import MessagingAdapter from '../MessagingAdapter'
+import { MessagingAdapter } from '../../../src'
 
 /**
  * @callback MessageListener

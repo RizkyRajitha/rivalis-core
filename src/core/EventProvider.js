@@ -16,7 +16,7 @@ class EventProvider {
      * @readonly
      * @type {string}
      */
-    namespace = null
+    contextId = null
 
     /**
      * 
@@ -35,11 +35,11 @@ class EventProvider {
 
     /**
      * 
-     * @param {string} namespace 
+     * @param {string} contextId 
      * @param {Config} config 
      */
-    constructor(namespace, config) {
-        this.namespace = namespace
+    constructor(contextId, config) {
+        this.contextId = contextId
         this.config = config
     }
 
@@ -49,7 +49,7 @@ class EventProvider {
      * @returns {Promise.<any>}
      */
     initalize() {
-        this.config.adapters.messaging.subscribe(this.namespace, 'events', this.messageHandler)
+        this.config.adapters.messaging.subscribe(this.contextId, 'events', this.messageHandler)
     }
 
     /**
@@ -57,7 +57,7 @@ class EventProvider {
      * @returns {Promise.<Array.<Event>>}
      */
     getEvents() {
-        return this.config.adapters.listStorage.getAll(this.namespace).then(itemList => {
+        return this.config.adapters.listStorage.getAll(this.contextId).then(itemList => {
             const eventList = []
             for (let item of itemList) {
                 eventList.push(new Event(item))
@@ -87,8 +87,8 @@ class EventProvider {
      */
     emit(event) {
         return Promise.all([
-            this.config.adapters.messaging.publish(this.namespace, 'events', event),
-            this.config.adapters.listStorage.push(this.namespace, event)
+            this.config.adapters.messaging.publish(this.contextId, 'events', event),
+            this.config.adapters.listStorage.push(this.contextId, event)
         ])
     }
 
@@ -97,7 +97,7 @@ class EventProvider {
      * @returns {Promise.<any>}
      */
     dispose() {
-        return this.config.adapters.messaging.unsubscribe(this.namespace, 'events', this.messageHandler)
+        return this.config.adapters.messaging.unsubscribe(this.contextId, 'events', this.messageHandler)
     }
 
     /**

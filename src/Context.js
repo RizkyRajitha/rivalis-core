@@ -1,18 +1,17 @@
-import ContextInfo from './structs/ContextInfo'
-import EventProvider from './providers/EventProvider'
-import Rivalis from './Rivalis'
+import EventProvider from './core/EventProvider'
 import Actor from './Actor.js'
 import Action from './structs/Action'
-import ActionHandlerRepository from './core/ActionHandlerRepository'
 import Event from './structs/Event'
+import ActionHandlerGroup from './core/ActionHandlerGroup'
+import Config from './Config'
 
 class Context {
 
     /**
      * 
-     * @type {ContextInfo}
+     * @type {string}
      */
-    info = null
+    id = null
 
 
     /**
@@ -23,20 +22,20 @@ class Context {
 
     /**
      * 
-     * @type {ActionHandlerRepository}
+     * @type {ActionHandlerGroup}
      */
     actions = null
-    
 
     /**
      * 
-     * @param {ContextInfo} contextInfo 
-     * @param {Rivalis} rivalis 
+     * @param {string} id
+     * @param {ActionHandlerGroup} actionHandlerGroup 
+     * @param {Config} config
      */
-    constructor(contextInfo, rivalis) {
-        this.info = contextInfo
-        this.actions = rivalis.actions
-        this.events = new EventProvider(this.info.id, rivalis.config)
+    constructor(id, actionHandlerGroup, config) {
+        this.id = id
+        this.actions = actionHandlerGroup
+        this.events = new EventProvider(id, config)
     }
 
     /**
@@ -51,11 +50,10 @@ class Context {
     /**
      * 
      * @param {string} actorId
-     * @returns {Actor} 
+     * @returns {Promise.<Actor>} 
      */
-    connect(actorId) {
-        //TODO: check if someone is connected with same id, connect
-        return new Actor(actorId, this)
+    connect(actorId, token) {
+        return Promise.resolve(new Actor(actorId, this))
     }
 
     /**
@@ -66,12 +64,15 @@ class Context {
      */
     execute(actor, action) {
         const currentTime = new Date().getTime()
-        const actionExecutable = this.actions.get(action.type)
-        if (actionExecutable === null) {
-            return Promise.reject(new Error('NOT IMPLEMENTED! action doesnt exist'))
+        let actionHandler = null
+        try {
+            actionHandler = ActionHandlerGroup.getHandler(this.actions, action.type)
+        } catch (error) {
+            return Promise.reject(error)
         }
+
         return Promise.resolve().then(() => {
-            return actionExecutable(action, this.info, actor)
+            return actionHandler(action, actor.id, this.id)
         }).then(result => {
             if (result === null || result === undefined) {
                 return
@@ -87,7 +88,6 @@ class Context {
             return this.events.emit(event)
         })
     }
-    
 }
 
 export default Context

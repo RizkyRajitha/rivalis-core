@@ -1,9 +1,9 @@
-import KVStorageAdapter from '../KVStorageAdapter'
+import { KVStorageAdapter } from '../../../src'
 
 class InMemoryKVStorageAdapter extends KVStorageAdapter {
     
     data = {}
-    expire = {}
+    expireObj = {}
     
     /**
      * 
@@ -71,7 +71,7 @@ class InMemoryKVStorageAdapter extends KVStorageAdapter {
         this.checkNamespace(namespace)
         this.checkLife(namespace, key)
         if (typeof this.data[namespace][key] !== 'undefined') {
-            this.expire[namespace][key] = { set: new Date().getTime(), timeMs }
+            this.expireObj[namespace][key] = { set: new Date().getTime(), timeMs }
         }
         return Promise.resolve()
     }
@@ -85,7 +85,7 @@ class InMemoryKVStorageAdapter extends KVStorageAdapter {
     ttl(namespace, key) {
         this.checkNamespace(namespace)
         this.checkLife(namespace, key)
-        const expireAt = this.expire[namespace][key]
+        const expireAt = this.expireObj[namespace][key]
         if (typeof expireAt === 'undefined') {
             return Promise.resolve(null)
         }
@@ -103,8 +103,8 @@ class InMemoryKVStorageAdapter extends KVStorageAdapter {
     persist(namespace, key) {
         this.checkNamespace(namespace)
         this.checkLife(namespace, key)
-        if (typeof this.expire[namespace][key] !== 'undefined') {
-            delete this.expire[namespace][key]
+        if (typeof this.expireObj[namespace][key] !== 'undefined') {
+            delete this.expireObj[namespace][key]
         }
         return Promise.resolve()
     }
@@ -130,14 +130,14 @@ class InMemoryKVStorageAdapter extends KVStorageAdapter {
     clear(namespace) {
         this.checkNamespace(namespace)
         this.data[namespace] = {}
-        this.expire[namespace] = {}
+        this.expireObj[namespace] = {}
         return Promise.resolve()
     }
     
     checkNamespace(namespace) {
         if (typeof this.data[namespace] === 'undefined') {
             this.data[namespace] = {}
-            this.expire[namespace] = {}
+            this.expireObj[namespace] = {}
         }
     }
 
@@ -147,14 +147,13 @@ class InMemoryKVStorageAdapter extends KVStorageAdapter {
      * @returns {number|null} 
      */
     checkLife(namespace, key = null) {
-        const keyList = key === null ? [key] : Object.keys(this.expire[namespace])
+        const keyList = key === null ? [key] : Object.keys(this.expireObj[namespace] || {})
         const currentTime = new Date().getTime()
         for (let key of keyList) {
-            console.log(this.expire[namespace][key], key, namespace)
-            const { set, timeMs } = this.expire[namespace][key] || {}
+            const { set, timeMs } = this.expireObj[namespace][key] || {}
             if (set + timeMs <= currentTime) {
                 delete this.data[namespace][key]
-                delete this.expire[namespace][key]
+                delete this.expireObj[namespace][key]
             }
         }
     }

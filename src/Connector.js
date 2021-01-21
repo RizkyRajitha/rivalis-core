@@ -1,7 +1,8 @@
 import { v4 as uuid } from 'uuid'
-import ContextRepository from './core/ContextRepository'
+import Actor from './Actor'
+import ContextProvider from './core/ContextProvider'
 
-class Protocol {
+class Connector {
 
     /**
      * 
@@ -18,7 +19,7 @@ class Protocol {
     /**
      * 
      * @private
-     * @type {ContextRepository}
+     * @type {ContextProvider}
      */
     contexts = null
 
@@ -34,17 +35,22 @@ class Protocol {
     /**
      * 
      * @private
-     * @param {ContextRepository} contexts 
+     * @param {ContextProvider} contexts 
      */
     initalize(contexts) {
         this.contexts = contexts
         return this.run()
     }
 
-    
-    getActor(contextId, actorId) {
-        // TODO: implement middleware and integrate data
-        return this.contexts.getContext(contextId).then(contextInfo => {
+    /**
+     * 
+     * @protected
+     * @param {string} contextId 
+     * @param {string} actorId 
+     * @param {string} token 
+     */
+    obrainActor(contextId, actorId, token) {
+        return this.contexts.get(contextId).then(contextInfo => {
             return this.contexts.resolve(contextInfo)
         }).then(context => {
             return context.connect(actorId)
@@ -53,10 +59,20 @@ class Protocol {
 
     /**
      * 
+     * @protected
+     * @param {Actor} actor 
+     */
+    disposeActor(actor) {
+        // TODO: implement this
+    }
+
+    /**
+     * 
+     * @protected
      * @returns {Promise.<any>}
      */
     run() {}
 
 }
 
-export default Protocol
+export default Connector

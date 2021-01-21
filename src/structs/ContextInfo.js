@@ -10,18 +10,32 @@ class ContextInfo {
      * 
      * @type {object}
      */
-    data = {}
+    settings = {}
+    
+    /**
+     * 
+     * @type {number}
+     */
+    maxSlots = 0
+
+    /**
+     * 
+     * @type {Array.<string>}
+     */
+    activeSlots = []
+
 
     /**
      * 
      * @param {ContextInfo} contextInfo 
      */
     constructor(contextInfo = {}) {
-        const { id, data } = contextInfo
+        const { id, settings, maxSlots, activeSlots } = contextInfo
         this.id = id ? id : null
-        this.data = data ? data : {}
+        this.settings = settings ? settings : this.settings
+        this.maxSlots = maxSlots ? maxSlots : this.maxSlots
+        this.activeSlots = activeSlots ? activeSlots : this.activeSlots
     }
-
 }
 
 export default ContextInfo

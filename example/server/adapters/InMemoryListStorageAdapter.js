@@ -1,4 +1,4 @@
-import ListStorageAdapter from '../ListStorageAdapter'
+import { ListStorageAdapter } from '../../../src'
 
 class InMemoryListStorageAdapter extends ListStorageAdapter {
     

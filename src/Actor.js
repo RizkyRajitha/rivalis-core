@@ -6,7 +6,7 @@ import VectorClock from './structs/VectorClock'
 
 /**
  * @callback EventListener
- * @param {Event} event
+ * @param {Array.<Event>} events
  */
 
 class Actor {
@@ -38,6 +38,19 @@ class Actor {
 
     /**
      * 
+     * @private
+     * @type {NodeJS.Timeout}
+     */
+    emitterIntervalId = null
+
+    /**
+     * 
+     * @type {Array.<Event>}
+     */
+    eventList = []
+
+    /**
+     * 
      * @param {string} id 
      * @param {Context} context 
      */
@@ -47,6 +60,7 @@ class Actor {
         this.clock = new VectorClock(id)
         this.eventReceiver = new Signal()
         this.context.events.add(this.eventHandler)
+        this.emitterIntervalId = setInterval(this.emitEventList, 100)
     }
 
     /**
@@ -70,7 +84,8 @@ class Actor {
     synctronize() {
         return this.context.events.getEvents().then(eventList => {
             for (let event of eventList) {
-                this.eventHandler(event)
+                this.clock.update(event.getVectorClock())
+                this.eventList.push(event)
             }
         })
     }
@@ -100,7 +115,20 @@ class Actor {
     eventHandler = event => {
         this.clock.update(event.getVectorClock())
         event.time.push(new Date().getTime())
-        this.eventReceiver.dispatch(event)
+        this.eventList.push(event)
+    }
+
+    /**
+     * 
+     * @private
+     */
+    emitEventList() {
+        const events = [ ...this.eventList ]
+        this.eventList = []
+        for (let event of this.eventList) {
+            event.time.push(new Date().getTime())
+        }
+        this.eventReceiver.dispatch(events)
     }
 
 }
