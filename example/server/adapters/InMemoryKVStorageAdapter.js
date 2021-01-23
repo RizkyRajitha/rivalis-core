@@ -147,7 +147,7 @@ class InMemoryKVStorageAdapter extends KVStorageAdapter {
      * @returns {number|null} 
      */
     checkLife(namespace, key = null) {
-        const keyList = key === null ? [key] : Object.keys(this.expireObj[namespace] || {})
+        const keyList = key === null ? Object.keys(this.expireObj[namespace]) : [key]
         const currentTime = new Date().getTime()
         for (let key of keyList) {
             const { set, timeMs } = this.expireObj[namespace][key] || {}

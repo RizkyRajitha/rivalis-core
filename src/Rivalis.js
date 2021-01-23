@@ -1,7 +1,8 @@
 import Config from './Config'
-import ContextPool from './core/ContextPool'
+import ContextPool from './core/StageProvider'
 import ContextProvider from './core/ContextProvider'
 import ActionHandlerGroup from './core/ActionHandlerGroup'
+import SlotProvider from './core/SlotProvider'
 
 class Rivalis {
 
@@ -25,6 +26,12 @@ class Rivalis {
 
     /**
      * 
+     * @type {SlotProvider}
+     */
+    slots = null
+
+    /**
+     * 
      * @private
      * @type {Config}
      */
@@ -39,6 +46,7 @@ class Rivalis {
         this.contexts = new ContextProvider(this.config)
         this.actions = new ActionHandlerGroup()
         this.pool = new ContextPool(this.config, this.contexts, this.actions)
+        this.slots = new SlotProvider(this.config, this.contexts)
     }
 
     initialize() {

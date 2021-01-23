@@ -22,9 +22,10 @@ class WebSocketConnector extends Connector {
                 queries[key] = value
             }
             
-            const { contextId, actorId } = queries
+            const { contextId, actorId, token } = queries
+            console.log(contextId, actorId, token)
             
-            this.obrainActor(contextId, actorId).then(actor => {
+            this.obtainActor(contextId, actorId, token).then(actor => {
                 this.handleConnection(websocket, actor)
             }).catch(error => {
                 console.error(error)

@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid'
 import Actor from './Actor'
 import ContextProvider from './core/ContextProvider'
+import Rivalis from './Rivalis'
 
 class Connector {
 
@@ -19,9 +20,9 @@ class Connector {
     /**
      * 
      * @private
-     * @type {ContextProvider}
+     * @type {Rivalis}
      */
-    contexts = null
+    rivalis = null
 
     /**
      * 
@@ -37,8 +38,8 @@ class Connector {
      * @private
      * @param {ContextProvider} contexts 
      */
-    initalize(contexts) {
-        this.contexts = contexts
+    initalize(rivalis) {
+        this.rivalis = rivalis
         return this.run()
     }
 
@@ -48,12 +49,11 @@ class Connector {
      * @param {string} contextId 
      * @param {string} actorId 
      * @param {string} token 
+     * @returns {Promise.<Actor>}
      */
-    obrainActor(contextId, actorId, token) {
-        return this.contexts.get(contextId).then(contextInfo => {
-            return this.contexts.resolve(contextInfo)
-        }).then(context => {
-            return context.connect(actorId)
+    obtainActor(contextId, actorId, token) {
+        return this.rivalis.pool.get(contextId).then(context => {
+            return context.connect(actorId, token)
         })
     }
 

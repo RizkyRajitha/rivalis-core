@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 import KVStorageAdapter from '../adapters/KVStorageAdapter'
-import ContextInfo from '../structs/ContextInfo'
+import ContextInfo from '../structs/Context'
 import Config from '../Config'
 
 class ContextProvider {
@@ -63,22 +63,21 @@ class ContextProvider {
      * @param {ContextInfo} contextId 
      */
     get(contextId) {
-        let contextData = null
         return this.kvStorage.get(this.namespace, contextId).then(data => {
             if (data === null) {
-                throw new Error('NOT IMPLEMENTED!')
+                throw new Error(`context [${contextId}] doesn't exist!`)
             }
-            contextData = data
-            return this.getActiveSlots(contextId)
-        }).then(activeSlots => {
-            const { settings, maxSlots } = contextData
+            const { settings, maxSlots } = data
             return new ContextInfo({
                 id: contextId,
                 settings,
-                maxSlots,
-                activeSlots
+                maxSlots
             })
         })
+    }
+
+    exist(contextId) {
+        return this.kvStorage.exist(this.namespace, contextId)
     }
 
     /**
@@ -94,51 +93,6 @@ class ContextProvider {
             }
             return Promise.all(promises)
         }).then(results => results)
-    }
-
-    /**
-     * 
-     * @param {string} contextId 
-     * @param {string} agentId
-     * @returns {Promise.<string>} 
-     */
-    obtainSlot(contextId, agentId) {
-        const namespace = `slots-${contextId}`
-        const token = uuid()
-        return this.kvStorage.save(namespace, agentId, token).then(() => {
-            return this.kvStorage.expire(namespace, agentId, 2000)
-        }).then(() => token)
-
-    }
-
-    /**
-     * 
-     * @private
-     * @param {string} contextId 
-     * @param {string} actorId 
-     * @param {string} token 
-     * @param {number} ttl 
-     * @returns {Promise.<any>}
-     */
-    retainSlot(contextId, actorId, token, ttl = 2000) {
-        const namespace = `slots-${contextId}`
-        return 
-    }
-
-    /**
-     * 
-     * @private
-     * @returns {Promise.<string>}
-     */
-    getActiveSlots(contextId) {
-        const namespace = `slots-${contextId}`
-        return this.kvStorage.getAll(namespace).then(map => {
-            const activeSlots = []
-            for (let key in map) {
-                activeSlots.push(key)
-            }
-            return activeSlots
-        })
     }
 
 }

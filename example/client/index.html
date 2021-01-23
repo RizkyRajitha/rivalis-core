@@ -6,8 +6,30 @@
     <title>client</title>
 </head>
 
+<style>
+    html, body {
+        width:100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .game {
+        display: block;
+        float: left;
+        width: 50%;
+        height: 100%;
+    }
+
+    .game > canvas {
+        display: block;
+        margin: auto;
+    }
+</style>
+
 <script src="/client.js"></script>
 <body>
-    
+    <div class="game" id="game1"></div>
+    <div class="game" id="game2"></div>
 </body>
 </html>

@@ -1,10 +1,10 @@
-import Context from '../Context'
-import ContextInfo from '../structs/ContextInfo'
+import Context from '../Stage'
+import ContextInfo from '../structs/Context'
 import ContextProvider from './ContextProvider'
 import ActionHandlerGroup from './ActionHandlerGroup'
 import Config from '../Config'
 
-class ContextPool {
+class StageProvider {
 
     /**
      * 
@@ -44,15 +44,16 @@ class ContextPool {
      * @param {ContextInfo} contextInfo
      * @returns {Promise.<Context>}
      */
-    get(contextInfo) {
-        this.contextProvider.get(contextInfo.id).then(contextInfo => {
+    get(contextId) {
+        return this.contextProvider.get(contextId).then(contextInfo => {
             if (contextInfo === null) {
-                throw new Error('')
+                throw new Error('context no exist')
             }
             const context = new Context(contextInfo.id, this.actionHandlerGroup, this.config)
             // TODO: save to the pool
+            return context
         })
     }
 }
 
-export default ContextPool
+export default StageProvider

@@ -1,5 +1,5 @@
 import { Signal } from 'signals'
-import Context from './Context'
+import Context from './Stage'
 import Action from './structs/Action'
 import Event from './structs/Event'
 import VectorClock from './structs/VectorClock'
@@ -38,13 +38,6 @@ class Actor {
 
     /**
      * 
-     * @private
-     * @type {NodeJS.Timeout}
-     */
-    emitterIntervalId = null
-
-    /**
-     * 
      * @type {Array.<Event>}
      */
     eventList = []
@@ -60,7 +53,6 @@ class Actor {
         this.clock = new VectorClock(id)
         this.eventReceiver = new Signal()
         this.context.events.add(this.eventHandler)
-        this.emitterIntervalId = setInterval(this.emitEventList, 100)
     }
 
     /**

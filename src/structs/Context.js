@@ -1,4 +1,4 @@
-class ContextInfo {
+class Context {
 
     /**
      * 
@@ -18,24 +18,17 @@ class ContextInfo {
      */
     maxSlots = 0
 
-    /**
-     * 
-     * @type {Array.<string>}
-     */
-    activeSlots = []
-
 
     /**
      * 
-     * @param {ContextInfo} contextInfo 
+     * @param {Context} context 
      */
-    constructor(contextInfo = {}) {
-        const { id, settings, maxSlots, activeSlots } = contextInfo
+    constructor(context = {}) {
+        const { id, settings, maxSlots } = context
         this.id = id ? id : null
         this.settings = settings ? settings : this.settings
         this.maxSlots = maxSlots ? maxSlots : this.maxSlots
-        this.activeSlots = activeSlots ? activeSlots : this.activeSlots
     }
 }
 
-export default ContextInfo
+export default Context
