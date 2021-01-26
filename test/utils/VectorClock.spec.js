@@ -1,6 +1,5 @@
 import { expect } from 'chai'
-import Event from '../../src/structs/Event'
-import VectorClock from '../../src/structs/VectorClock'
+import VectorClock from '../../src/core/VectorClock'
 
 describe('Vector clock tests', () => {
     
