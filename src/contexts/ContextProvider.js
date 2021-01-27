@@ -66,7 +66,7 @@ class ContextProvider extends EventEmitter {
      * @param {Config} config 
      * @param {StageRegister} stages
      */
-    constructor(onInit, config, stages) {
+    constructor(config, stages) {
         this.stages = stages
         this.events = new MessageBroker(config.adapter, config.cluster, 'context')
         // onInit.dispatch(this.contextEvents.initialize())

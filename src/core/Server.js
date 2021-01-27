@@ -40,7 +40,7 @@ class Server {
         this.config = new Config(config)
         this.onInit = new Signal()
         this.stages = new StageRegister()
-        this.contexts = new ContextProvider(this.onInit, this.config)
+        this.contexts = new ContextProvider(this.config, this.stages)
     }
 
     /**
@@ -48,7 +48,7 @@ class Server {
      * @returns {Promise.<any>}
      */
     initialize() {
-        
+        return this.contexts.initialize()
     }
 
 }

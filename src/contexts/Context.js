@@ -3,6 +3,8 @@ import Stage from '../stages/Stage'
 import Adapter from '../adapter/Adapter'
 import ContextProvider from './ContextProvider'
 import ActionHandler from './ActionHandler'
+import MessageBroker from '../core/MessageBroker'
+import KVStore from '../core/KVStore'
 
 class Context {
 
@@ -17,6 +19,18 @@ class Context {
      * @type {object}
      */
     settings = null
+
+    /**
+     * 
+     * @type {MessageBroker}
+     */
+    events = null
+
+    /**
+     * 
+     * @type {KVStore}
+     */
+    storage = null
 
     /**
      * 
@@ -41,12 +55,14 @@ class Context {
 
     /**
      * 
+     * @private
      * @type {boolean}
      */
     disposed = false
 
     /**
      * 
+     * @private
      * @type {ActionHandler}
      */
     actions = null
@@ -66,6 +82,8 @@ class Context {
         this.adapter = adapter
         this.contextProvider = contextProvider
         this.actions = new ActionHandler()
+        this.events = new MessageBroker(adapter, id)
+        this.storage = new KVStore(adapter, id)
     }
 
     /**
@@ -84,7 +102,14 @@ class Context {
      * @param {Actor} actor 
      */
     leave(actor) {
+        // TODO: implement this
+    }
 
+    execute(actor, action) {
+        if (this.disposed) {
+            return Promise.reject(new Error('error in context#execute, context is already disposed'))
+        }
+        // TODO: implement this
     }
 
     /**
@@ -97,22 +122,14 @@ class Context {
         })
     }
 
-    execute(actor, action) {
-        if (this.disposed) {
-            return Promise.reject(new Error('error in context#execute, context is already disposed'))
-        }
-    }
-
     /**
      * 
      * @private
      * @returns {Promise.<any>}
      */
     onInitialize() {
-        return Promise.resolve().then(() => {
-            return this.stage.onInit(this.actions, this.settings)
-        }).then(() => {
-            
+        return this.events.initialize().then(() => {
+            return this.stage.onInit(this.actions, this.settings)  
         })
     }
 
@@ -123,7 +140,7 @@ class Context {
      */
     onDispose() {
         this.disposed = true
-        console.log('dispose context')
+        return this.events.dispose()
     }
 
     /**
@@ -134,7 +151,7 @@ class Context {
      */
     canProceed(method) {
         return this.contextProvider.get(this.id).then(contextInfo => {
-            if (contextInfo === null) {
+            if (contextInfo === null || this.disposed) {
                 throw new Error(`error in context#${method}, context is already disposed`)
             }
         })
