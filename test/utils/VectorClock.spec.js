@@ -29,7 +29,7 @@ describe('Vector clock tests', () => {
         nodeThreeClock[nodeThreeId] = 1
     })
 
-    it('should initalize properly', () => {
+    it('should initialize properly', () => {
         const vectorClock = new VectorClock(nodeOneId, nodeOneClock)
         expect(vectorClock.nodeId).to.be.equal(nodeOneId)
         expect(vectorClock.getClock()).to.be.deep.equal(nodeOneClock)

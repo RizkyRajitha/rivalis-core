@@ -4,7 +4,7 @@ class Adapter {
      * 
      * @returns {Promise.<any>}
      */
-    initalize() {}
+    initialize() {}
 
     /**
      * subscribe to specific address for receiving messages

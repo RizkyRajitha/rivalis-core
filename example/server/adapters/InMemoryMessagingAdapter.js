@@ -14,7 +14,7 @@ class InMemoryMessagingAdapter extends MessagingAdapter {
      * Initalizing connection to messaging server
      * @returns {Promise.<any>}
      */
-    initalize = () => Promise.resolve()
+    initialize = () => Promise.resolve()
 
     /**
      * subscribe to specific address for receiving messages

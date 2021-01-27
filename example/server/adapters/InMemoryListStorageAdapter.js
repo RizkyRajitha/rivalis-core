@@ -8,7 +8,7 @@ class InMemoryListStorageAdapter extends ListStorageAdapter {
      * 
      * @returns {Promise.<any>}
      */
-    initalize = () => Promise.resolve()
+    initialize = () => Promise.resolve()
 
     /**
      * 

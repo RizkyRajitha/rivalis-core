@@ -9,7 +9,7 @@ class InMemoryKVStorageAdapter extends KVStorageAdapter {
      * 
      * @returns {Promise.<any>}
      */
-    initalize = () => Promise.resolve()
+    initialize = () => Promise.resolve()
 
     /**
      * 

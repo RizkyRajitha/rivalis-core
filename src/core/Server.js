@@ -47,7 +47,7 @@ class Server {
      * 
      * @returns {Promise.<any>}
      */
-    initalize() {
+    initialize() {
         
     }
 

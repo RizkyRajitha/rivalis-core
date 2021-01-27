@@ -56,21 +56,21 @@ class MessageBroker {
      * 
      * @returns {Promise.<any>}
      */
-    initalize() {
+    initialize() {
         return this.adapter.subscribe(this.namespace, this.address, this.messageHandler)
     }
 
     /**
      * 
      * @param {EventListener} listener 
-     * @param {T} context 
+     * @param {any} context 
      */
     addListener = (listener, context) => this.eventReceiver.add(listener, context)
 
     /**
      * 
      * @param {EventListener} listener 
-     * @param {T} context 
+     * @param {any} context 
      */
     removeListener = (listener, context) => this.eventReceiver.remove(listener, context)
 
