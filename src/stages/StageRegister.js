@@ -5,7 +5,7 @@ class StageRegister {
     /**
      * 
      * @private
-     * @type {object}
+     * @type {Object.<string, Stage>}
      */
     stageMap = {}
 

@@ -10,14 +10,14 @@ class VectorClock {
     /**
      * clock data
      * @private
-     * @type {object}
+     * @type {Object.<string, number>}
      */
     data = {}
 
     /**
      * Vector Clock implementation used for synchronization of the events
      * @param {string} nodeId unique identifier of the node
-     * @param {object} data clock data
+     * @param {Object.<string, number>} data clock data
      */
     constructor(nodeId, data = {}) {
         this.nodeId = nodeId
@@ -26,7 +26,7 @@ class VectorClock {
 
     /**
      * override vector clock data with a new one
-     * @param {Object} object vector clock object that contains versions
+     * @param {Object.<string, number>} object vector clock object that contains versions
      */
     setClock(clock = {}) {
         this.data = clock
@@ -34,7 +34,7 @@ class VectorClock {
 
     /**
      * returns new object of clock data
-     * @returns {object}
+     * @returns {Object.<string, number>}
      */
     getClock() {
         return { ...this.data }

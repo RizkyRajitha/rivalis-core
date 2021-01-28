@@ -1,4 +1,4 @@
-class Action {
+class Command {
 
     /**
      * 
@@ -8,31 +8,19 @@ class Action {
 
     /**
      * 
-     * @type {any}
+     * @type {Object.<string, any>}
      */
     data = null
 
     /**
      * 
-     * @type {number}
+     * @param {Command} command 
      */
-    time = null
-
-    /**
-     * 
-     * @param {Action} action 
-     */
-    constructor(action = {}) {
-        const { type, data, time } = action
+    constructor(command = {}) {
+        const { type, data } = command
         this.type = typeof type === 'string' ? type : this.type
         this.data = typeof data !== 'undefined' ? data : this.data
-        this.time = typeof time === 'number' ? time : this.time
-    }
 
-    /**
-     * 
-     */
-    validate() {
         if (typeof this.type !== 'string') {
             throw new Error('hehe action 1 NOT IMPLEMENTED!')
         }
@@ -40,11 +28,7 @@ class Action {
         if (typeof this.data === 'undefined') {
             throw new Error(' hehe action 2 NOT IMPLEMENTED!')
         }
-
-        if (typeof this.time !== 'number') {
-            throw new Error(' hehe action 3 NOT IMPLEMENTED!')
-        }
     }
 }
 
-export default Action
+export default Command

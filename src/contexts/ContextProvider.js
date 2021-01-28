@@ -11,7 +11,7 @@ import Context from './Context'
  * @typedef ContextInfo
  * @property {string} id
  * @property {string} type
- * @property {object} settings
+ * @property {Object.<string, any>} settings
  */
 
 /**
@@ -25,7 +25,7 @@ import Context from './Context'
  * @param {ContextInfo} contextInfo
  */
 
-class ContextProvider extends EventEmitter {
+class ContextProvider {
 
     /**
      * @private
@@ -56,6 +56,7 @@ class ContextProvider extends EventEmitter {
 
     /**
      * 
+     * @private
      * @type {Array.<Context>}
      */
     pool = []
@@ -69,25 +70,28 @@ class ContextProvider extends EventEmitter {
     constructor(config, stages) {
         this.stages = stages
         this.events = new MessageBroker(config.adapter, config.cluster, 'context')
-        // onInit.dispatch(this.contextEvents.initialize())
     }
 
     /**
      * 
      * @param {string} type 
-     * @param {object} settings 
+     * @param {Object.<string, any>} settings 
      * @returns {Promise.<ContextInfo>}
      */
     create(type, settings = {}) {
         const stage = this.stages.get(type)
+        
         if (stage === null) {
             return Promise.reject(new Error(`stage def [${type}] is not available`))
         }
+        
         if (typeof settings === 'object') {
             return Promise.reject(new Error(`stage settings [${settings}] must be an object`))
         }
+        
         const id = uuid()
         const contextInfo = { id, type, settings }
+        
         return this.storage.set(id, contextInfo).then(() => {
             return this.events.emit({ type: 'create', info: contextInfo })
         }).then(() => contextInfo)
@@ -177,6 +181,7 @@ class ContextProvider extends EventEmitter {
 
     /**
      * 
+     * @private
      * @param {ContextEvent} contextEvent 
      */
     handleContextEvents = contextEvent => {

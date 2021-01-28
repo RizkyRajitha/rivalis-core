@@ -1,10 +1,9 @@
-import Adapter from '../presence/Presence'
 import StageRegister from '../stages/StageRegister'
 import ContextProvider from '../contexts/ContextProvider'
 import Config from './Config'
 import { Signal } from 'signals'
 
-class Server {
+class Rivalis {
 
     /**
      * 
@@ -53,4 +52,4 @@ class Server {
 
 }
 
-export default Server
+export default Rivalis

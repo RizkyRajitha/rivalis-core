@@ -1,12 +1,10 @@
-import Action from '../models/Action'
+import Command from '../models/Command'
 
 /**
  * Callback for handling actions
  *
  * @callback ActionListener
- * @param {Action} action
- * @param {string} actorId
- * @param {string} contextId
+ * @param {Command} command
  */
 
 class ActionHandler {
