@@ -5,26 +5,27 @@ class StageRegister {
     /**
      * 
      * @private
-     * @type {Object.<string, Stage>}
+     * @type {Map.<string, Stage>}
      */
-    stageMap = {}
+    stages = null
+
+    constructor() {
+        this.stages = new Map()
+    }
 
     /**
      * defining stage event handlers for handling lifecycle of the context
      * @param {string} type 
      * @param {Stage} stage 
      */
-    define(type, stage) {
-
-        if (typeof this.stageMap[key] !== 'undefined') {
+    define(key, stage) {
+        if (this.stages.has(key)) {
             throw new Error(`stage [${key}] is already defined`)
         }
-
         if (!(stage instanceof Stage)) {
             throw new Error(`stage must be an instance of Stage`)
         }
-
-        this.stageMap[key] = stage
+        this.stages.set(key, stage)
     }
 
     /**
@@ -32,8 +33,8 @@ class StageRegister {
      * @param {string} type 
      * @return {Stage}
      */
-    get(type) {
-        return this.stageMap[key] || null
+    get(key) {
+        return this.stages.get(key) || null
     }
 
 }

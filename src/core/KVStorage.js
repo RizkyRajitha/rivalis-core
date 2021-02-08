@@ -1,9 +1,9 @@
-import Adapter from '../adapter/Adapter'
+import Adapter from '../adapters/Adapter'
 
 /**
  * @template T
  */
-class KVStore {
+class KVStorage {
 
     /**
      * 
@@ -57,9 +57,17 @@ class KVStore {
      * 
      * @param {string} key 
      * @param {T} data 
-     * @returns {Promise.<any>}
+     * @returns {Promise.<boolean>}
      */
-    set = (key, data) => this.adapter.set(this.namepsace, key, data)
+    save = (key, data) => this.adapter.save(this.namepsace, key, data)
+
+    /**
+     * 
+     * @param {string} key 
+     * @param {T} data 
+     * @returns {Promise.<boolean>}
+     */
+    update = (key, data) => this.adapter.update(this.namepsace, key, data)
 
     /**
      * 
@@ -84,4 +92,4 @@ class KVStore {
 
 }
 
-export default KVStore
+export default KVStorage

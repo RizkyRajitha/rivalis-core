@@ -38,9 +38,18 @@ class Adapter {
      * @param {string} namespace 
      * @param {string} key 
      * @param {any} value
-     * @returns {Promise.<any>} 
+     * @returns {Promise.<boolean>} 
      */
-    set(namespace, key, value) {}
+    save(namespace, key, value) {}
+
+     /**
+     * 
+     * @param {string} namespace 
+     * @param {string} key 
+     * @param {any} value
+     * @returns {Promise.<boolean>} 
+     */
+    update(namespace, key, value) {}
 
     /**
      * 

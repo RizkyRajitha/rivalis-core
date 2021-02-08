@@ -26,18 +26,10 @@ class Rivalis {
 
     /**
      * 
-     * @private
-     * @type {Signal.<any>}
-     */
-    onInit = null
-
-    /**
-     * 
      * @param {Config} config 
      */
     constructor(config = {}) {
         this.config = new Config(config)
-        this.onInit = new Signal()
         this.stages = new StageRegister()
         this.contexts = new ContextProvider(this.config, this.stages)
     }
@@ -47,7 +39,7 @@ class Rivalis {
      * @returns {Promise.<any>}
      */
     initialize() {
-        return this.contexts.initialize()
+        return this.config.adapter.initialize().then(() => this.contexts.initialize())
     }
 
 }

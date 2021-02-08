@@ -4,6 +4,12 @@ import Context from '../contexts/Context'
 
 class Stage {
 
+    /**
+     * 
+     * @param {string} id 
+     * @param {Object.<string, any>} settings 
+     */
+    onCreate(id, settings) {}
 
     /**
      * 
@@ -15,13 +21,6 @@ class Stage {
     /**
      * 
      * @param {Context} context 
-     * @param {Object.<string, any>} settings 
-     */
-    onCreate(context) {}
-
-    /**
-     * 
-     * @param {Context} context 
      * @param {Actor} actor
      */
     onJoin(context, actor) {}
@@ -29,9 +28,9 @@ class Stage {
     /**
      * 
      * @param {Context} context 
-     * @param {string} id 
+     * @param {Actor} actor
      */
-    onLeave(context, id) {}
+    onLeave(context, actor) {}
 
     /**
      * 

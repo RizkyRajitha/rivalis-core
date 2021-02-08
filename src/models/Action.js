@@ -1,4 +1,4 @@
-class Command {
+class Action {
 
     /**
      * 
@@ -14,10 +14,10 @@ class Command {
 
     /**
      * 
-     * @param {Command} command 
+     * @param {Action} action 
      */
-    constructor(command = {}) {
-        const { type, data } = command
+    constructor(action = {}) {
+        const { type, data } = action
         this.type = typeof type === 'string' ? type : this.type
         this.data = typeof data !== 'undefined' ? data : this.data
 
@@ -31,4 +31,4 @@ class Command {
     }
 }
 
-export default Command
+export default Action

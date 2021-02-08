@@ -1,6 +1,4 @@
-import EventEmitter from 'eventemitter3'
-import Command from '../models/Command'
-import Message from '../models/Message'
+import Action from '../models/Action'
 import Context from './Context'
 
 /**
@@ -43,13 +41,13 @@ class Actor {
 
     /**
      * 
-     * @param {Command} command 
+     * @param {Action} action 
      */
-    execute(command) {
-        if (!(command instanceof Command)) {
-            throw new Error('command must be an instance of Command class')
+    execute(action) {
+        if (!(action instanceof Action)) {
+            throw new Error('action must be an instance of Action class')
         }
-        return this.context.execute(this, command)
+        return this.context.execute(this, action)
     }
 
     leave() {

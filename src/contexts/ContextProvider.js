@@ -2,7 +2,7 @@ import { Signal } from 'signals'
 import EventEmitter from 'eventemitter3'
 import Config from '../core/Config'
 import MessageBroker from '../core/MessageBroker'
-import KVStore from '../core/KVStore'
+import KVStorage from '../core/KVStorage'
 import StageRegister from '../stages/StageRegister'
 import { v4 as uuid } from 'uuid'
 import Context from './Context'
@@ -36,7 +36,7 @@ class ContextProvider {
     /**
      * 
      * @private
-     * @type {KVStore.<ContextInfo>}
+     * @type {KVStorage.<ContextInfo>}
      */
     storage = null
 
@@ -52,7 +52,7 @@ class ContextProvider {
      * @private
      * @type {EventEmitter}
      */
-    eventEmitter = null
+    emitter = null
 
     /**
      * 
@@ -63,13 +63,35 @@ class ContextProvider {
 
     /**
      * 
+     * @private
+     * @type {Config}
+     */
+    config = null
+
+    /**
+     * 
      * @param {Signal.<Promise>} onInit 
      * @param {Config} config 
      * @param {StageRegister} stages
      */
     constructor(config, stages) {
+        this.config = config
         this.stages = stages
         this.events = new MessageBroker(config.adapter, config.cluster, 'context')
+        this.storage = new KVStorage(config.adapter, 'contexts')
+        this.emitter = new EventEmitter()
+    }
+
+    /**
+     * 
+     * @private
+     * @returns {Promise.<any>}
+     */
+    initialize() {
+        return this.events.initialize().then(() => {
+            this.emitter.on('dispose', this.disposeContext, this)
+            return this.events.addListener(this.handleContextEvents)
+        }).then(() => undefined)
     }
 
     /**
@@ -82,17 +104,19 @@ class ContextProvider {
         const stage = this.stages.get(type)
         
         if (stage === null) {
-            return Promise.reject(new Error(`stage def [${type}] is not available`))
+            return Promise.reject(new Error(`stage definition [${type}] is not available`))
         }
-        
-        if (typeof settings === 'object') {
+
+        if (typeof settings !== 'object') {
             return Promise.reject(new Error(`stage settings [${settings}] must be an object`))
         }
         
         const id = uuid()
         const contextInfo = { id, type, settings }
         
-        return this.storage.set(id, contextInfo).then(() => {
+        return this.storage.save(id, contextInfo).then(() => {
+            return stage.onCreate(contextInfo.id, contextInfo.settings)
+        }).then(() => {
             return this.events.emit({ type: 'create', info: contextInfo })
         }).then(() => contextInfo)
     }
@@ -122,8 +146,6 @@ class ContextProvider {
                 throw new Error(`context [${id}] can not be disposed, doesn't exist`)
             }
             info = contextInfo
-            return this.storage.delete(id)
-        }).then(() => {
             return this.events.emit({ type: 'dispose', info })
         })
     }
@@ -147,7 +169,7 @@ class ContextProvider {
             if (context !== null) {
                 return context
             }
-            context = new Context(contextInfo.id, contextInfo.settings, stage)
+            context = new Context(contextInfo.id, contextInfo.settings, stage, this.config.adapter, this)
             this.pool.push(context)
             return context.onInitialize()
         })
@@ -163,20 +185,24 @@ class ContextProvider {
             throw new Error('event must be a string')
         }
         if (!(event === 'create' || event === 'dispose')) {
-            throw new Error('invalid event type, event types available (create, dispose)')
+            throw new Error('invalid event type, available events (create, dispose)')
         }
-        this.eventHandler.on(event, contextListener)
+        this.emitter.on(event, contextListener)
     }
 
     /**
      * 
-     * @private
-     * @returns {Promise.<any>}
+     * @param {('create'|'dispose')} event 
+     * @param {ContextListener} contextListener 
      */
-    initialize() {
-        return this.events.initialize().then(() => {
-            return this.events.addListener(this.handleContextEvents)
-        }).then(() => undefined)
+    off(event, contextListener) {
+        if (typeof event !== 'string') {
+            throw new Error('event must be a string')
+        }
+        if (!(event === 'create' || event === 'dispose')) {
+            throw new Error('invalid event type, available events (create, dispose)')
+        }
+        this.emitter.off(event, contextListener)
     }
 
     /**
@@ -185,16 +211,7 @@ class ContextProvider {
      * @param {ContextEvent} contextEvent 
      */
     handleContextEvents = contextEvent => {
-        this.eventEmitter.emit(contextEvent.type, contextEvent.info)
-        if (contextEvent.type === 'dispose') {
-            let context = this.getObtainedContext(contextEvent.info.id)
-            if (context !== null) {
-                context.onDispose().then(() => {
-                    this.pool = this.pool.filter(item => item.id !== context.id)
-                })
-                
-            }
-        }
+        this.emitter.emit(contextEvent.type, contextEvent.info)
     }
 
     /**
@@ -209,14 +226,21 @@ class ContextProvider {
                 return context
             }
         }
+        return null
+    }
+
+    /**
+     * 
+     * @private
+     * @param {ContextInfo} contextInfo 
+     */
+    disposeContext(contextInfo) {
+        let context = this.getObtainedContext(contextInfo.id)
+        if (context !== null) {
+            context.onDispose()
+        }
     }
 
 }
-
-/**
- * 
- * @enum {string}
- */
-ContextProvider.EventType = EventType
 
 export default ContextProvider

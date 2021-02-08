@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import VectorClock from '../../src/core/VectorClock'
+import VectorClock from '../../src/utils/VectorClock'
 
 describe('Vector clock tests', () => {
     

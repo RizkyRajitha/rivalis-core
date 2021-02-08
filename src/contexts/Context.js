@@ -1,12 +1,10 @@
-import Actor from './Actor'
 import Stage from '../stages/Stage'
-import Adapter from '../adapter/Adapter'
+import Adapter from '../adapters/Adapter'
 import ContextProvider from './ContextProvider'
 import ActionHandler from './ActionHandler'
 import MessageBroker from '../core/MessageBroker'
-import KVStore from '../core/KVStore'
-import Actor from './Actor'
-import Command from '../models/Command'
+import KVStorage from '../core/KVStorage'
+import Action from '../models/Action'
 import Response from '../models/Response'
 import Actor from './Actor'
 import Message from '../models/Message'
@@ -33,7 +31,7 @@ class Context {
 
     /**
      * 
-     * @type {KVStore.<any>}
+     * @type {KVStorage.<any>}
      */
     storage = null
 
@@ -68,7 +66,7 @@ class Context {
     /**
      * 
      * @private
-     * @type {KVStore.<string>}
+     * @type {KVStorage.<string>}
      */
     actorStore = null
 
@@ -87,7 +85,7 @@ class Context {
      * @param {Adapter} adapter 
      * @param {ContextProvider} contextProvider
      */
-    constructor(id, settings, stage, adapter) {
+    constructor(id, settings, stage, adapter, contextProvider) {
         this.id = id
         this.settings = settings
         this.stage = stage
@@ -95,14 +93,15 @@ class Context {
         
         this.actions = new ActionHandler()
         this.messages = new MessageBroker(adapter, id)
-        this.storage = new KVStore(adapter, id)
+        this.storage = new KVStorage(adapter, id)
         
-        this.actorStore = new KVStore(adapter, `actors:${id}`)
+        this.actorStore = new KVStorage(adapter, `actors:${id}`)
         this.actors = new Map()
     }
 
     /**
      * 
+     * TODO: fix joining with same id
      * @param {string} id 
      * @param {Object.<string, any>} data
      * @returns {Promise.<Actor>} 
@@ -112,13 +111,11 @@ class Context {
         return this.canProceed('join').then(() => {
             return this.stage.onJoin(this, actor)
         }).then(() => {
-            return this.actorStore.exist(id)
-        }).then(exist => {
-            if (exist) {
+            return this.actorStore.save(id, data)
+        }).then(executed => {
+            if (!executed) {
                 throw new Error(`actor ${id} is already in the context`)
             }
-            return this.actorStore.set(id, data)
-        }).then(() => {
             this.actors.set(id, actor)
             return actor
         })
@@ -133,25 +130,28 @@ class Context {
             if (!this.actors.has(actor.id)) {
                 throw new Error(`actor ${actor.id} is not locally available`)
             }
-            return this.actorStore.exist(id)
+            return this.actorStore.exist(actor.id)
         }).then(exist => {
             if (!exist) {
-                this.actors.delete(actor.id)
-                throw new Error(`actor ${actor.id} is not live in this context (${this.id})`)
+                throw new Error(`actor ${actor.id} is not a part of this context (${this.id})`)
             }
+            return this.stage.onLeave(this, actor)
+        }).then(() => {
+            // TODO:  send an event for connector disconnection
+            return this.actors.delete(actor.id)
         })
     }
 
     /**
      * 
      * @param {Actor} actor 
-     * @param {Command} command 
+     * @param {Action} action 
      * @returns {Promise.<Response|null>}
      */
-    execute(actor, command) {
-        if (this.disposed) {
-            return Promise.reject(new Error('error in context#execute, context is already disposed'))
-        }
+    execute(actor, action) {
+        return this.canProceed('execute').then(() => {
+
+        })
         // TODO: implement this
     }
 
@@ -162,7 +162,6 @@ class Context {
     dispose() {
         return this.canProceed('dispose').then(() => {
             return this.contextProvider.dispose(this.id)
-            // TODO: null all variables
         })
     }
 
@@ -172,9 +171,9 @@ class Context {
      * @returns {Promise.<any>}
      */
     onInitialize() {
-        return this.events.initialize().then(() => {
+        return this.messages.initialize().then(() => {
             return this.stage.onInit(this.actions, this.settings)  
-        })
+        }).then(() => this)
     }
 
     /**
@@ -184,7 +183,12 @@ class Context {
      */
     onDispose() {
         this.disposed = true
-        return this.events.dispose()
+        return this.messages.dispose().then(() => {
+            this.actors.forEach(actor => {
+                // TODO:  send an event for connector disconnection
+            })
+            this.actors.clear()
+        })
     }
 
     /**
