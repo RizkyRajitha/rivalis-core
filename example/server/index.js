@@ -1,5 +1,4 @@
-import { InMemoryAdapter, Rivalis } from '../../src'
-import Context from '../../src/contexts/Context'
+import { InMemoryAdapter, Rivalis, Context, Action } from '../../src'
 import PvPStage from './stages/PvPStage'
 const gameserver = new Rivalis({
     adapter: new InMemoryAdapter(),
@@ -48,6 +47,8 @@ const createContext = () => {
  */
 const connectPlayer = (context, name) => {
     return context.join(name, { name }).then(actor => {
-        // console.log(actor.id, 'connected!')
+        return actor.execute(new Action({ type:'chat.message', data: 'test' }))
+    }).catch(error => {
+        console.error(error)
     })
 }

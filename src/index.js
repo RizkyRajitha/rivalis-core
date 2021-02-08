@@ -3,6 +3,7 @@ import Context from './contexts/Context'
 import Stage from './stages/Stage'
 import Adapter from './adapters/Adapter'
 import ActionHandler from './contexts/ActionHandler'
+import Action from './models/Action'
 import Message from './models/Message'
 import Response from './models/Response'
 
@@ -14,6 +15,7 @@ export {
     Stage,
     Adapter,
     ActionHandler,
+    Action,
     Message,
     Response,
 

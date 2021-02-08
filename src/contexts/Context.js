@@ -150,9 +150,34 @@ class Context {
      */
     execute(actor, action) {
         return this.canProceed('execute').then(() => {
+            let actionHandler = ActionHandler.getHandler(this.actions, action.type)
+            if (actionHandler === null) {
+                throw new Error(`action handler for action ${action.type} is not registered`)
+            }
+            return actionHandler(action, actor)
+        }).then(response => {
 
+            if (response === null) {
+                return null
+            }
+
+            if (!(response instanceof Response)) {
+                throw new Error('invalid response, returned data must be an instance of Response class')
+            }
+
+            if (!(response.type === Response.Type.EMIT || response.type === Response.Type.REPLY)) {
+                throw new Error(`invalid response type, avaiable types ${[Response.Type.EMIT, Response.Type.REPLY].join(', ')}`)
+            }
+
+            if (response.type === Response.Type.REPLY) {
+                let message = new Message()
+                return message
+            } else if (response.type === Response.Type.EMIT) {
+                let message = new Message()
+                // TODO: define message and emit
+                return this.messages.emit(message).then(() => null)
+            }
         })
-        // TODO: implement this
     }
 
     /**
@@ -188,6 +213,7 @@ class Context {
                 // TODO:  send an event for connector disconnection
             })
             this.actors.clear()
+            // TODO: dispose all things here
         })
     }
 
@@ -198,11 +224,10 @@ class Context {
      * @returns {Promise.<any>}
      */
     canProceed(method) {
-        return this.contextProvider.get(this.id).then(contextInfo => {
-            if (contextInfo === null || this.disposed) {
-                throw new Error(`error in context#${method}, context is already disposed`)
-            }
-        })
+        if (this.disposed) {
+            return Promise.reject(new Error(`error in context#${method}, context is already disposed`))
+        }
+        return Promise.resolve()
     }
 
 }

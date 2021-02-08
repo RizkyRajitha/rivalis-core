@@ -42,7 +42,7 @@ Response.Type = {
      * @readonly
      * @type {string}
      */
-    EVENT: 'event'
+    EMIT: 'emit'
 }
 
 export default Response

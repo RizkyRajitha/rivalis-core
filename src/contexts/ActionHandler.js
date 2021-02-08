@@ -1,10 +1,9 @@
-import Action from '../models/Action'
-
 /**
  * Callback for handling actions
  *
  * @callback ActionListener
  * @param {Action} action
+ * @returns {Response}
  */
 
 class ActionHandler {
@@ -85,20 +84,21 @@ class ActionHandler {
  * @param {string} type 
  * @returns {ActionListener}
  */
-ActionHandler.getListener = (actionHandler, type) => {
+ActionHandler.getHandler = (actionHandler, type) => {
     const nameList = type.split('.')
-    const name = nameList.shift()
     if (nameList.length > 1) {
+        const name = nameList.shift()
         const handler = actionHandler.handlers.get(name) || null
         if (handler === null) {
-            throw new Error(`not avaiable listener for type ${type}`)
+            return null
         } else {
-            return ActionHandler.getListener(handler, nameList.join('.'))
+            return ActionHandler.getHandler(handler, nameList.join('.'))
         }
     } else {
         const listener = actionHandler.listeners.get(type) || null
+        
         if (listener === null) {
-            throw new Error(`not avaiable listener for type ${type}`)
+            return null
         } else {
             return listener
         }

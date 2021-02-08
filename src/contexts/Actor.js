@@ -1,4 +1,5 @@
 import Action from '../models/Action'
+import Message from '../models/Message'
 import Context from './Context'
 
 /**
@@ -37,6 +38,7 @@ class Actor {
         this.id = id
         this.data = data
         this.context = context
+        this.context.messages.addListener(this.handleMessages)
     }
 
     /**
@@ -52,6 +54,14 @@ class Actor {
 
     leave() {
         this.context.leave(this)
+    }
+
+    /**
+     * 
+     * @param {Message} message 
+     */
+    handleMessages = message => {
+        console.log(this.id, 'message received', message)
     }
 
     
