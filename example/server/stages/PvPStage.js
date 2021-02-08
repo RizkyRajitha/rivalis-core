@@ -23,6 +23,14 @@ class PvPStage extends Stage {
 
     /**
      * 
+     * @param {Message} message 
+     */
+    onEmit(message) {
+        console.log('PvPStage: emitted message', JSON.stringify(message))
+    }
+
+    /**
+     * 
      * @param {Context} context 
      * @param {Actor} actor
      */

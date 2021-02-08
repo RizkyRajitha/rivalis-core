@@ -97,6 +97,8 @@ class Context {
         
         this.actorStore = new KVStorage(adapter, `actors:${id}`)
         this.actors = new Map()
+
+        this.messages.processMessage = this.processMessage
     }
 
     /**
@@ -149,6 +151,7 @@ class Context {
      * @returns {Promise.<Response|null>}
      */
     execute(actor, action) {
+        let receiveTime = new Date().getTime()
         return this.canProceed('execute').then(() => {
             let actionHandler = ActionHandler.getHandler(this.actions, action.type)
             if (actionHandler === null) {
@@ -168,16 +171,36 @@ class Context {
             if (!(response.type === Response.Type.EMIT || response.type === Response.Type.REPLY)) {
                 throw new Error(`invalid response type, avaiable types ${[Response.Type.EMIT, Response.Type.REPLY].join(', ')}`)
             }
-
+            let message = new Message({
+                type: action.type,
+                time: [action.time, receiveTime, new Date().getTime()],
+                clock: {},
+                data: response.data,
+                sender: actor.id
+            })
             if (response.type === Response.Type.REPLY) {
-                let message = new Message()
                 return message
             } else if (response.type === Response.Type.EMIT) {
-                let message = new Message()
-                // TODO: define message and emit
-                return this.messages.emit(message).then(() => null)
+                actor.clock.increment()
+                message.clock = actor.clock.getClock()
+                return Promise.all([
+                    this.messages.emit(message),
+                    this.stage.onEmit(message)
+                ]).then(() => null)
             }
         })
+    }
+
+    /**
+     * 
+     * @private
+     * @param {Message} message 
+     * @returns {Message}
+     */
+    processMessage(message) {
+        message = new Message(message)
+        message.time.push(new Date().getTime())
+        return message
     }
 
     /**

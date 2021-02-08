@@ -1,6 +1,7 @@
 import ActionHandler from '../contexts/ActionHandler'
 import Actor from '../contexts/Actor'
 import Context from '../contexts/Context'
+import Message from '../models/Message'
 
 class Stage {
 
@@ -17,6 +18,12 @@ class Stage {
      * @param {Object.<string, any>} settings 
      */
     onInit(actions, settings) {}
+
+    /**
+     * 
+     * @param {Message} message 
+     */
+    onEmit(message) {}
 
     /**
      * 

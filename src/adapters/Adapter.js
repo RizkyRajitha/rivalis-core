@@ -89,37 +89,6 @@ class Adapter {
      */
     clear(namespace) {}
 
-    /**
-     * 
-     * @param {string} namespace 
-     * @param {any} value 
-     * @returns {Promise.<any>}
-     */
-    push(namespace, value) {}
-
-    /**
-     * 
-     * @param {string} namespace 
-     * @returns {Promise.<any>}
-     */
-    pop(namespace) {}
-
-    /**
-     * 
-     * @param {string} namespace
-     * @param {number} offset
-     * @param {number} limit 
-     * @returns {Promise.<Array.<any>>}
-     */
-    getList(namespace, offset, limit) {}
-
-    /**
-     * 
-     * @param {string} namespace 
-     * @returns {Promise.<any>}
-     */
-    clearList(namespace) {}
-
 }
 
 export default Adapter

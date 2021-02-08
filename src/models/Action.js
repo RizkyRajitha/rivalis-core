@@ -14,12 +14,19 @@ class Action {
 
     /**
      * 
+     * @type {number}
+     */
+    time = null
+
+    /**
+     * 
      * @param {Action} action 
      */
     constructor(action = {}) {
-        const { type, data } = action
+        const { type, data, time } = action
         this.type = typeof type === 'string' ? type : this.type
         this.data = typeof data !== 'undefined' ? data : this.data
+        this.time = typeof time === 'number' ? time : this.time
 
         if (typeof this.type !== 'string') {
             throw new Error('hehe action 1 NOT IMPLEMENTED!')

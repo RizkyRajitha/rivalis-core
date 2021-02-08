@@ -1,10 +1,13 @@
 import Action from '../models/Action'
 import Message from '../models/Message'
 import Context from './Context'
+import VectorClock from '../utils/VectorClock'
+import { Signal } from 'signals'
+import EventEmitter from 'eventemitter3'
 
 /**
- * @callback ActorListener
- * @param {any} data
+ * @callback MessageListener
+ * @param {Message} event
  */
 
 class Actor {
@@ -30,6 +33,19 @@ class Actor {
 
     /**
      * 
+     * @type {VectorClock}
+     */
+    clock = null
+
+    /**
+     * 
+     * @private
+     * @type {EventEmitter.<Message>}
+     */
+    emitter = null
+
+    /**
+     * 
      * @param {string} id 
      * @param {Object.<string, any>} data 
      * @param {*} context 
@@ -38,6 +54,8 @@ class Actor {
         this.id = id
         this.data = data
         this.context = context
+        this.clock = new VectorClock(id)
+        this.emitter = new EventEmitter()
         this.context.messages.addListener(this.handleMessages)
     }
 
@@ -58,10 +76,27 @@ class Actor {
 
     /**
      * 
+     * @param {string} event
+     * @param {MessageListener} listener 
+     * @param {any} context 
+     */
+    on = (event, listener, context) => this.emitter.on(event, listener, context)
+
+    /**
+     * 
+     * @param {string} event
+     * @param {MessageListener} listener 
+     * @param {any} context 
+     */
+    off = (event, listener, context) => this.emitter.off(event, listener, context)
+
+    /**
+     * 
      * @param {Message} message 
      */
     handleMessages = message => {
-        console.log(this.id, 'message received', message)
+        this.clock.update(new VectorClock(message.sender, message.clock))
+        this.emitter.emit('message', message)
     }
 
     
