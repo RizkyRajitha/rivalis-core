@@ -1,91 +1,109 @@
 import { Signal } from 'signals'
-import Event from '../models/Event'
-import MessagingAdapter from '../adapters/MessagingAdapter'
+import Adapter from '../adapters/Adapter'
 
+
+/**
+ * @template T
+ */
 class MessageBroker {
-
-    /** @private */
-    PREFIX = '_mb@rivalis:'
-
+    
     /**
-     * @private
-     * @type {Signal<Event>}
+     * @callback EventListener
+     * @param {T} event
      */
-    signal = new Signal()
 
     /**
-     * @private
+     * 
+     * @protected
      * @type {string}
      */
     namespace = null
 
     /**
-     * @private
+     * 
+     * @protected
      * @type {string}
      */
-    channel = null
-
-    /**
-     * @private
-     * @type {MessagingAdapter}
-     */
-    messagingAdapter = null
+    address = null
 
     /**
      * 
-     * @param {string} namespace 
-     * @param {MessagingAdapter} broadcastProvider 
+     * @private
+     * @type {Adapter}
      */
-    constructor(namespace, channel, messagingAdapter) {
-        this.namespace = this.PREFIX + namespace
-        this.channel = channel
-        this.messagingAdapter = messagingAdapter
+    adapter = null
+
+    /**
+     * 
+     * @private
+     * @type {Signal.<T>}
+     */
+    eventReceiver = new Signal()
+
+    /**
+     * 
+     * @param {Adapter} adapter 
+     * @param {string} namespace
+     * @param {string} address 
+     */
+    constructor(adapter, namespace, address) {
+        this.namespace = namespace
+        this.address = address
+        this.adapter = adapter
     }
 
     /**
-     * @returns {Promise<boolean>}
+     * 
+     * @returns {Promise.<any>}
      */
     initialize() {
-        return this.messagingAdapter.subscribe(this.namespace, this.channel, this.callback)
+        return this.adapter.subscribe(this.namespace, this.address, this.messageHandler)
     }
-
-    add = (listener) => this.signal.add(listener)
-
-    addOnce = (listener) => this.signal.addOnce(listener)
 
     /**
      * 
-     * @param {string} channel
-     * @param {Event} event
-     * @returns {Promise<boolean>}
+     * @param {EventListener} listener 
+     * @param {any} context 
      */
-    publish(channel, event)  {
-        //TODO: check for your channel
-        return this.messagingAdapter.publish(this.namespace, channel, event)
+    addListener = (listener, context) => this.eventReceiver.add(listener, context)
+
+    /**
+     * 
+     * @param {EventListener} listener 
+     * @param {any} context 
+     */
+    removeListener = (listener, context) => this.eventReceiver.remove(listener, context)
+
+    /**
+     * 
+     * @param {T} message
+     * @returns {Promise.<any>}
+     */
+    emit(message) {
+        return this.adapter.publish(this.namespace, this.address, message)
     }
 
-    emit(event) {
-        return this.messagingAdapter.emit(this.namespace, event)
+    dispose() {
+        return this.adapter.unsubscribe(this.namespace, this.address, this.messageHandler)
     }
 
     /**
-     * @return {Promise<null>}
+     * 
+     * @protected
+     * @param {any} message
+     * @returns {T} 
      */
-    destroy() {
-        return this.messagingAdapter.unsubscribe(this.namespace, this.channel)
-    }
-
-
+    processMessage = message => message
 
     /**
      * @private
-     * @type {Function}
+     * @param {any} message 
      */
-    callback = message => {
-        const { type, data, receiver } = message
-        const event = new Event(type, data, receiver)
-        this.signal.dispatch(event)
+    messageHandler = message => {
+        message = this.processMessage(message)
+        this.eventReceiver.dispatch(message)
     }
+
 }
 
 export default MessageBroker
