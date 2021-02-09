@@ -1,5 +1,5 @@
 import EventEmitter from 'eventemitter3'
-import Adapter from './Adapter'
+import Adapter from './core/Adapter'
 
 class InMemoryAdapter extends Adapter {
     

@@ -1,23 +1,25 @@
 import Rivalis from './core/Rivalis'
-import Context from './contexts/Context'
 import Stage from './stages/Stage'
-import Adapter from './adapters/Adapter'
+import Adapter from './core/Adapter'
+import Connector from './core/Connector'
 import ActionHandler from './contexts/ActionHandler'
 import Action from './models/Action'
 import Message from './models/Message'
 import Response from './models/Response'
 
-import InMemoryAdapter from './adapters/InMemoryAdapter'
+import Context from './contexts/Context'
+import KVStorage from './core/KVStorage'
 
 export {
     Rivalis,
-    Context,
-    Stage,
     Adapter,
+    Connector,
+    Stage,
     ActionHandler,
     Action,
     Message,
     Response,
-
-    InMemoryAdapter
+    
+    Context,
+    KVStorage
 }

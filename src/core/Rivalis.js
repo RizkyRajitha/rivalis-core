@@ -1,7 +1,6 @@
 import StageRegister from '../stages/StageRegister'
 import ContextProvider from '../contexts/ContextProvider'
 import Config from './Config'
-import { Signal } from 'signals'
 
 class Rivalis {
 
@@ -39,7 +38,16 @@ class Rivalis {
      * @returns {Promise.<any>}
      */
     initialize() {
-        return this.config.adapter.initialize().then(() => this.contexts.initialize())
+        return this.config.initialize().then(() => {
+            return this.contexts.initialize()
+        }).then(() => {
+            let promises = []
+            for (let connector of this.config.connectors) {
+                connector.contextProvider = this.contexts
+                promises.push(connector.initialize())
+            }
+            return Promise.all(promises).then(() => null)
+        })
     }
 
 }

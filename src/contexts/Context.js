@@ -1,5 +1,5 @@
 import Stage from '../stages/Stage'
-import Adapter from '../adapters/Adapter'
+import Adapter from '../core/Adapter'
 import ContextProvider from './ContextProvider'
 import ActionHandler from './ActionHandler'
 import MessageBroker from '../core/MessageBroker'
@@ -157,7 +157,7 @@ class Context {
             if (actionHandler === null) {
                 throw new Error(`action handler for action ${action.type} is not registered`)
             }
-            return actionHandler(action, actor)
+            return actionHandler(action, actor.id, this.storage)
         }).then(response => {
 
             if (response === null) {

@@ -1,4 +1,6 @@
-import Adapter from "../adapters/Adapter"
+import InMemoryAdapter from "../InMemoryAdapter"
+import Adapter from "./Adapter"
+import Connector from "./Connector"
 
 class Config {
 
@@ -14,7 +16,10 @@ class Config {
      */
     adapter = null
 
-    // TODO: implement this
+    /**
+     * 
+     * @type {Array.<Connector>}
+     */
     connectors = []
 
     /**
@@ -23,26 +28,35 @@ class Config {
      */
     constructor(settings = {}) {
         this.cluster = settings.cluster || 'default'
-        this.adapter = settings.adapter || null
+        this.adapter = settings.adapter || new InMemoryAdapter()
         let connectors = settings.connectors || []
         for (let connector of connectors) {
             this.connectors.push(connector)
         }
-        this.validate()
     }
 
     /**
      * 
      * @private
      */
-    validate() {
-        if (this.adapter === null) {
-            throw new Error('Rivalis can not be started without an adapter')
-        }
-        if (!(this.adapter instanceof Adapter)) {
+    initialize() {
+
+        if (this.adapter !== null && !(this.adapter instanceof Adapter)) {
             throw new Error('adapter must be an instance of Adapter class')
         }
-        // TODO: implement validation for connectors
+
+        if (!Array.isArray(this.connectors)) {
+            throw new Error('connectors must be an array of Connector class instances')
+        }
+
+        for (let connector of this.connectors) {
+            if (!(connector instanceof Connector)) {
+                throw new Error('connectors must be an array of Connector class instances')
+            }
+        }
+
+
+        return this.adapter.initialize()
     }
 
 }

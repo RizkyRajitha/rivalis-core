@@ -1,5 +1,5 @@
 import { Signal } from 'signals'
-import Adapter from '../adapters/Adapter'
+import Adapter from './Adapter'
 
 
 /**

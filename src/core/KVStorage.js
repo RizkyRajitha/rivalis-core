@@ -1,4 +1,4 @@
-import Adapter from '../adapters/Adapter'
+import Adapter from './Adapter'
 
 /**
  * @template T
@@ -85,6 +85,7 @@ class KVStorage {
 
     /**
      * 
+     * @protected
      * @param {any} entry
      * @returns {T} 
      */

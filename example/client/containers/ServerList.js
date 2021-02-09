@@ -32,8 +32,6 @@ class ServerList extends GameObjects.Container {
         obtain.on('pointerdown', () => this.events.emit('obtain', this.selectedGame))
         join.on('pointerdown', () => this.events.emit('join', { contextId: this.selectedGame, token: this.gameToken }))
 
-        setInterval(() => this.events.emit('refresh'), 500)
-
         const pane = this.scene.add.graphics({ fillStyle: { color: '#ccc' } })
         pane.fillRect(20, 20, 790, 130)
 

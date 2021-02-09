@@ -161,6 +161,9 @@ class ContextProvider {
             return Promise.resolve(context)
         }
         return this.get(id).then(contextInfo => {
+            if (contextInfo === null) {
+                throw new Error(`there is not context with id ${id}`)
+            }
             let stage = this.stages.get(contextInfo.type)
             if (stage === null) {
                 throw new Error(`context can not be resolved, stage definition missing, type=(${contextInfo.type})`)

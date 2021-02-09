@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import GameContainer from './containers/GameContainer'
 import ServerList from './containers/ServerList'
+import WSAgent from './WSAgent'
 
 class LobbyScene extends Phaser.Scene {
 
@@ -21,26 +22,7 @@ class LobbyScene extends Phaser.Scene {
         const background = this.add.image(0, 0, 'background').setOrigin(0)
         this.serverList = new ServerList(this, 0, 0)
         this.gameContainer = new GameContainer(this, 20, 230)
-
-        this.serverList.events.on('refresh', () => {
-            fetch('/contexts').then(response => response.json()).then(server => {
-                this.serverList.setServers(server)
-            })
-        })
-
-        this.serverList.events.on('create', () => {
-            fetch('/contexts', { method: 'post' }).then(response => response.json())
-        })
-
-        this.serverList.events.on('obtain', contextId => {
-            fetch(`/contexts/${contextId}/${this.actorId}`, { method: 'post' }).then(response => response.json()).then(slot => {
-                this.serverList.setToken(slot.token)
-            })
-        })
-
-        this.serverList.events.on('join', ({ contextId, token }) => {
-            this.gameContainer.connect(contextId, this.actorId, token)
-        })
+        this.agent = new WSAgent()
     }
 
 }

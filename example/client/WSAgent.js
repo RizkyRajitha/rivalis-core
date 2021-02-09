@@ -1,13 +1,14 @@
-import EventEmitter from 'eventemitter3'
 
-class WSAgent extends EventEmitter {
+class WSAgent {
     
     ws = null
 
     constructor(contextId, actorId, token) {
-        super()
-        this.ws = new WebSocket(`ws://localhost:3000/?contextId=${contextId}&actorId=${actorId}&token=${token}`)
-        
+        console.log('invoked!')
+        this.ws = new WebSocket(`ws://localhost:3000/`)
+        this.ws.onopen = () => {
+            this.ws.send('helloo')
+        }
     }
 
     execute(action) {

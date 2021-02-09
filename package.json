@@ -11,7 +11,7 @@
     "prepublishOnly": "npm run build",
     "build:src": "npx rmdir-cli lib && babel src --out-dir lib",
     "build:tsd": "npx typescript -d --allowJs --emitDeclarationOnly --outDir ./lib src/*.js",
-    "run:server": "nodemon -w src -w example --ignore example/client/client.js --exec \"babel-node example/server/index.js\"",
+    "run:server": "nodemon -w src -w example --ignore example/client/client.js --exec \"npm run build:client && babel-node example/server/index.js\"",
     "build:client": "parcel build example/client/index.js --target browser --no-minify --no-source-maps --bundle-node-modules -d example/client --out-file client.js",
     "test:linter": "eslint src",
     "test:unit": "mocha --recursive --require @babel/register"

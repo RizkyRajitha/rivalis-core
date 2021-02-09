@@ -3,6 +3,8 @@
  *
  * @callback ActionListener
  * @param {Action} action
+ * @param {string} actorId
+ * @param {KVStorage} storage
  * @returns {Response}
  */
 

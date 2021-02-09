@@ -60,7 +60,7 @@ class Message {
  */
 Message.getPing = message => {
     const [ t1, t2, , t4, t5 = new Date().getTime() ] = message.time
-    return t5 - t1 - (t4 - t2)
+    return (t5 - t1 - (t4 - t2)) / 2
 }
 
 Message.getProcessingTime = message => {

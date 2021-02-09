@@ -1,5 +1,4 @@
 import { GameObjects } from 'phaser'
-import WSAgent from '../WSAgent'
 
 class GameContainer extends GameObjects.Container {
 
@@ -15,14 +14,7 @@ class GameContainer extends GameObjects.Container {
     }
 
     connect(contextId, actorId, token) {
-        this.agent = new WSAgent(contextId, actorId, token)
-        this.agent.on('connect', () => {
-            console.log(`${actorId} connected!`)
-        })
-
-        this.agent.on('event', event => {
-
-        })
+        
     }
 
 }
