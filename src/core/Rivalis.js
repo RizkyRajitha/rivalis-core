@@ -42,9 +42,9 @@ class Rivalis {
             return this.contexts.initialize()
         }).then(() => {
             let promises = []
-            for (let connector of this.config.connectors) {
-                connector.contextProvider = this.contexts
-                promises.push(connector.initialize())
+            for (let protocol of this.config.protocols) {
+                protocol.contextProvider = this.contexts
+                promises.push(protocol.initialize())
             }
             return Promise.all(promises).then(() => null)
         })

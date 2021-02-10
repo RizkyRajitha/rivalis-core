@@ -1,7 +1,7 @@
 import ContextProvider from '../contexts/ContextProvider'
 import Connection from './Connection'
 
-class Connector {
+class Protocol {
 
     /**
      * 
@@ -44,4 +44,4 @@ class Connector {
 
 }
 
-export default Connector
+export default Protocol

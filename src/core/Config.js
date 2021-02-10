@@ -1,6 +1,6 @@
-import InMemoryAdapter from "../InMemoryAdapter"
-import Adapter from "./Adapter"
-import Connector from "./Connector"
+import InMemoryAdapter from '../InMemoryAdapter'
+import Adapter from './Adapter'
+import Protocol from './Protocol'
 
 class Config {
 
@@ -18,9 +18,9 @@ class Config {
 
     /**
      * 
-     * @type {Array.<Connector>}
+     * @type {Array.<Protocol>}
      */
-    connectors = []
+    protocols = []
 
     /**
      * 
@@ -29,9 +29,9 @@ class Config {
     constructor(settings = {}) {
         this.cluster = settings.cluster || 'default'
         this.adapter = settings.adapter || new InMemoryAdapter()
-        let connectors = settings.connectors || []
-        for (let connector of connectors) {
-            this.connectors.push(connector)
+        let protocols = settings.protocols || []
+        for (let protocol of protocols) {
+            this.protocols.push(protocol)
         }
     }
 
@@ -45,13 +45,13 @@ class Config {
             throw new Error('adapter must be an instance of Adapter class')
         }
 
-        if (!Array.isArray(this.connectors)) {
-            throw new Error('connectors must be an array of Connector class instances')
+        if (!Array.isArray(this.protocols)) {
+            throw new Error('protocols must be an array of Protocol class instances')
         }
 
-        for (let connector of this.connectors) {
-            if (!(connector instanceof Connector)) {
-                throw new Error('connectors must be an array of Connector class instances')
+        for (let protocol of this.protocols) {
+            if (!(protocol instanceof Protocol)) {
+                throw new Error('protocols must be an array of Protocol class instances')
             }
         }
 

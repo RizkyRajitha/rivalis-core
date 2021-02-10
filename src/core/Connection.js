@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid'
 import Actor from '../contexts/Actor'
 import Action from '../models/Action'
-import Connector from './Connector'
+import Protocol from './Protocol'
 
 class Connection {
 
@@ -14,9 +14,9 @@ class Connection {
     /**
      * 
      * @private
-     * @type {Connector}
+     * @type {Protocol}
      */
-    connector = null
+    protocol = null
 
     /**
      * 
@@ -39,11 +39,11 @@ class Connection {
 
     /**
      * 
-     * @param {Connector} connector 
+     * @param {Protocol} protocol 
      */
-    constructor(connector) {
+    constructor(protocol) {
         this.id = uuid()
-        this.connector = connector
+        this.protocol = protocol
     }
 
     /**
@@ -112,7 +112,7 @@ class Connection {
             return Promise.reject(Connection.Response.INVALID_PAYLOAD)
         }
         const { contextId, actorId, data } = content 
-        return this.connector.contextProvider.obtain(contextId).then(context => {
+        return this.protocol.contextProvider.obtain(contextId).then(context => {
             return context.join(actorId, data)
         }).then(actor => {
             if (this.actor !== null) {
@@ -195,7 +195,7 @@ class Connection {
             }
         }).then(() => {
             this.actor = null
-            return this.connector.disconnect(this)
+            return this.protocol.disconnect(this)
         })
     }
 
