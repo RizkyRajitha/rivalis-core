@@ -13,11 +13,11 @@ The main goal of this framework is to provide environment for rapid multiplayer 
 ---
 
 ### Features:
-[x] Distributed architecture
-[x] Consistent event ordering
-[x] Extensibility
-[x] Scalability
-[x] Awesome API
+- [x] Distributed architecture
+- [x] Consistent event ordering
+- [x] Extensibility
+- [x] Scalability
+- [x] Awesome API
 
 ## License
 
