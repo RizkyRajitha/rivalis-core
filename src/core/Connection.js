@@ -1,4 +1,3 @@
-import { response } from 'express'
 import { v4 as uuid } from 'uuid'
 import Actor from '../contexts/Actor'
 import Action from '../models/Action'
@@ -126,6 +125,7 @@ class Connection {
             this.actor.on('message', this.handleMessage, this)
             return Connection.Response.CONNECTION_ESTABLISHED
         }).catch(error => {
+            console.error(error)
             throw Connection.Response.ACCESS_DENIED
         })
     }
@@ -150,6 +150,7 @@ class Connection {
             }
             return null
         }).catch(error => {
+            console.error(error)
             return Connection.Response.NOT_ACCEPTED
         })
     }

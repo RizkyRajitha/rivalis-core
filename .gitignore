@@ -2,3 +2,4 @@ node_modules
 lib
 .cache
 example/client/client.js
+example/client/client.js.map

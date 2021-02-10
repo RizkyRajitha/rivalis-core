@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { Message } from '../../src'
 import GameContainer from './containers/GameContainer'
 import ServerList from './containers/ServerList'
 import WSAgent from './WSAgent'
@@ -22,7 +23,18 @@ class LobbyScene extends Phaser.Scene {
         const background = this.add.image(0, 0, 'background').setOrigin(0)
         this.serverList = new ServerList(this, 0, 0)
         this.gameContainer = new GameContainer(this, 20, 230)
-        this.agent = new WSAgent()
+        this.agent = new WSAgent('ws://localhost:3000')
+        
+        this.agent.on('connection_established', () => {
+            this.agent.execute('chat.message', 'hello')
+        })
+        
+        this.agent.on('message', message => {
+            console.log(Message.getPing(message))
+        })
+        this.agent.on('ready', () => {
+            this.agent.connect('test', this.actorId, { nickname: this.actorId })
+        })
     }
 
 }

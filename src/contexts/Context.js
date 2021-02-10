@@ -140,7 +140,8 @@ class Context {
             return this.stage.onLeave(this, actor)
         }).then(() => {
             // TODO:  send an event for connector disconnection
-            return this.actors.delete(actor.id)
+            this.actors.delete(actor.id)
+            return this.actorStore.delete(actor.id)
         })
     }
 
@@ -158,6 +159,14 @@ class Context {
                 throw new Error(`action handler for action ${action.type} is not registered`)
             }
             return actionHandler(action, actor.id, this.storage)
+        }).catch(error => {
+            if (error instanceof Error) {
+                error = error.stack
+            }
+            return new Response({
+                type: Response.Type.REPLY,
+                data: { error }
+            })
         }).then(response => {
 
             if (response === null) {
