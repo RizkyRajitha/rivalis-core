@@ -5,7 +5,9 @@
 ![GitHub Release)](https://img.shields.io/github/v/tag/rivalis/rivalis-core?color=orange&include_prereleases&label=VERSION&style=for-the-badge)
 ![npm downloads](https://img.shields.io/npm/dw/@rivalis/core?label=downloads&style=for-the-badge)
 
-<img style="display:block; margin:auto;" src="https://user-images.githubusercontent.com/10467454/107292858-cf2f6700-6a6a-11eb-9116-6026aaca0e2f.png" width="320px" alt="Rivalis Logo" />
+<p align="center">
+  <img style="display:block; margin:auto;" src="https://user-images.githubusercontent.com/10467454/107292858-cf2f6700-6a6a-11eb-9116-6026aaca0e2f.png" width="320px" alt="Rivalis Logo" />
+</p>
 
 ---
 
