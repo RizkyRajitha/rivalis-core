@@ -150,7 +150,6 @@ class Connection {
             }
             return null
         }).catch(error => {
-            console.error(error)
             return Connection.Response.NOT_ACCEPTED
         })
     }
