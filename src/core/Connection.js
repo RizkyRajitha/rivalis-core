@@ -49,30 +49,28 @@ class Connection {
 
     /**
      * 
-     * @param {('open'|'close'|'error'|'message')} event 
+     * @param {('close'|'error'|'message')} event 
      * @param {any} data 
      */
     handle(event, data) {
-        
-        if (event === 'open') {
-            this.onInitalize()
-        }
 
         if (event === 'close') {
             this.dispose()
         }
 
-        if (event === 'message') {
-            this.onMessage(data).then(response => {
-                this.onmessage(JSON.stringify(response))
-            }).catch(response => {
-                this.onmessage(JSON.stringify(response))
-                // TODO: terminate connection
-            })
-        }
-
         if (event === 'error') {
             this.dispose()
+        }
+
+        if (event === 'message') {
+            this.onMessage(data).then(response => {
+                if (response !== null) {
+                    this.onmessage(JSON.stringify(response))
+                }
+            }).catch(response => {
+                this.onclose(JSON.stringify(response))
+                this.dispose()
+            })
         }
     }
 
@@ -103,10 +101,10 @@ class Connection {
         const { kind, content } = message
         if (kind === 'connect') {
             return this.handleConnect(content)
-        }
-
-        if (kind === 'action') {
+        } else if (kind === 'action') {
             return this.handleAction(content)
+        } else {
+            return Promise.reject(Connection.Response.INVALID_PAYLOAD)
         }
     }
 
@@ -128,11 +126,15 @@ class Connection {
             this.actor.on('message', this.handleMessage, this)
             return Connection.Response.CONNECTION_ESTABLISHED
         }).catch(error => {
-            // TODO: log error
             throw Connection.Response.ACCESS_DENIED
         })
     }
 
+    /**
+     * 
+     * @private
+     * @param {Object.<string,any>} content 
+     */
     handleAction(content) {
         if (this.actor === null) {
             return Promise.reject(Connection.Response.NOT_CONNECTED)
@@ -154,10 +156,11 @@ class Connection {
 
     /**
      * 
+     * @private
      * @param {Message} message 
      */
     handleMessage(message) {
-        let repsonse = {
+        let response = {
             ...Connection.Response.MESSAGE,
             data: message
         }
@@ -169,9 +172,8 @@ class Connection {
      * @param {Object.<string,any>} object 
      * @param {Array.<string>} properties 
      */
-
     isValidInput(object, properties = []) {
-        if (Object.keys(object) !== properties.length) {
+        if (Object.keys(object).length !== properties.length) {
             return false
         }
         for (let property of properties) {
@@ -184,11 +186,17 @@ class Connection {
 
     /**
      * 
-     * @private
+     * @returns {Promise.<any>}
      */
     dispose() {
-        // TODO: dispose
-        console.log('dispose')
+        return Promise.resolve().then(() => {
+            if (this.actor !== null) {
+                return this.actor.leave()
+            }
+        }).then(() => {
+            this.actor = null
+            return this.connector.disconnect(this)
+        })
     }
 
 }

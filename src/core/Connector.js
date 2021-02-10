@@ -30,7 +30,6 @@ class Connector {
     connect() {
         let connection = new Connection(this)
         this.connections.set(connection.id, connection)
-        connection.handle('open')
         return connection
     }
 
@@ -41,7 +40,6 @@ class Connector {
      */
     disconnect(connection) {
         this.connections.delete(connection.id)
-        connection.dispose()
     }
 
 }

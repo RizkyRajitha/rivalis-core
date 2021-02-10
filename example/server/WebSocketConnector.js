@@ -30,7 +30,11 @@ class WebSocketConnector extends Connector {
             const connection = this.connect()
             
             connection.onmessage = message => socket.send(message)
-            connection.onclose = (code, message) => socket.close(code, message)
+            connection.onclose = message => {
+                socket.send(message, () => {
+                    socket.close()
+                })
+            }
 
             socket.on('close', () => connection.handle('close'))
             socket.on('error', () => connection.handle('error'))
