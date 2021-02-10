@@ -1,7 +1,7 @@
 import Rivalis from './core/Rivalis'
 import Stage from './stages/Stage'
 import Adapter from './core/Adapter'
-import Connector from './core/Connector'
+import Protocol from './core/Protocol'
 import Agent from './core/Agent'
 import ActionHandler from './contexts/ActionHandler'
 import Action from './models/Action'
@@ -14,7 +14,7 @@ import KVStorage from './core/KVStorage'
 export {
     Rivalis,
     Adapter,
-    Connector,
+    Protocol,
     Agent,
     Stage,
     ActionHandler,
