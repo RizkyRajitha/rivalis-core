@@ -62,6 +62,7 @@ class Actor {
     /**
      * 
      * @param {Action} action 
+     * @returns {Message|null}
      */
     execute(action) {
         if (!(action instanceof Action)) {
@@ -71,7 +72,7 @@ class Actor {
     }
 
     leave() {
-        this.context.leave(this)
+        return this.context.leave(this)
     }
 
     /**

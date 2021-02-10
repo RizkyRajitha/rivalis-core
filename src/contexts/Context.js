@@ -148,7 +148,7 @@ class Context {
      * 
      * @param {Actor} actor 
      * @param {Action} action 
-     * @returns {Promise.<Response|null>}
+     * @returns {Promise.<Message|null>}
      */
     execute(actor, action) {
         let receiveTime = new Date().getTime()

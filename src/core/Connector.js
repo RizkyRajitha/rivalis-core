@@ -46,18 +46,4 @@ class Connector {
 
 }
 
-/**
- * @typedef {ErrorMessage}
- * @param {string} code
- * @param {string} cause
- */
-
-/**
- * 
- * @enum {ErrorMessage}
- */
-Connector.Error = {
-    INVALID_PAYLOAD: { code: 'invalid_payload' }
-}
-
 export default Connector
