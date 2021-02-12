@@ -76,14 +76,6 @@ class Connection {
     /**
      * 
      * @private
-     */
-    onInitalize() {
-
-    }
-
-    /**
-     * 
-     * @private
      * @param {string} data 
      * @returns {Promise.<string>}
      */

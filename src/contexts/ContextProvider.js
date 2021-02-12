@@ -111,7 +111,7 @@ class ContextProvider {
             return Promise.reject(new Error(`stage settings [${settings}] must be an object`))
         }
         
-        const id = 'test' //uuid()
+        const id = uuid()
         const contextInfo = { id, type, settings }
         
         return this.storage.save(id, contextInfo).then(() => {
