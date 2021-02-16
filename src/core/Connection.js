@@ -84,24 +84,24 @@ class Connection {
         try {
             message = JSON.parse(data)
         } catch (error) {
-            return Promise.reject(Connection.Response.INVALID_PAYLOAD)
+            return Promise.reject({ ...Connection.Response.INVALID_PAYLOAD, message: error.message })
         }
         if (!this.isValidInput(message, ['kind', 'content'])) {
-            return Promise.reject(Connection.Response.INVALID_PAYLOAD)
+            return Promise.reject({ ...Connection.Response.INVALID_PAYLOAD, message: `message must contain { kind, content }` })
         }
         const { kind, content } = message
-        if (kind === 'connect') {
+        if (kind === 'join') {
             return this.handleConnect(content)
         } else if (kind === 'action') {
             return this.handleAction(content)
         } else {
-            return Promise.reject(Connection.Response.INVALID_PAYLOAD)
+            return Promise.reject({ ...Connection.Response.INVALID_PAYLOAD, message: `message of kind ${kind} can not be accepted` })
         }
     }
 
     handleConnect(content) {
         if (!this.isValidInput(content, ['contextId', 'actorId', 'data'])) {
-            return Promise.reject(Connection.Response.INVALID_PAYLOAD)
+            return Promise.reject({ ...Connection.Response.INVALID_PAYLOAD, message: `content must contain { contextId, actorId, data }` })
         }
         const { contextId, actorId, data } = content 
         return this.protocol.contextProvider.obtain(contextId).then(context => {
@@ -118,7 +118,7 @@ class Connection {
             return Connection.Response.JOIN
         }).catch(error => {
             console.error(error)
-            throw Connection.Response.ACCESS_DENIED
+            throw { ...Connection.Response.ACCESS_DENIED, message: message.error }
         })
     }
 
@@ -132,7 +132,7 @@ class Connection {
             return Promise.reject(Connection.Response.NOT_CONNECTED)
         }
         if (!this.isValidInput(content, ['type', 'data', 'time'])) {
-            return Promise.reject(Connection.Response.INVALID_PAYLOAD)
+            return Promise.reject({ ...Connection.Response.INVALID_PAYLOAD, message: `content must contain { type, data, time }` })
         }
         return this.actor.execute(new Action(content)).then(message => {
             if (message !== null) {
@@ -212,7 +212,6 @@ Connection.Response = {
 
     JOIN: { code: 'join' },
     MESSAGE: { code: 'message', data: null }
-
 }
 
 export default Connection

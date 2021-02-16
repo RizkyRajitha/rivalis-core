@@ -32,7 +32,7 @@ class Client {
      * @param {string} actorId 
      * @param {Object.<string,any>} data 
      */
-    join(contextId, actorId, data) {
+    join(contextId, actorId, data = {}) {
         this.check()
         if (typeof contextId !== 'string') {
             throw new Error('contextId must be a string')
