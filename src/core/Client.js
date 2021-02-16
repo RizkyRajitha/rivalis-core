@@ -6,7 +6,7 @@ import Message from '../models/Message'
  * @param {any} message
  */
 
-class Agent {
+class Client {
 
     /**
      * 
@@ -32,10 +32,22 @@ class Agent {
      * @param {string} actorId 
      * @param {Object.<string,any>} data 
      */
-    connect(contextId, actorId, data) {
+    join(contextId, actorId, data) {
         this.check()
+        if (typeof contextId !== 'string') {
+            throw new Error('contextId must be a string')
+        }
+
+        if (typeof actorId !== 'string') {
+            throw new Error('actorId must be a string')
+        }
+
+        if (typeof data !== 'object') {
+            throw new Error('data must be an object')
+        }
+
         const message = JSON.stringify({
-            kind: 'connect',
+            kind: 'join',
             content: { contextId, actorId, data }
         })
         this.sendMessage(message)
@@ -90,7 +102,7 @@ class Agent {
      */
     check() {
         if (!this._ready) {
-            throw new Error('connection is not ready, event "ready" will be fired when agent is able to communicate to server')
+            throw new Error('connection is not ready, event "ready" will be fired when client is able to communicate to server')
         }
     }
 
@@ -116,4 +128,4 @@ class Agent {
 
 }
 
-export default Agent
+export default Client

@@ -115,7 +115,7 @@ class Connection {
         }).then(actor => {
             this.actor = actor
             this.actor.on('message', this.handleMessage, this)
-            return Connection.Response.CONNECTION_ESTABLISHED
+            return Connection.Response.JOIN
         }).catch(error => {
             console.error(error)
             throw Connection.Response.ACCESS_DENIED
@@ -210,7 +210,7 @@ Connection.Response = {
     NOT_CONNECTED: { code: 'not_connected' },
     NOT_ACCEPTED: { code: 'not_accepted' },
 
-    CONNECTION_ESTABLISHED: { code: 'connection_established' },
+    JOIN: { code: 'join' },
     MESSAGE: { code: 'message', data: null }
 
 }

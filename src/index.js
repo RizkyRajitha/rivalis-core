@@ -2,7 +2,7 @@ import Rivalis from './core/Rivalis'
 import Stage from './stages/Stage'
 import Adapter from './core/Adapter'
 import Protocol from './core/Protocol'
-import Agent from './core/Agent'
+import Client from './core/Client'
 import ActionHandler from './contexts/ActionHandler'
 import Action from './models/Action'
 import Message from './models/Message'
@@ -15,7 +15,7 @@ export {
     Rivalis,
     Adapter,
     Protocol,
-    Agent,
+    Client,
     Stage,
     ActionHandler,
     Action,
