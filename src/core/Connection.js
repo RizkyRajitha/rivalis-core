@@ -117,8 +117,7 @@ class Connection {
             this.actor.on('message', this.handleMessage, this)
             return Connection.Response.JOIN
         }).catch(error => {
-            console.error(error)
-            throw { ...Connection.Response.ACCESS_DENIED, message: message.error }
+            throw { ...Connection.Response.ACCESS_DENIED, message: error.message }
         })
     }
 
