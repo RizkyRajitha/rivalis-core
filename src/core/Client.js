@@ -1,5 +1,6 @@
 import EventEmitter from 'eventemitter3'
 import Message from '../models/Message'
+import Connection from './Connection'
 
 /**
  * @callback MessageListener
@@ -20,7 +21,7 @@ class Client {
      * @private
      * @type {boolean}
      */
-    _ready = false
+    isReady = false
 
     constructor() {
         this.emitter = new EventEmitter()
@@ -44,6 +45,14 @@ class Client {
 
         if (typeof data !== 'object') {
             throw new Error('data must be an object')
+        }
+
+        if (contextId.length === 0) {
+            throw new Error('contextId can not be empty string')
+        }
+
+        if (actorId.length === 0) {
+            throw new Error('actorId can not be empty string')
         }
 
         const message = JSON.stringify({
@@ -89,10 +98,19 @@ class Client {
 
     /**
      * 
+     * 
+     */
+    disconnect() {
+        this.isReady = false
+        this.onDisconnect()
+    }
+
+    /**
+     * 
      * @protected
      */
     ready() {
-        this._ready = true
+        this.isReady = true
         this.emitter.emit('ready')
     }
 
@@ -101,7 +119,7 @@ class Client {
      * @private
      */
     check() {
-        if (!this._ready) {
+        if (!this.isReady) {
             throw new Error('connection is not ready, event "ready" will be fired when client is able to communicate to server')
         }
     }
@@ -109,14 +127,22 @@ class Client {
     /**
      * 
      * @protected
-     * @param {Object.<string, any>} content 
+     * @param {string} content 
      */
-    handleMessage(content) {
+    handleMessage(message) {
+        let content = null
+        try {
+            content = JSON.parse(message)
+        } catch (error) {
+            throw new Error('unacceptable message format received from server')
+        }
         let { code, data } = content
-        if (code === 'message') {
+        if (code === Client.EVENTS.MESSAGE) {
             data = new Message(data)
+            this.emitter.emit(data.type, data)
         }
         this.emitter.emit(code, data)
+        
     }
 
     /**
@@ -126,6 +152,26 @@ class Client {
      */
     sendMessage(message) {}
 
+    onDisconnect() {}
+
+    get connected() {
+        return this.isReady
+    }
+
+}
+
+/**
+ * 
+ * @enum {string}
+ */
+Client.EVENTS = {
+    INVALID_PAYLOAD: Connection.RESPONSES.INVALID_PAYLOAD.code,
+    ACCESS_DENIED: Connection.RESPONSES.ACCESS_DENIED.code,
+    NOT_ACCEPTED: Connection.RESPONSES.NOT_ACCEPTED.code,
+    JOIN: Connection.RESPONSES.JOIN.code,
+    MESSAGE: Connection.RESPONSES.MESSAGE.code
+
 }
 
 export default Client
+

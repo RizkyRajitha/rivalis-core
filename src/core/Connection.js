@@ -84,24 +84,24 @@ class Connection {
         try {
             message = JSON.parse(data)
         } catch (error) {
-            return Promise.reject({ ...Connection.Response.INVALID_PAYLOAD, message: error.message })
+            return Promise.reject({ ...Connection.RESPONSES.INVALID_PAYLOAD, data: 'invalid message format' })
         }
         if (!this.isValidInput(message, ['kind', 'content'])) {
-            return Promise.reject({ ...Connection.Response.INVALID_PAYLOAD, message: `message must contain { kind, content }` })
+            return Promise.reject({ ...Connection.RESPONSES.INVALID_PAYLOAD, data: `message must contain { kind, content }` })
         }
         const { kind, content } = message
         if (kind === 'join') {
-            return this.handleConnect(content)
+            return this.handleJoin(content)
         } else if (kind === 'action') {
             return this.handleAction(content)
         } else {
-            return Promise.reject({ ...Connection.Response.INVALID_PAYLOAD, message: `message of kind ${kind} can not be accepted` })
+            return Promise.reject({ ...Connection.RESPONSES.INVALID_PAYLOAD, data: `unnaceptable message of kind ${kind}` })
         }
     }
 
-    handleConnect(content) {
+    handleJoin(content) {
         if (!this.isValidInput(content, ['contextId', 'actorId', 'data'])) {
-            return Promise.reject({ ...Connection.Response.INVALID_PAYLOAD, message: `content must contain { contextId, actorId, data }` })
+            return Promise.reject({ ...Connection.RESPONSES.INVALID_PAYLOAD, data: `message content must contain { contextId, actorId, data }` })
         }
         const { contextId, actorId, data } = content 
         return this.protocol.contextProvider.obtain(contextId).then(context => {
@@ -115,9 +115,9 @@ class Connection {
         }).then(actor => {
             this.actor = actor
             this.actor.on('message', this.handleMessage, this)
-            return Connection.Response.JOIN
+            return Connection.RESPONSES.JOIN
         }).catch(error => {
-            throw { ...Connection.Response.ACCESS_DENIED, message: error.message }
+            throw { ...Connection.RESPONSES.ACCESS_DENIED, data: error.message }
         })
     }
 
@@ -128,20 +128,20 @@ class Connection {
      */
     handleAction(content) {
         if (this.actor === null) {
-            return Promise.reject(Connection.Response.NOT_CONNECTED)
+            return Promise.reject({ ...Connection.RESPONSES.NOT_ACCEPTED,  })
         }
         if (!this.isValidInput(content, ['type', 'data', 'time'])) {
-            return Promise.reject({ ...Connection.Response.INVALID_PAYLOAD, message: `content must contain { type, data, time }` })
+            return Promise.reject({ ...Connection.RESPONSES.INVALID_PAYLOAD, data: `message content must contain { type, data, time }` })
         }
         return this.actor.execute(new Action(content)).then(message => {
             if (message !== null) {
-                let response = { ...Connection.Response.MESSAGE }
+                let response = { ...Connection.RESPONSES.MESSAGE }
                 response.data = message
                 return response
             }
             return null
         }).catch(error => {
-            return Connection.Response.NOT_ACCEPTED
+            return Connection.RESPONSES.NOT_ACCEPTED
         })
     }
 
@@ -152,7 +152,7 @@ class Connection {
      */
     handleMessage(message) {
         let response = {
-            ...Connection.Response.MESSAGE,
+            ...Connection.RESPONSES.MESSAGE,
             data: message
         }
         this.onmessage(JSON.stringify(response))
@@ -194,23 +194,22 @@ class Connection {
 
 
 /**
- * @typedef {ErrorMessage}
+ * @typedef {Response}
  * @param {string} code
  * @param {string} data
  */
 
 /**
  * 
- * @enum {ErrorMessage}
+ * @enum {Response}
  */
-Connection.Response = {
-    INVALID_PAYLOAD: { code: 'invalid_payload' },
-    ACCESS_DENIED: { code: 'access_denied' },
-    NOT_CONNECTED: { code: 'not_connected' },
-    NOT_ACCEPTED: { code: 'not_accepted' },
+Connection.RESPONSES = {
+    INVALID_PAYLOAD: { code: 'invalid-payload', data: null },
+    ACCESS_DENIED: { code: 'access-denied', data: null },
+    NOT_ACCEPTED: { code: 'not-accepted', data: null },
 
-    JOIN: { code: 'join' },
-    MESSAGE: { code: 'message', data: null }
+    JOIN: { code: 'context-join', data: null },
+    MESSAGE: { code: 'context-message', data: null }
 }
 
 export default Connection

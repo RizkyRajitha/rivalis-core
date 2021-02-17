@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import VectorClock from '../../src/utils/VectorClock'
 
-describe('Vector clock tests', () => {
+describe('utils/VectorClock tests', () => {
     
     const nodeOneId = 'test-node-1',
         nodeTwoId = 'test-node-2',
