@@ -41,7 +41,7 @@ class Config {
      */
     initialize() {
 
-        if (this.adapter !== null && !(this.adapter instanceof Adapter)) {
+        if (!Adapter.isAdapter(this.adapter)) {
             throw new Error('adapter must be an instance of Adapter class')
         }
 
@@ -50,7 +50,7 @@ class Config {
         }
 
         for (let protocol of this.protocols) {
-            if (!(protocol instanceof Protocol)) {
+            if (!Protocol.isProtocol(protocol)) {
                 throw new Error('protocols must be an array of Protocol class instances')
             }
         }

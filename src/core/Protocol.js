@@ -44,4 +44,23 @@ class Protocol {
 
 }
 
+/**
+ * 
+ * @param {Protocol} protocol
+ * @returns {boolean} 
+ */
+Protocol.isProtocol = (protocol = null) => {
+    if (typeof protocol !== 'object') {
+        return false
+    }
+    let proto = (Object.getPrototypeOf(protocol) || {}).constructor
+    if (typeof proto !== 'function') {
+        return false
+    }
+    if (Object.getPrototypeOf(proto).name === 'Protocol') {
+        return true
+    }
+    return false
+}
+
 export default Protocol

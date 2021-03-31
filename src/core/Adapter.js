@@ -91,4 +91,23 @@ class Adapter {
 
 }
 
+/**
+ * 
+ * @param {Adapter} adapter 
+ * @returns {boolean}
+ */
+ Adapter.isAdapter = (adapter = null) => {
+    if (typeof adapter !== 'object') {
+        return false
+    }
+    let proto = (Object.getPrototypeOf(adapter) || {}).constructor
+    if (typeof proto !== 'function') {
+        return false
+    }
+    if (Object.getPrototypeOf(proto).name === 'Adapter') {
+        return true
+    }
+    return false
+}
+
 export default Adapter
