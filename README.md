@@ -1,5 +1,7 @@
 # Rivalis Core
 
+[![logo](https://user-images.githubusercontent.com/10467454/113154097-f834d280-9237-11eb-95a9-bd62cdde4677.png)](https://rivalis.io)
+
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/fo-real.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/uses-js.svg)](https://forthebadge.com)
