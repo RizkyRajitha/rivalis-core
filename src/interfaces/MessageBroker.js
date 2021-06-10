@@ -1,37 +1,43 @@
 import { Signal } from 'signals'
-import Adapter from './Adapter'
-
+import MessageBrokerAdapter from '../adapters/MessageBrokerAdapter'
 
 /**
  * @template T
+ * @class
+ * @author Daniel Kalevski
+ * @since 0.5.0
+ * 
+ * // TODO: short docs
  */
 class MessageBroker {
-    
-    /**
-     * @callback EventListener
-     * @param {T} event
-     */
-
-    /**
-     * 
-     * @protected
-     * @type {string}
-     */
-    namespace = null
-
-    /**
-     * 
-     * @protected
-     * @type {string}
-     */
-    address = null
 
     /**
      * 
      * @private
-     * @type {Adapter}
+     * @type {string}
+     */
+    namespace = null
+
+     /**
+     * 
+     * @private
+     * @type {string}
+     */
+    address = null
+
+     /**
+     * 
+     * @private
+     * @type {MessageBrokerAdapter}
      */
     adapter = null
+
+    /**
+     * 
+     * @private
+     * @type {boolean}
+     */
+    subscribed = false
 
     /**
      * 
@@ -42,7 +48,7 @@ class MessageBroker {
 
     /**
      * 
-     * @param {Adapter} adapter 
+     * @param {MessageBrokerAdapter} adapter 
      * @param {string} namespace
      * @param {string} address 
      */
@@ -57,7 +63,11 @@ class MessageBroker {
      * @returns {Promise.<any>}
      */
     initialize() {
-        return this.adapter.subscribe(this.namespace, this.address, this.messageHandler)
+        if (!this.subscribed) {
+            return this.adapter.subscribe(this.namespace, this.address, this.messageHandler)
+        } else {
+            return Promise.resolve()
+        }
     }
 
     /**
@@ -65,14 +75,18 @@ class MessageBroker {
      * @param {EventListener} listener 
      * @param {any} context 
      */
-    addListener = (listener, context) => this.eventReceiver.add(listener, context)
+    subscribe(listener, context) {
+        this.eventReceiver.add(listener, context)
+    }
 
     /**
      * 
      * @param {EventListener} listener 
      * @param {any} context 
      */
-    removeListener = (listener, context) => this.eventReceiver.remove(listener, context)
+    unsubscribe(listener, context) {
+        this.eventReceiver.remove(listener, context)
+    }
 
     /**
      * 
@@ -80,7 +94,7 @@ class MessageBroker {
      * @returns {Promise.<any>}
      */
     emit(message) {
-        return this.adapter.publish(this.namespace, this.address, message)
+        return this.adapter.publish(this.namespace, this.address, this.mapInput(message))
     }
 
     dispose() {
@@ -90,17 +104,25 @@ class MessageBroker {
     /**
      * 
      * @protected
-     * @param {any} message
+     * @param {T} message
+     * @returns {string} 
+     */
+    mapInput = message => message
+
+    /**
+     * 
+     * @protected
+     * @param {string} message
      * @returns {T} 
      */
-    processMessage = message => message
+     mapOutput = message => message
 
     /**
      * @private
-     * @param {any} message 
+     * @param {string} message 
      */
     messageHandler = message => {
-        message = this.processMessage(message)
+        message = this.mapOutput(message)
         this.eventReceiver.dispatch(message)
     }
 
