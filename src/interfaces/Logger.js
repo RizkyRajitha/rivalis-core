@@ -1,5 +1,7 @@
 import LoggingAdapter from '../adapters/LoggingAdapter'
 
+// TODO: implement this
+
 class Logger {
 
     /**
@@ -52,6 +54,7 @@ class Logger {
         if (this.level < Logger.LEVEL.INFO) {
             return
         }
+        
     }
 
     debug(...messages) {
@@ -96,3 +99,4 @@ Logger.LEVEL = {
 }
 
 
+export default Logger

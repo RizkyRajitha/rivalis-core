@@ -107,7 +107,7 @@ class MessageBroker {
      * @param {T} message
      * @returns {string} 
      */
-    mapInput = message => message
+    mapInput = message => JSON.stringify(message)
 
     /**
      * 
@@ -115,7 +115,7 @@ class MessageBroker {
      * @param {string} message
      * @returns {T} 
      */
-     mapOutput = message => message
+     mapOutput = message => JSON.parse(message)
 
     /**
      * @private

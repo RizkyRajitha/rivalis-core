@@ -72,9 +72,9 @@ class SharedStorage {
      * 
      * @param {string} key 
      * @param {T} data 
-     * @returns {Promise.<any>}
+     * @returns {Promise.<boolean>}
      */
-     savenx(key, data) {
+    savenx(key, data) {
         return this.adapter.savenx(this.namepsace, key, this.mapInput(data))
     }
 

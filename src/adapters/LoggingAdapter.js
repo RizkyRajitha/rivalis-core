@@ -1,15 +1,44 @@
 class LoggingAdapter {
 
+    /**
+     * 
+     * @returns {Promise.<any>}
+     */
     initialize() {}
 
-    error(namespace, message, stack) {}
+    /**
+     * 
+     * @param {string} namespace 
+     * @param {string} message 
+     */
+    error(namespace, message) {}
 
-    warning(namespace, message, stack) {}
+    /**
+     * 
+     * @param {string} namespace 
+     * @param {string} message 
+     */
+    warning(namespace, message) {}
 
+    /**
+     * 
+     * @param {string} namespace 
+     * @param {string} message 
+     */
     info(namespace, message) {}
 
+    /**
+     * 
+     * @param {string} namespace 
+     * @param {string} message 
+     */
     debug(namespace, message) {}
 
+    /**
+     * 
+     * @param {string} namespace 
+     * @param {string} message 
+     */
     trace(namespace, message) {}
 }
 

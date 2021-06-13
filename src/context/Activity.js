@@ -1,13 +1,22 @@
 import Context from './Context'
 import Actor from './Actor'
+import Event from './Event'
+
 /**
  * Callback for handling actions
  *
  * @callback ActionListener
- * @param {Action} action
  * @param {Actor} actor
+ * @param {any} data
  * @param {Context} context
- * @returns {Promise.<any>}
+ */
+
+/**
+ * 
+ * @callback FilterListener
+ * @param {Event} event
+ * @param {Context} context
+ * @returns {boolean|Promise.<boolean>}
  */
 
 class Activity {
@@ -33,14 +42,22 @@ class Activity {
      */
     listeners = null
 
+    /**
+     * 
+     * @private
+     * @type {Map.<string,FilterListener>}
+     */
+    filters = null
+
     constructor() {
         this.activities = new Map()
         this.listeners = new Map()
+        this.filters = new Map()
     }
 
     /**
      * 
-     * @param {string} name 
+     * @param {string} namespace
      * @param {Activity} activity 
      */
     use(namespace, activity) {
@@ -56,7 +73,7 @@ class Activity {
 
     /**
      * 
-     * @param {string} name 
+     * @param {string} namespace 
      * @param {ActionListener} actionListener 
      */
     on(namespace, actionListener) {
@@ -68,6 +85,22 @@ class Activity {
             throw new Error(`listener with name [${namespace}] is already registered`)
         }
         this.listeners.set(namespace, actionListener)
+    }
+
+    /**
+     * 
+     * @param {string} namespace 
+     * @param {FilterListener} filterListener 
+     */
+    filter(namespace, filterListener) {
+        this.validateNamespace(namespace)
+        if (typeof filterListener !== 'function') {
+            throw new Error('filterListener must be a function')
+        }
+        if (this.filters.has(namespace)) {
+            throw new Error(`filter with name [${namespace}] is already registered`)
+        }
+        this.filters.set(namespace, filterListener)
     }
 
     validateNamespace(namespace) {
@@ -92,6 +125,26 @@ Activity.getListener = (activity, namespace) => {
         if (childActivity) {
             activities.shift()
             return Activity.getListener(childActivity, activities.join('.'))
+        }
+        return null
+    }
+}
+
+/**
+ * 
+ * @param {Activity} activity 
+ * @param {string} namespace
+ * @returns {FilterListener|null} 
+ */
+Activity.getFilter = (activity, namespace) => {
+    let activities = namespace.split('.')
+    if (activities.length === 1) {
+        return activity.filters.get(activities[0])
+    } else {
+        let childActivity = activity.activities.get(activities[0])
+        if (childActivity) {
+            activities.shift()
+            return Activity.getFilter(childActivity, activities.join('.'))
         }
         return null
     }

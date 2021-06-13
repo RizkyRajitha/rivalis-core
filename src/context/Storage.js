@@ -1,4 +1,6 @@
+import SharedStorageAdapter from '../adapters/SharedStorageAdapter'
 import SharedStorage from '../interfaces/SharedStorage'
+import Context from './Context'
 import Event from './Event'
 
 /**
@@ -9,19 +11,20 @@ class Storage extends SharedStorage {
 
     /**
      * 
-     * @protected
-     * @param {Event} message
-     * @returns {string} 
+     * @private
+     * @type {Context}
      */
-    mapInput = message => Event.stringify(message) 
+    context = null
 
     /**
      * 
-     * @protected
-     * @param {string} message
-     * @returns {Event} 
+     * @param {SharedStorageAdapter} adapter
+     * @param {Context} context 
      */
-    mapOutput = message => Event.parse(message)
+    constructor(adapter, context) {
+        super(adapter, context.id)
+        this.context = context
+    }
 
 }
 

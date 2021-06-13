@@ -1,5 +1,4 @@
 import Actor from './Actor'
-import Action from './Action'
 import Context from './Context'
 
 class ActionHandler {
@@ -22,14 +21,11 @@ class ActionHandler {
     /**
      * 
      * @param {Actor} actor 
-     * @param {Action} action
-     * @returns {Promise.<any>}
+     * @param {string} namespace 
+     * @param {any} data
+     * @returns {any|Promise.<any>} 
      */
-    execute(actor, action) {
-        // TODO: implement this
-    }
-
-    schedule(actor, action) {
+    execute(actor, namespace, data) {
         
     }
 

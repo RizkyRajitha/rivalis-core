@@ -1,5 +1,6 @@
 import { emit } from 'process'
 import { Signal } from 'signals'
+import Activity from './Activity'
 import Context from './Context'
 import Event from './Event'
 
@@ -65,18 +66,19 @@ class Actor {
 
     /**
      * 
-     * @param {Action} action 
+     * @param {string} namespace 
+     * @param {any} data 
      * @returns {Promise.<any>}
      */
-    execute(action) {
-        return this.context.actions.execute(this, action)
+    execute(namespace, data) {
+        return this.context.actions.execute(this, namespace, data)
     }
 
     /**
      * 
      * @param {Event} event 
      */
-    emit(event) {
+    send(event) {
         this.eventReceiver.dispatch(event)
     }
     
@@ -86,12 +88,24 @@ class Actor {
      * @param {Event} event 
      */
     handleEvent(event) {
-        // TODO: filter events 
-        this.emit(event)
+        let filterListener = Activity.getFilter(this.context.activity, event.namespace)
+        if (filterListener === null) {
+            return this.send(event)
+        }
+        let filter = filterListener(event, this.context)
+        if (typeof filter === 'boolean' && filter === true) {
+            return this.send(event)
+        }
+        filter.then(filtered => {
+            if (filtered) {
+                this.send(event)
+            }      
+        })
     }
 
     dispose() {
         this.context.events.unsubscribe(this.handleEvent, this)
+        // TODO: implement this
     }
 
 }

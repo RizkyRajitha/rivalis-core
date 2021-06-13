@@ -77,7 +77,7 @@ class ActorProvider {
     /**
      * 
      * @param {Object.<string,string>} filter 
-     * @returns {Array.<ActorData>}
+     * @returns {Promise.<Array.<ActorData>>}
      */
     getAll() {
         return this.storage.getAll().catch(error => {

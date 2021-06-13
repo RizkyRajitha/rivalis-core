@@ -27,7 +27,7 @@ class SharedStorageAdapter {
      * @param {string} namespace 
      * @param {string} key 
      * @param {string} value
-     * @returns {Promise.<any>} 
+     * @returns {Promise.<boolean>} 
      */
     savenx(namespace, key, value) {}
 

@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import VectorClock from '../../src/structs/VectorClock'
 
+// eslint-disable-next-line no-undef
 describe('structs/VectorClock', () => {
     
     const nodeOneId = 'test-node-1',
@@ -11,6 +12,7 @@ describe('structs/VectorClock', () => {
         nodeTwoClock = null,
         nodeThreeClock = null
 
+    // eslint-disable-next-line no-undef
     beforeEach(() => {
         nodeOneClock = {}
         nodeTwoClock = {}
@@ -29,6 +31,7 @@ describe('structs/VectorClock', () => {
         nodeThreeClock[nodeThreeId] = 1
     })
 
+    // eslint-disable-next-line no-undef
     it('should initialize properly', () => {
         const vectorClock = new VectorClock(nodeOneId, nodeOneClock)
         expect(vectorClock.nodeId).to.be.equal(nodeOneId)
@@ -36,24 +39,28 @@ describe('structs/VectorClock', () => {
 
     })
 
+    // eslint-disable-next-line no-undef
     it('should set clock values properly', () => {
         const vectorClock = new VectorClock(nodeOneId, nodeOneClock)
         vectorClock.setClock(nodeTwoClock)
         expect(vectorClock.getClock()).to.be.deep.equal(nodeTwoClock)
     })
 
+    // eslint-disable-next-line no-undef
     it('should set version value properly', () => {
         const vectorClock = new VectorClock(nodeOneId, nodeOneClock)
         vectorClock.setVersion(5)
         expect(vectorClock.getVersion()).to.be.equal(5)
     })
 
+    // eslint-disable-next-line no-undef
     it('should increment value properly', () => {
         const vectorClock = new VectorClock(nodeOneId, nodeOneClock)
         vectorClock.increment()
         expect(vectorClock.getVersion()).to.be.equal(2)
     })
 
+    // eslint-disable-next-line no-undef
     it('should update values properly', () => {
         const updatedClock = {}
         updatedClock[nodeOneId] = 1
@@ -69,6 +76,7 @@ describe('structs/VectorClock', () => {
         expect(vectorClock1.getClock()).to.be.deep.equal(updatedClock)
     })
 
+    // eslint-disable-next-line no-undef
     it('should VectorClock#getNodeIds returns list of all node ids of two nodes', () => {
         const vectorClock1 = new VectorClock(nodeOneId)
         vectorClock1.increment()
@@ -82,6 +90,7 @@ describe('structs/VectorClock', () => {
         expect(nodeIdList).to.be.eql([ nodeOneId, nodeTwoId ])
     })
 
+    // eslint-disable-next-line no-undef
     it('should VectorClock#isAfter returns valid order', () => {
         const vectorClock1 = new VectorClock(nodeOneId, nodeOneClock)
         const vectorClock2 = new VectorClock(nodeTwoId, nodeTwoClock)
@@ -94,6 +103,7 @@ describe('structs/VectorClock', () => {
         expect(isAfter).to.be.true
     })
 
+    // eslint-disable-next-line no-undef
     it('should VectorClock#isConcurrent returns valid order', () => {
         const vectorClock1 = new VectorClock(nodeOneId, nodeOneClock)
         const vectorClock2 = new VectorClock(nodeTwoId, nodeTwoClock)
@@ -105,6 +115,7 @@ describe('structs/VectorClock', () => {
         expect(isConcurrent).to.be.true
     })
 
+    // eslint-disable-next-line no-undef
     it('should VectorClock#isBefore returns valid order', () => {
         const vectorClock1 = new VectorClock(nodeOneId, nodeOneClock)
         const vectorClock2 = new VectorClock(nodeTwoId, nodeTwoClock)
@@ -116,6 +127,7 @@ describe('structs/VectorClock', () => {
         expect(isBefore).to.be.true
     })
 
+    // eslint-disable-next-line no-undef
     it('should VectorClock#compare returns valid order', () => {
         const vectorClock1 = new VectorClock(nodeOneId, nodeOneClock)
         const vectorClock2 = new VectorClock(nodeTwoId, nodeTwoClock)
