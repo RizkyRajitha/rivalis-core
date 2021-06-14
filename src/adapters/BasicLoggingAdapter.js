@@ -1,12 +1,14 @@
-import LoggingAdapter from '../adapters/LoggingAdapter'
+import LoggingAdapter from './LoggingAdapter'
 
-class BaseLoggingAdapter extends LoggingAdapter {
+class BasicLoggingAdapter extends LoggingAdapter {
 
     /**
      * 
      * @returns {Promise.<any>}
      */
-    initialize() {}
+    initialize() {
+        return Promise.resolve()
+    }
 
     /**
      * 
@@ -54,4 +56,4 @@ class BaseLoggingAdapter extends LoggingAdapter {
     }
 }
 
-export default BaseLoggingAdapter
+export default BasicLoggingAdapter

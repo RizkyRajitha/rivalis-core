@@ -1,6 +1,6 @@
-import SharedStorageAdapter from '../adapters/SharedStorageAdapter'
+import SharedStorageAdapter from './SharedStorageAdapter'
 
-class BaseSharedStorageAdapter extends SharedStorageAdapter {
+class InMemoryStorageAdapter extends SharedStorageAdapter {
     
     /**
      * 
@@ -117,4 +117,4 @@ class BaseSharedStorageAdapter extends SharedStorageAdapter {
     }
 }
 
-export default BaseSharedStorageAdapter
+export default InMemoryStorageAdapter

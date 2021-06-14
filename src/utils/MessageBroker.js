@@ -12,6 +12,11 @@ import MessageBrokerAdapter from '../adapters/MessageBrokerAdapter'
 class MessageBroker {
 
     /**
+     * @callback MessageListener
+     * @param {T} message
+     */
+
+    /**
      * 
      * @private
      * @type {string}
@@ -72,7 +77,7 @@ class MessageBroker {
 
     /**
      * 
-     * @param {EventListener} listener 
+     * @param {MessageListener} listener 
      * @param {any} context 
      */
     subscribe(listener, context) {
@@ -81,7 +86,7 @@ class MessageBroker {
 
     /**
      * 
-     * @param {EventListener} listener 
+     * @param {MessageListener} listener 
      * @param {any} context 
      */
     unsubscribe(listener, context) {

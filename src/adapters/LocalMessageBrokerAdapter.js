@@ -1,7 +1,7 @@
 import EventEmitter from 'eventemitter3'
-import MessageBrokerAdapter from '../adapters/MessageBrokerAdapter'
+import MessageBrokerAdapter from './MessageBrokerAdapter'
 
-class BaseMessageBrokerAdapter extends MessageBrokerAdapter {
+class LocalMessageBrokerAdapter extends MessageBrokerAdapter {
 
     /**
      * 
@@ -57,4 +57,4 @@ class BaseMessageBrokerAdapter extends MessageBrokerAdapter {
 
 }
 
-export default BaseMessageBrokerAdapter
+export default LocalMessageBrokerAdapter

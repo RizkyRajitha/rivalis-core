@@ -1,7 +1,6 @@
 import MessageBrokerAdapter from '../adapters/MessageBrokerAdapter'
-import MessageBroker from '../interfaces/MessageBroker'
-import Context from './Context'
-import Event from './Event'
+import MessageBroker from '../utils/MessageBroker'
+import Event from '../core/Event'
 
 /**
  * 
@@ -11,19 +10,11 @@ class EventBroker extends MessageBroker {
 
     /**
      * 
-     * @private
-     * @type {Context}
-     */
-    context = null
-
-    /**
-     * 
      * @param {MessageBrokerAdapter} adapter 
-     * @param {Context} context 
+     * @param {string} contextId
      */
-    constructor(adapter, context) {
-        super(adapter, context.id, 'events')
-        this.context = context
+    constructor(adapter, contextId) {
+        super(adapter, contextId, 'events')
     }
 
     /**
@@ -40,7 +31,7 @@ class EventBroker extends MessageBroker {
      * @param {string} message
      * @returns {Event} 
      */
-     mapOutput = message => Event.parse(message)
+    mapOutput = message => Event.parse(message)
 
 }
 

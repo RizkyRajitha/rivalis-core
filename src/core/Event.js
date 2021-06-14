@@ -1,5 +1,3 @@
-import { v4 as uuid } from 'uuid'
-
 class Event {
 
     /**
@@ -14,7 +12,7 @@ class Event {
      * @readonly
      * @type {string}
      */
-    namespace = null
+    key = null
 
     /**
      * 
@@ -36,19 +34,6 @@ class Event {
      * @type {any}
      */
     data = null
-
-    /**
-     * 
-     * @param {Event} event 
-     */
-    constructor(event = {}) {
-        this.uid = typeof event.uid === 'string' ? event.uid : uuid()
-        this.namespace = typeof event.namespace === 'string' ? event.namespace : this.namespace
-        this.time = Array.isArray(event.time) ? event.time : this.time
-        this.clock = typeof event.clock === 'object' ? event.clock : this.clock
-        this.sender = typeof event.sender === 'string' ? event.sender : this.sender
-        this.data = typeof event.data !== 'undefined' ? event.data : this.data
-    }
 }
 
 /**
