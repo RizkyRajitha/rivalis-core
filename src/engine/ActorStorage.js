@@ -1,3 +1,4 @@
+import SharedStorageAdapter from '../adapters/SharedStorageAdapter'
 import SharedStorage from '../utils/SharedStorage'
 
 /**
@@ -11,6 +12,12 @@ import SharedStorage from '../utils/SharedStorage'
  * @extends {SharedStorage<ActorObject>}
  */
 class ActorStorage extends SharedStorage {
+    
+    /**
+     * 
+     * @param {SharedStorageAdapter} adapter 
+     * @param {string} contextId 
+     */
     constructor(adapter, contextId) {
         super(adapter, `${contextId}-actors`)
     }

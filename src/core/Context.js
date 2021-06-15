@@ -6,9 +6,9 @@ import Activity from './Activity'
 import VectorClock from '../structs/VectorClock'
 import Event from './Event'
 import { generateID } from '../helper/generateID'
-import events from './events'
 import EventEmitter from 'eventemitter3'
 import ActionManager from '../api/ActionManager'
+import EventManager from '../api/EventManager'
 
 
 /**
@@ -117,19 +117,11 @@ class Context {
 
             this.actors = new ActorManager(this.engine)
             this.actions = new ActionManager(this.engine)
+            this.events = new EventManager(this.engine, this.clock)
         })
     }
 
     terminate() {
-
-    }
-
-    /**
-     * 
-     * @param {string} namespace 
-     * @param {any} data 
-     */
-    emit(namespace, data) {
 
     }
 
@@ -147,7 +139,8 @@ class Context {
      * @param {Event} event 
      */
     handleEvent(event) {
-        // update context clock
+        this.clock.update(event.getVectorClock())
+        this.emitter.emit(Context.Events.EMIT, event)
     }
 
     /**
@@ -155,8 +148,8 @@ class Context {
      * @param {Object.<string,any>} contextEvent 
      */
     handleContextEvent(contextEvent) {
-        const { namespace, data } = contextEvent
-        this.emitter.emit(namespace, data)
+        const { key, data } = contextEvent
+        this.emitter.emit(key, data)
     }
 }
 
@@ -168,8 +161,9 @@ Context.Events = {
     ACTOR_LEAVE: 'actor.leave',
     ACTOR_KICK: 'actor.kick',
 
-    CONTEXT_INIT: 'context.init',
-    CONTEXT_DISPOSE: 'context.dispose'
+    INIT: 'init',
+    DISPOSE: 'dispose',
+    EMIT: 'emit'
 }
 
 export default Context

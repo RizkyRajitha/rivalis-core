@@ -2,8 +2,6 @@ import Actor from '../core/Actor'
 import Engine from '../engine/Engine'
 import Context from '../core/Context'
 
-const { ACTOR_JOIN, ACTOR_KICK, ACTOR_LEAVE } = Context.Events
-
 class ActorManager {
 
     /**
@@ -60,7 +58,7 @@ class ActorManager {
             }
             let actor = new Actor(id, data, this.engine)
             this.actors.set(id, actor)
-            this.engine.contextEventBroker.emit({ key: ACTOR_JOIN, data: { id } })
+            this.engine.contextEventBroker.emit({ key: Context.Events.ACTOR_JOIN, data: { id } })
             return actor
         })
     }
@@ -77,7 +75,7 @@ class ActorManager {
         let actor = this.actors.get(id)
         actor.dispose()
         this.actors.delete(id)
-        return this.engine.contextEventBroker.emit({ key: ACTOR_LEAVE, data: { id } })
+        return this.engine.contextEventBroker.emit({ key: Context.Events.ACTOR_LEAVE, data: { id } })
     }
 
     /**
@@ -91,7 +89,7 @@ class ActorManager {
             if (actorObject === null) {
                 throw new Error(`there is no actor with id=(${id})`)
             }
-            return this.engine.contextEventBroker.emit({ key: ACTOR_KICK, data: { id, reason } })
+            return this.engine.contextEventBroker.emit({ key: Context.Events.ACTOR_KICK, data: { id, reason } })
         })
     }
 
@@ -103,7 +101,7 @@ class ActorManager {
      */
     handleEvent(key, data) {
         
-        if (key === ACTOR_KICK) {
+        if (key === Context.Events.ACTOR_KICK) {
             const {id } = data
             this.handleKickEvent(id)
         }

@@ -55,7 +55,7 @@ class InMemoryStorageAdapter extends SharedStorageAdapter {
     get(namespace, key) {
         this.checkNamespace(namespace)
         let value = this.namespaces[namespace][key] || null
-        return Promise.resolve(value)
+        return Promise.resolve(value || null)
     }
 
     /**
@@ -81,6 +81,8 @@ class InMemoryStorageAdapter extends SharedStorageAdapter {
      */
     delete(namespace, key) {
         this.checkNamespace(namespace)
+        delete this.namespaces[namespace][key]
+        return Promise.resolve()
     }
 
     /**
@@ -90,6 +92,7 @@ class InMemoryStorageAdapter extends SharedStorageAdapter {
      */
     getAll(namespace) {
         this.checkNamespace(namespace)
+        return Promise.resolve(this.namespaces[namespace])
     }
 
     /**
@@ -99,6 +102,7 @@ class InMemoryStorageAdapter extends SharedStorageAdapter {
      */
     count(namespace) {
         this.checkNamespace(namespace)
+        return Promise.resolve(Object.keys(this.namespaces[namespace]).length)
     }
 
     /**
@@ -108,6 +112,8 @@ class InMemoryStorageAdapter extends SharedStorageAdapter {
      */
     clear(namespace) {
         this.checkNamespace(namespace)
+        this.namespaces[namespace] = {}
+        return Promise.resolve()
     }
 
     checkNamespace(namespace) {

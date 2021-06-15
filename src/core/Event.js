@@ -1,3 +1,5 @@
+import VectorClock from "../structs/VectorClock"
+
 class Event {
 
     /**
@@ -34,6 +36,39 @@ class Event {
      * @type {any}
      */
     data = null
+
+    /**
+     * 
+     * @param {string} uid
+     * @param {Object.<string,number>} clock 
+     * @param {string} sender 
+     */
+    constructor(uid, clock, sender) {
+        this.uid = uid
+        this.clock = clock
+        this.sender = sender
+    }
+
+    /**
+     * 
+     * @param {string} key 
+     * @param {any} data 
+     * @param {boolean} emit 
+     * @returns {this}
+     */
+    set(key, data) {
+        this.key = key
+        this.data = data
+        return this
+    }
+
+    /**
+     * 
+     * @returns {VectorClock}
+     */
+    getVectorClock() {
+        return new VectorClock(this.sender, this.clock)
+    }
 }
 
 /**
@@ -51,7 +86,8 @@ Event.stringify = event => {
  * @returns {Event} 
  */
 Event.parse = event => {
-    return new Event(JSON.parse(event))
+    const { uid, key, clock, sender, data } = JSON.parse(event)
+    return new Event(uid, clock, sender).set(key, data)
 }
 
 export default Event

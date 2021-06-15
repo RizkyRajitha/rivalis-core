@@ -55,11 +55,12 @@ class Engine {
     }
 
     initialize() {
+        
         this.contextStorage = new ContextStorage(this.adapter.getSharedStorageAdapter(), this.context.id)
         this.actorStorage = new ActorStorage(this.adapter.getSharedStorageAdapter(), this.context.id)
         this.eventBroker = new EventBroker(this.adapter.getMessageBrokerAdapter(), this.context.id)
         this.contextEventBroker = new ContextEventBroker(this.adapter.getMessageBrokerAdapter(), this.context.id)
-        
+
         return this.eventBroker.initialize().then(() => {
             return this.contextEventBroker.initialize()
         })
