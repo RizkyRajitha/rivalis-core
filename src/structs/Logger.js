@@ -1,4 +1,4 @@
-import LoggingAdapter from '../adapters/LoggingAdapter'
+import LoggingAdapter from '../interfaces/LoggingAdapter'
 
 // TODO: implement this
 

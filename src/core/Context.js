@@ -1,66 +1,26 @@
-import Adapter from '../adapters/Adapter'
-import ActorManager from '../api/ActorManager'
-import Engine from '../engine/Engine'
-import SharedStorage from '../utils/SharedStorage'
-import Activity from './Activity'
-import VectorClock from '../structs/VectorClock'
-import Event from './Event'
-import { generateID } from '../helper/generateID'
 import EventEmitter from 'eventemitter3'
-import ActionManager from '../api/ActionManager'
-import EventManager from '../api/EventManager'
-
+import Event from './Event'
+import Activity from './Activity'
+import Adapter from '../interfaces/Adapter'
+import VectorClock from '../structs/VectorClock'
+import ContextPersistence from '../persistence/ContextPersistence'
 
 /**
- * @callback EventListener
+ * @callback StateListener
  * @param {Object.<string,any>} event
  * 
  */
 
-class Context {
+class Context extends Activity {
 
     /**
      * 
-     * @readonly
      * @type {string}
      */
     id = null
 
     /**
      * 
-     * @readonly
-     * @type {string}
-     */
-    instanceId = null
-
-    /**
-     * 
-     * @readonly
-     * @type {Activity}
-     */
-    activity = null
-
-    /**
-     * 
-     * @type {ActorManager}
-     */
-    actors = null
-
-    /**
-     * 
-     * @type {ActionManager}
-     */
-    actions = null
-
-    /**
-     * @private
-     * @type {Engine}
-     */
-    engine = null
-
-    /**
-     * 
-     * @private
      * @type {VectorClock}
      */
     clock = null
@@ -68,69 +28,78 @@ class Context {
     /**
      * 
      * @private
-     * @type {EventEmitter.<string,any>}
+     * @type {ContextPersistence}
      */
-    emitter = null
+    persistence = null
 
     /**
      * 
-     * @param {string} id
+     * @private
+     * @type {EventEmitter}
+     */
+    emitter = null
+
+
+    /**
+     * 
+     * @param {string} id 
      * @param {Adapter} adapter 
      */
     constructor(id, adapter) {
+        super()
         this.id = id
-        this.instanceId = generateID()
-        this.clock = new VectorClock(this.instanceId)
-        this.activity = new Activity()
-        this.engine = new Engine(this, adapter)
+        this.clock = new VectorClock(id)
+        this.persistence = new ContextPersistence(this, adapter)
         this.emitter = new EventEmitter()
     }
 
     /**
      * 
-     * @param {string} event 
-     * @param {EventListener} eventListener 
+     * @param {string} state 
+     * @param {StateListener} stateListener 
      * @param {any} context 
-     * @returns {Context}
+     * @returns {this}
      */
-    on(event, eventListener, context) {
-        this.emitter.on(event, eventListener, context)
+    on(state, stateListener, context) {
+        this.emitter.on(state, stateListener, context)
         return this
     }
 
     /**
      * 
-     * @param {string} event 
-     * @param {EventListener} eventListener 
+     * @param {string} state 
+     * @param {StateListener} stateListener 
      * @param {any} context 
-     * @returns {Context}
+     * @returns 
      */
-    off(event, eventListener, context) {
-        this.emitter.off(event, eventListener, context)
+    off(state, stateListener, context) {
+        this.emitter.off(state, stateListener, context)
         return this
     }
 
+    /**
+     * 
+     * @returns {Promise.<any>}
+     */
     initialize() {
-        return this.engine.initialize().then(() => {
-            this.engine.eventBroker.subscribe(this.handleEvent, this)
-            this.engine.contextEventBroker.subscribe(this.handleContextEvent, this)
+        return this.persistence.initialize().then(() => {
+            this.persistence.events.subscribe(this.handleEvent, this)
+            this.persistence.state.subscribe(this.handleState, this)
 
-            this.actors = new ActorManager(this.engine)
-            this.actions = new ActionManager(this.engine)
-            this.events = new EventManager(this.engine, this.clock)
+            // TODO: initialize API here
         })
     }
 
-    terminate() {
-
-    }
-
     /**
      * 
-     * @type {SharedStorage.<any>}
+     * @returns {Promise.<any>}
      */
-    get storage() {
-        return this.engine.contextStorage
+    dispose() {
+        this.persistence.events.unsubscribe(this.handleEvent, this)
+        this.persistence.state.unsubscribe(this.handleState, this)
+        return this.persistence.dispose().then(() => {
+            // TODO: dispose API here
+        })
     }
 
     /**
@@ -140,15 +109,16 @@ class Context {
      */
     handleEvent(event) {
         this.clock.update(event.getVectorClock())
-        this.emitter.emit(Context.Events.EMIT, event)
+        this.emitter.emit(Context.State.EMIT, event)
     }
 
     /**
+     * 
      * @private
-     * @param {Object.<string,any>} contextEvent 
+     * @param {import('./persistence/StateBroker').State} state 
      */
-    handleContextEvent(contextEvent) {
-        const { key, data } = contextEvent
+    handleState(state) {
+        const { key, data } = state
         this.emitter.emit(key, data)
     }
 }
@@ -156,7 +126,7 @@ class Context {
 /**
  * @enum {string}
  */
-Context.Events = {
+Context.State = {
     ACTOR_JOIN: 'actor.join',
     ACTOR_LEAVE: 'actor.leave',
     ACTOR_KICK: 'actor.kick',
@@ -164,6 +134,15 @@ Context.Events = {
     INIT: 'init',
     DISPOSE: 'dispose',
     EMIT: 'emit'
+}
+
+/**
+ * 
+ * @param {Context} context 
+ * @returns {ContextPersistence}
+ */
+Context.getPersistence = (context) => {
+    return context.persistence
 }
 
 export default Context

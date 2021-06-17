@@ -1,11 +1,12 @@
 import { Signal } from 'signals'
-import MessageBrokerAdapter from '../adapters/MessageBrokerAdapter'
+import MessageBrokerAdapter from '../interfaces/MessageBrokerAdapter'
 
 /**
  * @template T
  * @class
  * @author Daniel Kalevski
  * @since 0.5.0
+ * @license {}
  * 
  * // TODO: short docs
  */

@@ -1,4 +1,4 @@
-import SharedStorageAdapter from '../adapters/SharedStorageAdapter'
+import SharedStorageAdapter from '../interfaces/SharedStorageAdapter'
 
 /**
  * @template T

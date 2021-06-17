@@ -1,5 +1,5 @@
-import SharedStorageAdapter from '../adapters/SharedStorageAdapter'
-import SharedStorage from '../utils/SharedStorage'
+import SharedStorageAdapter from '../interfaces/SharedStorageAdapter'
+import SharedStorage from '../structs/SharedStorage'
 
 /**
  * @typedef ActorObject

@@ -1,9 +1,8 @@
-import Engine from '../engine/Engine'
 import Event from './Event'
 import { Signal } from 'signals'
-import Context from './Context'
 import VectorClock from '../structs/VectorClock'
 import Activity from './Activity'
+import Context from './Context'
 
 /**
  * @callback EventListener
@@ -36,6 +35,7 @@ class Actor {
 
     /**
      * 
+     * @private
      * @type {Signal.<Event>}
      */
     onEvent = null
@@ -43,23 +43,24 @@ class Actor {
     /**
      * 
      * @private
-     * @type {Engine}
+     * @type {Context}
      */
-    engine = null
+    context = null
 
     /**
      * 
      * @param {string} id 
      * @param {Object.<string,any>} data 
-     * @param {Engine} engine 
+     * @param {Context} context 
      */
-    constructor(id, data, engine) {
+    constructor(id, data, context) {
         this.id = id
         this.data = data
         this.clock = new VectorClock(id)
-        this.engine = engine
+        this.context = context
         this.onEvent = new Signal()
-        this.engine.eventBroker.subscribe(this.handleEvent, this)
+        Context.getPersistence(this.context).events.subscribe(this.handleEvent, this)
+        
     }
 
     /**

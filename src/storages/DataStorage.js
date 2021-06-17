@@ -1,13 +1,13 @@
-import SharedStorage from '../utils/SharedStorage'
+import SharedStorage from '../structs/SharedStorage'
 
 /**
  * 
  * @extends {SharedStorage<any>}
  */
-class ContextStorage extends SharedStorage {
+class DataStorage extends SharedStorage {
     constructor(adapter, contextId) {
         super(adapter, `${contextId}-storage`)
     }
 }
 
-export default ContextStorage
+export default DataStorage

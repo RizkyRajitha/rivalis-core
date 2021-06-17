@@ -2,6 +2,9 @@ import LoggingAdapter from './LoggingAdapter'
 import MessageBrokerAdapter from './MessageBrokerAdapter'
 import SharedStorageAdapter from './SharedStorageAdapter'
 
+/**
+ * @interface Adapter
+ */
 class Adapter {
 
     /**
@@ -14,19 +17,19 @@ class Adapter {
      * 
      * @returns {LoggingAdapter}
      */
-    getLoggingAdapter() {}
+    getLogger() {}
 
     /**
      * 
      * @returns {SharedStorageAdapter}
      */
-    getSharedStorageAdapter() {}
+    getSharedStorage() {}
 
     /**
      * 
      * @returns {MessageBrokerAdapter}
      */
-    getMessageBrokerAdapter() {}
+    getMessageBroker() {}
 
 }
 

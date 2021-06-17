@@ -1,13 +1,6 @@
-import VectorClock from "../structs/VectorClock"
+import VectorClock from '../structs/VectorClock'
 
 class Event {
-
-    /**
-     * 
-     * @readonly
-     * @type {string}
-     */
-    uid = null
 
     /**
      * 
@@ -39,12 +32,10 @@ class Event {
 
     /**
      * 
-     * @param {string} uid
      * @param {Object.<string,number>} clock 
      * @param {string} sender 
      */
-    constructor(uid, clock, sender) {
-        this.uid = uid
+    constructor(clock, sender) {
         this.clock = clock
         this.sender = sender
     }

@@ -42,7 +42,7 @@ class Activity {
      * @private
      * @type {Map.<string,ActionListener>}
      */
-    listeners = null
+    handlers = null
 
     /**
      * 
@@ -53,7 +53,7 @@ class Activity {
 
     constructor() {
         this.activities = new Map()
-        this.listeners = new Map()
+        this.handlers = new Map()
         this.filters = new Map()
     }
 
@@ -83,10 +83,10 @@ class Activity {
         if (typeof actionListener !== 'function') {
             throw new Error('actionListener must be a function')
         }
-        if (this.listeners.has(key)) {
+        if (this.handlers.has(key)) {
             throw new Error(`listener with name [${key}] is already registered`)
         }
-        this.listeners.set(key, actionListener)
+        this.handlers.set(key, actionListener)
     }
 
     /**
@@ -149,7 +149,7 @@ Activity.getHandler = (activity, key) => {
     if (target === null) {
         return null
     } else {
-        return target.listeners.get(handlerKey) || null
+        return target.handlers.get(handlerKey) || null
     }
 }
 
