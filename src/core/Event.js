@@ -77,8 +77,8 @@ Event.stringify = event => {
  * @returns {Event} 
  */
 Event.parse = event => {
-    const { uid, key, clock, sender, data } = JSON.parse(event)
-    return new Event(uid, clock, sender).set(key, data)
+    const { key, clock, sender, data } = JSON.parse(event)
+    return new Event(clock, sender).set(key, data)
 }
 
 export default Event

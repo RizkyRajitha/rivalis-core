@@ -29,6 +29,7 @@ class Actor {
 
     /**
      * 
+     * @private
      * @type {VectorClock}
      */
     clock = null
@@ -59,7 +60,7 @@ class Actor {
         this.clock = new VectorClock(id)
         this.context = context
         this.onEvent = new Signal()
-        Context.getPersistence(this.context).events.subscribe(this.handleEvent, this)
+        Context.getEngine(this.context).events.subscribe(this.handleEvent, this)
         
     }
 
@@ -92,7 +93,7 @@ class Actor {
      * @returns {Promise.<any>}
      */
     execute(key, data) {
-        return this.engine.context.actions.execute(this, key, data)
+        return this.context.actions.execute(this, key, data)
     }
 
     /**
@@ -105,10 +106,18 @@ class Actor {
 
     /**
      * 
+     * @returns {VectorClock}
+     */
+    getClock() {
+        return this.clock
+    }
+
+    /**
+     * @private
      * @returns {Promise.<any>}
      */
     dispose() {
-        this.engine.eventBroker.unsubscribe(this.handleEvent, this)
+        Context.getEngine(this.context).events.unsubscribe(this.handleEvent, this)
         this.onEvent.removeAll()
         this.onEvent = null
     }
@@ -120,7 +129,7 @@ class Actor {
      */
     handleEvent(event) {
         this.clock.update(event.getVectorClock())
-        let filter = Activity.getFilter(this.engine.context.activity, event.key)
+        let filter = Activity.getFilter(this.context, event.key)
         if (filter) {
             filter(this, event, this.engine.context)
         } else {
@@ -128,6 +137,14 @@ class Actor {
         }
     }
 
+}
+
+/**
+ * 
+ * @param {Actor} actor
+ */
+Actor.dispose = (actor) => {
+    actor.dispose()
 }
 
 export default Actor

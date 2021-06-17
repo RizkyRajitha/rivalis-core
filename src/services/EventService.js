@@ -1,10 +1,22 @@
-import Actor from '../Actor'
-import Event from '../Event'
+import Actor from '../core/Actor'
+import Event from '../core/Event'
+import ContextEngine from '../engines/ContextEngine'
 
-class EventModule {
+class EventService {
 
-    constructor(core) {
-        this.core = core
+    /**
+     * 
+     * @private
+     * @type {ContextEngine}
+     */
+    engine = null
+
+    /**
+     * 
+     * @param {ContextEngine} engine 
+     */
+    constructor(engine) {
+        this.engine = engine
     }
 
     /**
@@ -13,18 +25,9 @@ class EventModule {
      * @returns {Event}
      */
     create(actor = null) {
-        // let clock = null
-        // let sender = null
-        // if (actor instanceof Actor) {
-        //     actor.clock.increment()
-        //     clock = actor.clock.getClock()
-        //     sender = actor.clock.nodeId
-        // } else {
-        //     this.contextClock.increment()
-        //     clock = this.core.context.getClock()
-        //     sender = this.contextClock.nodeId
-        // }
-        // return new Event(clock, sender)
+        let clock = actor instanceof Actor ? actor.getClock() : this.engine.context.getClock()
+        clock.increment()
+        return new Event(clock.getClock(), clock.nodeId)
     }
 
     /**
@@ -33,9 +36,9 @@ class EventModule {
      * @returns {Promise.<any>}
      */
     emit(event) {
-        return this.engine.eventBroker.emit(event)
+        return this.engine.events.emit(event)
     }
 
 }
 
-export default EventModule
+export default EventService

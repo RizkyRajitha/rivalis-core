@@ -4,6 +4,7 @@ import ActorStorage from '../storages/ActorStorage'
 import DataStorage from '../storages/DataStorage'
 import Context from '../core/Context'
 import Adapter from '../interfaces/Adapter'
+import VectorClock from '../structs/VectorClock'
 
 class ContextEngine {
 
@@ -30,6 +31,12 @@ class ContextEngine {
      * @type {DataStorage}
      */
     data = null
+
+    /**
+     * 
+     * @type {VectorClock}
+     */
+    clock = null
 
     /**
      * 
@@ -64,6 +71,8 @@ class ContextEngine {
         this.actors = new ActorStorage(this.adapter.getSharedStorage(), this.context.id)
         this.data = new DataStorage(this.adapter.getSharedStorage(), this.context.id)
 
+        this.clock = new VectorClock()
+
         return this.events.initialize().then(() => {
             return this.state.initialize()
         })
@@ -81,6 +90,8 @@ class ContextEngine {
             this.state = null
             this.actors = null
             this.data = null
+
+            this.clock = null
         })
     }
 

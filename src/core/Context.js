@@ -3,7 +3,11 @@ import Event from './Event'
 import Activity from './Activity'
 import Adapter from '../interfaces/Adapter'
 import VectorClock from '../structs/VectorClock'
-import ContextPersistence from '../persistence/ContextPersistence'
+import ContextEngine from '../engines/ContextEngine'
+import State from '../models/State'
+import ActorService from '../services/ActorService'
+import ActionService from '../services/ActionService'
+import EventService from '../services/EventService'
 
 /**
  * @callback StateListener
@@ -21,16 +25,28 @@ class Context extends Activity {
 
     /**
      * 
-     * @type {VectorClock}
+     * @type {ActorService}
      */
-    clock = null
+    actors = null
+
+    /**
+     * 
+     * @type {ActionService}
+     */
+    actions = null
+
+    /**
+     * 
+     * @type {EventService}
+     */
+    events = null
 
     /**
      * 
      * @private
-     * @type {ContextPersistence}
+     * @type {ContextEngine}
      */
-    persistence = null
+    engine = null
 
     /**
      * 
@@ -48,9 +64,36 @@ class Context extends Activity {
     constructor(id, adapter) {
         super()
         this.id = id
-        this.clock = new VectorClock(id)
-        this.persistence = new ContextPersistence(this, adapter)
+        this.engine = new ContextEngine(this, adapter)
         this.emitter = new EventEmitter()
+    }
+
+    /**
+     * 
+     * @returns {Promise.<any>}
+     */
+    initialize() {
+        return this.engine.initialize().then(() => {
+            this.engine.events.subscribe(this.handleEvent, this)
+            this.engine.state.subscribe(this.handleState, this)
+
+            this.actors = new ActorService(this.engine)
+            this.actions = new ActionService(this.engine)
+            this.events = new EventService(this.engine)
+        })
+    }
+
+    /**
+     * 
+     * @returns {Promise.<any>}
+     */
+    dispose() {
+        this.engine.events.unsubscribe(this.handleEvent, this)
+        this.engine.state.unsubscribe(this.handleState, this)
+        
+        // TODO: dispose API here
+        
+        return this.engine.dispose()
     }
 
     /**
@@ -79,27 +122,10 @@ class Context extends Activity {
 
     /**
      * 
-     * @returns {Promise.<any>}
+     * @returns {VectorClock}
      */
-    initialize() {
-        return this.persistence.initialize().then(() => {
-            this.persistence.events.subscribe(this.handleEvent, this)
-            this.persistence.state.subscribe(this.handleState, this)
-
-            // TODO: initialize API here
-        })
-    }
-
-    /**
-     * 
-     * @returns {Promise.<any>}
-     */
-    dispose() {
-        this.persistence.events.unsubscribe(this.handleEvent, this)
-        this.persistence.state.unsubscribe(this.handleState, this)
-        return this.persistence.dispose().then(() => {
-            // TODO: dispose API here
-        })
+    getClock() {
+        return this.engine.clock
     }
 
     /**
@@ -108,14 +134,14 @@ class Context extends Activity {
      * @param {Event} event 
      */
     handleEvent(event) {
-        this.clock.update(event.getVectorClock())
+        this.getClock().update(event.getVectorClock())
         this.emitter.emit(Context.State.EMIT, event)
     }
 
     /**
      * 
      * @private
-     * @param {import('./persistence/StateBroker').State} state 
+     * @param {State} state 
      */
     handleState(state) {
         const { key, data } = state
@@ -139,10 +165,10 @@ Context.State = {
 /**
  * 
  * @param {Context} context 
- * @returns {ContextPersistence}
+ * @returns {ContextEngine}
  */
-Context.getPersistence = (context) => {
-    return context.persistence
+Context.getEngine = (context) => {
+    return context.engine
 }
 
 export default Context

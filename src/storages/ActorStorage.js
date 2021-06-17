@@ -1,12 +1,6 @@
 import SharedStorageAdapter from '../interfaces/SharedStorageAdapter'
 import SharedStorage from '../structs/SharedStorage'
-
-/**
- * @typedef ActorObject
- * @property {string} id
- * @property {Object.<string,any>} data
- */
-
+import ActorObject from '../models/ActorObject'
 /**
  * 
  * @extends {SharedStorage<ActorObject>}

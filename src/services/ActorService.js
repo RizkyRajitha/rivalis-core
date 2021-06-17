@@ -1,73 +1,128 @@
-import Actor from '../Actor'
-import Engine from '../engine/Engine'
-import Context from '../Context'
+import Context from '../core/Context'
+import Actor from '../core/Actor'
+import ContextEngine from '../engines/ContextEngine'
+import State from '../models/State'
+import ActorObject from '../models/ActorObject'
 
-class ActorModule {
+class ActorService {
 
+    /**
+     * 
+     * @private
+     * @type {Map.<Actor>}
+     */
     actors = null
 
+    /**
+     * 
+     * @private
+     * @type {ContextEngine}
+     */
+    engine = null
+
+    /**
+     * 
+     * @param {ContextEngine} engine 
+     */
     constructor(engine) {
-        // this.engine = engine
-        // this.actors = new Map()
-        // this.engine.contextEventBroker.subscribe(event => {
-        //     this.handleEvent(event.key, event.data)
-        // })
+        this.engine = engine
+        this.actors = new Map()
+        this.engine.state.subscribe(this.handleState, this)
     }
 
+    /**
+     * 
+     * @param {string} id 
+     * @returns {Promise.<ActorObject|null>}
+     */
     get(id) {
-        return this.engine.actorStorage.get(id)
+        return this.engine.actors.get(id)
     }
 
+    /**
+     * 
+     * @returns {Promise.<Map.<string,ActorObject>>}
+     */
     getAll() {
-        return this.engine.actorStorage.getAll()
+        return this.engine.actors.getAll()
     }
 
+    /**
+     * 
+     * @param {string} id 
+     * @param {Object.<string,any>} data 
+     * @returns {Promise.<Actor>}
+     */
     join(id, data) {
-        return this.engine.actorStorage.savenx(id, { id, data }).then(persisted => {
+        return this.engine.actors.savenx(id, { id, data }).then(persisted => {
             if (!persisted) {
-                throw new Error(`actor with id ${id} already exist in this context`)
+                throw new Error(`actor=(${id}) already exist in this context`)
             }
-            let actor = new Actor(id, data, this.engine)
+            let actor = new Actor(id, data, this.engine.context)
             this.actors.set(id, actor)
-            this.engine.contextEventBroker.emit({ key: Context.Events.ACTOR_JOIN, data: { id } })
+            this.engine.state.emit({ key: Context.State.ACTOR_JOIN, data: { id } })
             return actor
         })
     }
 
-    leave(id) {
-        if (!this.actors.has(id)) {
-            return Promise.reject(new Error(`actor id=(${id}) doesn't exist`))
+    /**
+     * 
+     * @param {Actor} actor 
+     * @returns {Promise.<any>}
+     */
+    leave(actor) {
+        if (!this.actors.has(actor.id)) {
+            return Promise.reject(new Error(`actor id=(${actor.id}) doesn't exist in this context instance`))
         }
-        let actor = this.actors.get(id)
-        actor.dispose()
-        this.actors.delete(id)
-        return this.engine.contextEventBroker.emit({ key: Context.Events.ACTOR_LEAVE, data: { id } })
+        Actor.dispose(this.actors.get(actor.id))
+        this.actors.delete(actor.id)
+        return this.engine.state.emit({ key: Context.State.ACTOR_LEAVE, data: { id: actor.id } })
     }
 
+    /**
+     * 
+     * @param {string} id 
+     * @param {string} reason 
+     * @returns {Promise.<boolean>}
+     */
     kick(id, reason) {
         return this.get(id).then(actorObject => {
             if (actorObject === null) {
-                throw new Error(`there is no actor with id=(${id})`)
+                return false
             }
-            return this.engine.contextEventBroker.emit({ key: Context.Events.ACTOR_KICK, data: { id, reason } })
+            return this.engine.state.emit({ key: Context.State.ACTOR_KICK, data: { id, reason } }).then(() => {
+                return true
+            })
         })
     }
 
-    handleEvent(key, data) {
-        
-        if (key === Context.Events.ACTOR_KICK) {
-            const {id } = data
-            this.handleKickEvent(id)
+    /**
+     * 
+     * @private
+     * @param {State} state 
+     */
+    handleState(state) {
+        const { key, data } = state
+        if (key === Context.State.ACTOR_KICK) {
+            const { id = null } = data
+            if (this.actors.has(id)) {
+                this.leave(id)
+            }
         }
     }
 
-    handleKickEvent(id) {
-        if (!this.actors.has(id)) {
-            return
-        }
-        this.leave(id)
+    dispose() {
+        this.engine.state.unsubscribe(this.handleState, this)
     }
 
 }
 
-export default ActorModule
+/**
+ * 
+ * @param {ActorService} actorService 
+ */
+ActorService.dispose = (actorService) => {
+    actorService.dispose()
+}
+
+export default ActorService

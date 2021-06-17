@@ -16,6 +16,20 @@ class EventBroker extends MessageBroker {
     constructor(adapter, contextId) {
         super(adapter, contextId, 'events')
     }
+
+    /**
+     * @private
+     * @param {Event} message 
+     * @returns {string}
+     */
+    mapInput = message => Event.stringify(message)
+
+    /**
+     * @private
+     * @param {string} message 
+     * @returns {Event}
+     */
+    mapOutput = message => Event.parse(message)
 }
 
 export default EventBroker
