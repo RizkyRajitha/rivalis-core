@@ -8,6 +8,7 @@ import State from '../models/State'
 import ActorService from '../services/ActorService'
 import ActionService from '../services/ActionService'
 import EventService from '../services/EventService'
+import DataStorage from '../storages/DataStorage'
 
 /**
  * @callback StateListener
@@ -94,6 +95,14 @@ class Context extends Activity {
         // TODO: dispose API here
         
         return this.engine.dispose()
+    }
+
+    /**
+     * 
+     * @type {DataStorage}
+     */
+    get data() {
+        return this.engine.data
     }
 
     /**
