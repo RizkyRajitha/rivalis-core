@@ -57,6 +57,11 @@ class Persistence {
     constructor(contextId, adapter) {
         this.contextId = contextId
         this.adapter = adapter
+
+        this.events = new EventBroker(this.adapter.getMessageBroker(), this.contextId)
+        this.state = new StateBroker(this.adapter.getMessageBroker(), this.contextId)
+        this.actors = new ActorStorage(this.adapter.getSharedStorage(), this.contextId)
+        this.data = new DataStorage(this.adapter.getSharedStorage(), this.contextId)
     }
 
     /**
@@ -64,11 +69,6 @@ class Persistence {
      * @returns {Promise.<any>}
      */
     initialize() {
-        this.events = new EventBroker(this.adapter.getMessageBroker(), this.contextId)
-        this.state = new StateBroker(this.adapter.getMessageBroker(), this.contextId)
-        this.actors = new ActorStorage(this.adapter.getSharedStorage(), this.contextId)
-        this.data = new DataStorage(this.adapter.getSharedStorage(), this.contextId)
-
         return this.events.initialize().then(() => {
             return this.state.initialize()
         })

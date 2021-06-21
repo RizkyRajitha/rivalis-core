@@ -110,6 +110,16 @@ class ActorService {
 
     /**
      * 
+     * @returns {Array.<Actor>}
+     */
+    getActorList() {
+        let list = []
+        this.actors.forEach(actor => list.push(actor))
+        return list
+    }
+
+    /**
+     * 
      * @private
      * @param {Object.<string,any>} state 
      */
