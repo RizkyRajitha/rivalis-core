@@ -8,6 +8,7 @@ import ActionService from '../services/ActionService'
 import EventService from '../services/EventService'
 import DataStorage from '../persistence/DataStorage'
 import Persistence from '../persistence/Persistence'
+import Stage from './Stage'
 
 /**
  * @callback StateListener
@@ -68,6 +69,11 @@ class Context {
      */
     emitter = null
 
+    /**
+     * @private
+     * @type {Stage}
+     */
+    stage = null
 
     /**
      * 
@@ -81,9 +87,11 @@ class Context {
      * 
      * @param {string} id unique context identifier
      * @param {Adapter} adapter adapter used for storing and sharing data
+     * @param {Stage} [stage=null] stage used for handling events
      */
-    constructor(id, adapter) {
+    constructor(id, adapter, stage = null) {
         this.id = id
+        this.stage = stage ? stage : new Stage()
         this.activity = new Activity()
         this.clock = new VectorClock(id)
         this.persistence = new Persistence(id, adapter)
@@ -103,6 +111,8 @@ class Context {
             this.actors = new ActorService(this.persistence, this)
             this.actions = new ActionService(this)
             this.events = new EventService(this.persistence, this)
+            return this.stage.onInit(this)
+        }).then(() => {
             this.emitter.emit(Context.State.INIT, this)
         })
     }
@@ -113,6 +123,8 @@ class Context {
      */
     dispose() {
         return ActorService.dispose(this.actors).then(() => {
+            return this.stage.onDispose(this)
+        }).then(() => {
             
             this.persistence.events.unsubscribe(this.handleEvent, this)
             this.persistence.state.unsubscribe(this.handleState, this)
@@ -169,6 +181,7 @@ class Context {
      */
     handleEvent(event) {
         this.clock.update(event.getVectorClock())
+        this.stage.onEmit(this, event)
         this.emitter.emit(Context.State.EMIT, event)
     }
 

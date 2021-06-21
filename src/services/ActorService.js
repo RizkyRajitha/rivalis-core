@@ -66,7 +66,11 @@ class ActorService {
      * @returns {Promise.<Actor>}
      */
     join(id, data) {
-        return this.persistence.actors.savenx(id, { id, data }).then(persisted => {
+        return Promise.resolve().then(() => {
+            return this.context.stage.onJoin(id, data)
+        }).then(() => {
+            return this.persistence.actors.savenx(id, { id, data })
+        }).then(persisted => {
             if (!persisted) {
                 throw new Error(`actor=(${id}) already exist in this context`)
             }
@@ -90,6 +94,8 @@ class ActorService {
         this.actors.delete(actor.id)
         
         return this.persistence.state.emit({ key: Context.State.ACTOR_LEAVE, data: { id: actor.id } }).then(() => {
+            return this.context.stage.onLeave(actor.id, actor.data)
+        }).then(() => {
             return this.persistence.actors.delete(actor.id)
         })
     }

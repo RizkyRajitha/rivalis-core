@@ -1,5 +1,5 @@
+import EventEmitter from 'eventemitter3'
 import Event from './Event'
-import { Signal } from 'signals'
 import VectorClock from '../structs/VectorClock'
 import Activity from './Activity'
 import Context from './Context'
@@ -46,9 +46,9 @@ class Actor {
 
     /**
      * @private
-     * @type {Signal.<Event>}
+     * @type {EventEmitter}
      */
-    onEvent = null
+    emitter = null
 
     /**
      * @private
@@ -75,30 +75,32 @@ class Actor {
         this.cache = new Map()
         this.clock = new VectorClock(id)
         this.context = context
-        this.onEvent = new Signal()
+        this.emitter = new EventEmitter()
         Context.getPersistence(this.context).events.subscribe(this.handleEvent, this)
         
     }
 
     /**
-     * Actor#add method can be used for registering a listener for the events applicable for this actor
+     * Actor#on method can be used for registering a listener for the events applicable for this actor
+     * @param {string} topic
      * @param {EventListener} listener 
      * @param {any} context 
      * @returns {this}
      */
-    add(listener, context) {
-        this.onEvent.add(listener, context)
+    on(topic, listener, context) {
+        this.emitter.on(topic, listener, context)
         return this
     }
 
     /**
-     * Actor#remove method can remove already registered listener
+     * Actor#off method can remove already registered listener
+     * @param {string} topic
      * @param {EventListener} listener 
      * @param {any} context 
      * @returns {this}
      */
-    remove(listener, context) {
-        this.onEvent.remove(listener, context)
+    off(topic, listener, context) {
+        this.emitter.off(topic, listener, context)
         return this
     }
 
@@ -117,7 +119,8 @@ class Actor {
      * @param {Event} event 
      */
     send(event) {
-        this.onEvent.dispatch(event)
+        this.emitter.emit('event', event)
+        return this
     }
 
     /**
@@ -134,8 +137,9 @@ class Actor {
      */
     dispose() {
         Context.getPersistence(this.context).events.unsubscribe(this.handleEvent, this)
-        this.onEvent.removeAll()
-        this.onEvent = null
+        this.emitter.emit('dispose')
+        this.emitter.removeAllListeners()
+        this.emitter = null
     }
 
     /**
@@ -161,6 +165,20 @@ class Actor {
  */
 Actor.dispose = actor => {
     actor.dispose()
+}
+
+Actor.Topic = {
+    EVENT: 'event',
+    DISPOSE: 'dispose'
+}
+
+/**
+ * 
+ * @param {Actor} actor 
+ * @returns {Context}
+ */
+Actor.getContext = actor => {
+    return actor.context
 }
 
 export default Actor

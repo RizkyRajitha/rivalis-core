@@ -26,12 +26,10 @@ export const structs = {
 
 import Context from './core/Context'
 import Activity from './core/Activity'
-import Actor from './core/Actor'
 import Event from './core/Event'
 
 export {
     Context,
     Activity,
-    Actor,
     Event
 }
