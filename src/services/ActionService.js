@@ -1,8 +1,14 @@
 import Activity from '../core/Activity'
 import Actor from '../core/Actor'
-import ContextProvider from '../providers/ContextProvider'
+import Context from '../core/Context'
 
 class ActionService {
+
+    /**
+     * @private
+     * @type {Context}
+     */
+    context = null
 
     /**
      * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
@@ -11,17 +17,10 @@ class ActionService {
      * 
      * // TODO: write description
      * 
-     * @private
-     * @type {ContextProvider}
+     * @param {Context} context 
      */
-    provider = null
-
-    /**
-     * 
-     * @param {ContextProvider} provider 
-     */
-    constructor(provider) {
-        this.provider = provider
+    constructor(context) {
+        this.context = context
     }
 
     /**
@@ -32,12 +31,12 @@ class ActionService {
      * @returns {Promise.<any>}
      */
     execute(actor, key, data) {
-        let actionHandler = Activity.getHandler(this.provider.context.activity, key)
+        let actionHandler = Activity.getHandler(this.context.activity, key)
         if (actionHandler === null) {
             return Promise.reject(new Error(`there is no action handler for key=(${key})`))
         }
         try {
-            let promise = actionHandler(actor, key, data, this.provider.context)
+            let promise = actionHandler(actor, key, data, this.context)
             if (promise instanceof Promise) {
                 return promise.catch(error => {
                     error.message = `action execution failed, actor=(${actor.id}), key=(${key}), data=(${JSON.stringify(data)}) ${error.message}`

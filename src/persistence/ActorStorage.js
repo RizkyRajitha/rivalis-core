@@ -1,9 +1,8 @@
 import SharedStorageAdapter from '../interfaces/SharedStorageAdapter'
 import SharedStorage from '../structs/SharedStorage'
-import ActorObject from '../models/ActorObject'
 /**
  * 
- * @extends {SharedStorage<ActorObject>}
+ * @extends {SharedStorage<Object.<string,any>>}
  */
 class ActorStorage extends SharedStorage {
     

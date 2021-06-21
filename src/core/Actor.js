@@ -36,7 +36,7 @@ class Actor {
     cache = null
 
     /**
-     * @private
+     * @readonly
      * @type {VectorClock}
      */
     clock = null
@@ -73,7 +73,7 @@ class Actor {
         this.clock = new VectorClock(id)
         this.context = context
         this.onEvent = new Signal()
-        Context.getProvider(this.context).events.subscribe(this.handleEvent, this)
+        Context.getPersistence(this.context).events.subscribe(this.handleEvent, this)
         
     }
 
@@ -118,19 +118,11 @@ class Actor {
     }
 
     /**
-     * Actor#getClock can be used to get reference of actor's clock
-     * @returns {VectorClock}
-     */
-    getClock() {
-        return this.clock
-    }
-
-    /**
      * @private
      * @returns {Promise.<any>}
      */
     dispose() {
-        Context.getProvider(this.context).events.unsubscribe(this.handleEvent, this)
+        Context.getPersistence(this.context).events.unsubscribe(this.handleEvent, this)
         this.onEvent.removeAll()
         this.onEvent = null
     }

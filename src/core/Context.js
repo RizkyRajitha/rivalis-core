@@ -3,12 +3,11 @@ import Event from './Event'
 import Activity from './Activity'
 import Adapter from '../interfaces/Adapter'
 import VectorClock from '../structs/VectorClock'
-import ContextProvider from '../providers/ContextProvider'
-import State from '../models/State'
 import ActorService from '../services/ActorService'
 import ActionService from '../services/ActionService'
 import EventService from '../services/EventService'
-import DataStorage from '../storages/DataStorage'
+import DataStorage from '../persistence/DataStorage'
+import Persistence from '../persistence/Persistence'
 
 /**
  * @callback StateListener
@@ -52,10 +51,16 @@ class Context {
     activity = null
 
     /**
-     * @private
-     * @type {ContextProvider}
+     * 
+     * @type {VectorClock}
      */
-    provider = null
+    clock = null
+
+    /**
+     * @private
+     * @type {Persistence}
+     */
+    persistence = null
 
     /**
      * @private
@@ -80,7 +85,8 @@ class Context {
     constructor(id, adapter) {
         this.id = id
         this.activity = new Activity()
-        this.provider = new ContextProvider(this, adapter)
+        this.clock = new VectorClock(id)
+        this.persistence = new Persistence(id, adapter)
         this.emitter = new EventEmitter()
     }
 
@@ -90,13 +96,13 @@ class Context {
      * @returns {Promise.<any>}
      */
     initialize() {
-        return this.provider.initialize().then(() => {
-            this.provider.events.subscribe(this.handleEvent, this)
-            this.provider.state.subscribe(this.handleState, this)
+        return this.persistence.initialize().then(() => {
+            this.persistence.events.subscribe(this.handleEvent, this)
+            this.persistence.state.subscribe(this.handleState, this)
 
-            this.actors = new ActorService(this.provider)
-            this.actions = new ActionService(this.provider)
-            this.events = new EventService(this.provider)
+            this.actors = new ActorService(this.persistence, this)
+            this.actions = new ActionService(this)
+            this.events = new EventService(this.persistence, this)
             this.emitter.emit(Context.State.INIT, this)
         })
     }
@@ -106,15 +112,15 @@ class Context {
      * @returns {Promise.<any>}
      */
     dispose() {
-        this.provider.events.unsubscribe(this.handleEvent, this)
-        this.provider.state.unsubscribe(this.handleState, this)
+        this.persistence.events.unsubscribe(this.handleEvent, this)
+        this.persistence.state.unsubscribe(this.handleState, this)
         
         ActorService.dispose(this.actors)
         
         this.actors = null
         this.actions = null
         this.events = null
-        return this.provider.dispose().then(() => {
+        return this.persistence.dispose().then(() => {
             this.emitter.emit(Context.State.DISPOSE, this)
             this.emitter.removeAllListeners()
             this.emitter = null
@@ -126,7 +132,7 @@ class Context {
      * @type {DataStorage}
      */
     get data() {
-        return this.provider.data
+        return this.persistence.data
     }
 
     /**
@@ -155,25 +161,17 @@ class Context {
     }
 
     /**
-     * Context#getClock method retreives a reference of context vector clock
-     * @returns {VectorClock}
-     */
-    getClock() {
-        return this.provider.clock
-    }
-
-    /**
      * @private
      * @param {Event} event 
      */
     handleEvent(event) {
-        this.getClock().update(event.getVectorClock())
+        this.clock.update(event.getVectorClock())
         this.emitter.emit(Context.State.EMIT, event)
     }
 
     /**
      * @private
-     * @param {State} state 
+     * @param {Object.<string,any>} state 
      */
     handleState(state) {
         const { key, data } = state
@@ -197,10 +195,10 @@ Context.State = {
 /**
  * 
  * @param {Context} context 
- * @returns {ContextProvider}
+ * @returns {Persistence}
  */
-Context.getProvider = (context) => {
-    return context.provider
+Context.getPersistence = (context) => {
+    return context.persistence
 }
 
 export default Context

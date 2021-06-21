@@ -1,8 +1,7 @@
 import MessageBroker from '../structs/MessageBroker'
-import State from '../models/State'
 /**
  * 
- * @extends {MessageBroker<State>}
+ * @extends {MessageBroker<Object.<string,any>>}
  */
  class StateBroker extends MessageBroker {
 

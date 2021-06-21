@@ -1,8 +1,6 @@
 import Context from '../core/Context'
 import Actor from '../core/Actor'
-import ContextProvider from '../providers/ContextProvider'
-import State from '../models/State'
-import ActorObject from '../models/ActorObject'
+import Persistence from '../persistence/Persistence'
 
 class ActorService {
 
@@ -16,9 +14,16 @@ class ActorService {
     /**
      * 
      * @private
-     * @type {ContextProvider}
+     * @type {Persistence}
      */
-     provider = null
+    persistence = null
+
+    /**
+     * 
+     * @private
+     * @type {Context}
+     */
+    context = null
 
     /**
      * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
@@ -27,29 +32,31 @@ class ActorService {
      * 
      * // TODO: write description
      * 
-     * @param {ContextProvider} provider 
+     * @param {Persistence} persistence
+     * @param {Context} context 
      */
-    constructor(provider) {
-        this.provider = provider
+    constructor(persistence, context) {
+        this.persistence = persistence
+        this.context = context
         this.actors = new Map()
-        this.provider.state.subscribe(this.handleState, this)
+        this.persistence.state.subscribe(this.handleState, this)
     }
 
     /**
      * 
      * @param {string} id 
-     * @returns {Promise.<ActorObject|null>}
+     * @returns {Promise.<Object.<string,any>|null>}
      */
     get(id) {
-        return this.provider.actors.get(id)
+        return this.persistence.actors.get(id)
     }
 
     /**
      * 
-     * @returns {Promise.<Map.<string,ActorObject>>}
+     * @returns {Promise.<Map.<string,Object.<string,any>>>}
      */
     getAll() {
-        return this.provider.actors.getAll()
+        return this.persistence.actors.getAll()
     }
 
     /**
@@ -59,13 +66,13 @@ class ActorService {
      * @returns {Promise.<Actor>}
      */
     join(id, data) {
-        return this.provider.actors.savenx(id, { id, data }).then(persisted => {
+        return this.persistence.actors.savenx(id, { id, data }).then(persisted => {
             if (!persisted) {
                 throw new Error(`actor=(${id}) already exist in this context`)
             }
-            let actor = new Actor(id, data, this.provider.context)
+            let actor = new Actor(id, data, this.context)
             this.actors.set(id, actor)
-            this.provider.state.emit({ key: Context.State.ACTOR_JOIN, data: { id } })
+            this.persistence.state.emit({ key: Context.State.ACTOR_JOIN, data: { id } })
             return actor
         })
     }
@@ -81,7 +88,7 @@ class ActorService {
         }
         Actor.dispose(this.actors.get(actor.id))
         this.actors.delete(actor.id)
-        return this.provider.state.emit({ key: Context.State.ACTOR_LEAVE, data: { id: actor.id } })
+        return this.persistence.state.emit({ key: Context.State.ACTOR_LEAVE, data: { id: actor.id } })
     }
 
     /**
@@ -95,7 +102,7 @@ class ActorService {
             if (actorObject === null) {
                 return false
             }
-            return this.provider.state.emit({ key: Context.State.ACTOR_KICK, data: { id, reason } }).then(() => {
+            return this.persistence.state.emit({ key: Context.State.ACTOR_KICK, data: { id, reason } }).then(() => {
                 return true
             })
         })
@@ -104,7 +111,7 @@ class ActorService {
     /**
      * 
      * @private
-     * @param {State} state 
+     * @param {Object.<string,any>} state 
      */
     handleState(state) {
         const { key, data } = state
@@ -118,7 +125,7 @@ class ActorService {
 
     dispose() {
         this.actors.forEach(actor => Actor.dispose(actor))
-        this.provider.state.unsubscribe(this.handleState, this)
+        this.persistence.state.unsubscribe(this.handleState, this)
         this.actors.clear()
         this.actors = null
     }

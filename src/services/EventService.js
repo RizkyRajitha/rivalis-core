@@ -1,8 +1,21 @@
 import Actor from '../core/Actor'
+import Context from '../core/Context'
 import Event from '../core/Event'
-import ContextProvider from '../providers/ContextProvider'
+import Persistence from '../persistence/Persistence'
 
 class EventService {
+
+    /**
+     * @private
+     * @type {Persistence}
+     */
+    persistence = null
+
+    /**
+     * @private
+     * @type {Context}
+     */
+    context = null
 
     /**
      * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
@@ -11,17 +24,12 @@ class EventService {
      * 
      * // TODO: write description
      * 
-     * @private
-     * @type {ContextProvider}
+     * @param {Persistence} persistence
+     * @param {Context} context 
      */
-    provider = null
-
-    /**
-     * 
-     * @param {ContextProvider} provider 
-     */
-    constructor(provider) {
-        this.provider = provider
+    constructor(persistence, context) {
+        this.persistence = persistence
+        this.context = context
     }
 
     /**
@@ -30,7 +38,7 @@ class EventService {
      * @returns {Event}
      */
     create(actor = null) {
-        let clock = actor instanceof Actor ? actor.getClock() : this.provider.context.getClock()
+        let clock = actor instanceof Actor ? actor.clock : this.context.clock
         clock.increment()
         return new Event(clock.getClock(), clock.nodeId)
     }
@@ -41,7 +49,7 @@ class EventService {
      * @returns {Promise.<any>}
      */
     emit(event) {
-        return this.provider.events.emit(event)
+        return this.persistence.events.emit(event)
     }
 
 }

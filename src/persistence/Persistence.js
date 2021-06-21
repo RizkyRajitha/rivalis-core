@@ -1,12 +1,10 @@
-import StateBroker from '../brokers/StateBroker'
-import EventBroker from '../brokers/EventBroker'
-import ActorStorage from '../storages/ActorStorage'
-import DataStorage from '../storages/DataStorage'
-import Context from '../core/Context'
+import StateBroker from './StateBroker'
+import EventBroker from './EventBroker'
+import ActorStorage from './ActorStorage'
+import DataStorage from './DataStorage'
 import Adapter from '../interfaces/Adapter'
-import VectorClock from '../structs/VectorClock'
 
-class ContextProvider {
+class Persistence {
 
     /**
      * 
@@ -34,15 +32,10 @@ class ContextProvider {
 
     /**
      * 
-     * @type {VectorClock}
+     * @private
+     * @type {string}
      */
-    clock = null
-
-    /**
-     * 
-     * @type {Context}
-     */
-    context = null
+    contextId = null
 
     /**
      * 
@@ -58,11 +51,11 @@ class ContextProvider {
      * 
      * // TODO: write description
      * 
-     * @param {Context} context 
+     * @param {string} contextId
      * @param {Adapter} adapter 
      */
-    constructor(context, adapter) {
-        this.context = context
+    constructor(contextId, adapter) {
+        this.contextId = contextId
         this.adapter = adapter
     }
 
@@ -71,12 +64,10 @@ class ContextProvider {
      * @returns {Promise.<any>}
      */
     initialize() {
-        this.events = new EventBroker(this.adapter.getMessageBroker(), this.context.id)
-        this.state = new StateBroker(this.adapter.getMessageBroker(), this.context.id)
-        this.actors = new ActorStorage(this.adapter.getSharedStorage(), this.context.id)
-        this.data = new DataStorage(this.adapter.getSharedStorage(), this.context.id)
-
-        this.clock = new VectorClock()
+        this.events = new EventBroker(this.adapter.getMessageBroker(), this.contextId)
+        this.state = new StateBroker(this.adapter.getMessageBroker(), this.contextId)
+        this.actors = new ActorStorage(this.adapter.getSharedStorage(), this.contextId)
+        this.data = new DataStorage(this.adapter.getSharedStorage(), this.contextId)
 
         return this.events.initialize().then(() => {
             return this.state.initialize()
@@ -95,11 +86,9 @@ class ContextProvider {
             this.state = null
             this.actors = null
             this.data = null
-
-            this.clock = null
         })
     }
 
 }
 
-export default ContextProvider
+export default Persistence
