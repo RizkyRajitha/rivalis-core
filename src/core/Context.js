@@ -13,44 +13,46 @@ import DataStorage from '../storages/DataStorage'
 /**
  * @callback StateListener
  * @param {Object.<string,any>} event
- * 
  */
 
+
+/**
+ * @class
+ * @extends {Activity}
+ */
 class Context extends Activity {
 
     /**
-     * 
+     * unique context identifier
      * @type {string}
      */
     id = null
 
     /**
-     * 
+     * provides API for managing actors of the context
      * @type {ActorService}
      */
     actors = null
 
     /**
-     * 
+     * provides API for managing actions of the context
      * @type {ActionService}
      */
     actions = null
 
     /**
-     * 
+     * provides API for managing events of the context
      * @type {EventService}
      */
     events = null
 
     /**
-     * 
      * @private
      * @type {ContextEngine}
      */
     engine = null
 
     /**
-     * 
      * @private
      * @type {EventEmitter}
      */
@@ -59,8 +61,16 @@ class Context extends Activity {
 
     /**
      * 
-     * @param {string} id 
-     * @param {Adapter} adapter 
+     * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
+     * @author Daniel Kalevski
+     * @since 0.5.0
+     * 
+     * Context instance represents space where your actors and business logic are alive.
+     * It is responsible for providing API for managing actors, actions, events, activities and emitting states.
+     * Context instance must be initialized before using.
+     * 
+     * @param {string} id unique context identifier
+     * @param {Adapter} adapter adapter used for storing and sharing data
      */
     constructor(id, adapter) {
         super()
@@ -70,7 +80,8 @@ class Context extends Activity {
     }
 
     /**
-     * 
+     * Context#initialize method must be invoked before using the context instance.
+     * This method starts the important instance procedures.
      * @returns {Promise.<any>}
      */
     initialize() {
@@ -81,24 +92,27 @@ class Context extends Activity {
             this.actors = new ActorService(this.engine)
             this.actions = new ActionService(this.engine)
             this.events = new EventService(this.engine)
+            this.emitter.emit(Context.State.INIT, this)
         })
     }
 
     /**
-     * 
+     * Context#dispose method can be used to dispose the context and all inner procedures
      * @returns {Promise.<any>}
      */
     dispose() {
         this.engine.events.unsubscribe(this.handleEvent, this)
         this.engine.state.unsubscribe(this.handleState, this)
-        
-        // TODO: dispose API here
-        
-        return this.engine.dispose()
+        this.actors = null
+        this.actions = null
+        this.events = null
+        return this.engine.dispose().then(() => {
+            this.emitter.emit(Context.State.DISPOSE, this)
+        })
     }
 
     /**
-     * 
+     * provides shared storage on context level
      * @type {DataStorage}
      */
     get data() {
@@ -106,7 +120,8 @@ class Context extends Activity {
     }
 
     /**
-     * 
+     * Context#on method can be used for registring a listener on any context state
+     * possible context states are listed under Context.State enumeration
      * @param {string} state 
      * @param {StateListener} stateListener 
      * @param {any} context 
@@ -118,7 +133,7 @@ class Context extends Activity {
     }
 
     /**
-     * 
+     * Context#off method can be used for removing already registered listener
      * @param {string} state 
      * @param {StateListener} stateListener 
      * @param {any} context 
@@ -130,7 +145,7 @@ class Context extends Activity {
     }
 
     /**
-     * 
+     * Context#getClock method retreives a reference of context vector clock
      * @returns {VectorClock}
      */
     getClock() {
@@ -138,7 +153,6 @@ class Context extends Activity {
     }
 
     /**
-     * 
      * @private
      * @param {Event} event 
      */
@@ -148,7 +162,6 @@ class Context extends Activity {
     }
 
     /**
-     * 
      * @private
      * @param {State} state 
      */

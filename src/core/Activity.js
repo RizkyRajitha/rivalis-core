@@ -21,36 +21,45 @@ import Event from './Event'
  * @param {Context} context
  */
 
+
+/**
+ * @class
+ */
 class Activity {
 
     /**
-     * 
      * @private
      * @type {RegExp}
      */
     nameRegExp = new RegExp(/^[a-z0-9]+$/)
 
     /**
-     * 
      * @private
      * @type {Map.<string,Activity>}
      */
     activities = null
 
     /**
-     * 
      * @private
      * @type {Map.<string,ActionListener>}
      */
     handlers = null
 
     /**
-     * 
      * @private
      * @type {Map.<string,FilterListener>}
      */
     filters = null
 
+    /**
+     * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
+     * @author Daniel Kalevski
+     * @since 0.5.0
+     * 
+     * Activity holds listeners for actions and filters.
+     * Can be used for chaining and grouping a collection of filters and action handlers.
+     * Most of the time, your business logic will live insde listeners registered inside this class.
+     */
     constructor() {
         this.activities = new Map()
         this.handlers = new Map()
@@ -58,7 +67,7 @@ class Activity {
     }
 
     /**
-     * 
+     * Activity#use method is used for adding child activity under a specific key
      * @param {string} key
      * @param {Activity} activity 
      */
@@ -74,7 +83,8 @@ class Activity {
     }
 
     /**
-     * 
+     * Activity#handle method is used for adding action handler for a specific key
+     * The action handler is invoked by execute action inside context.
      * @param {string} key 
      * @param {ActionListener} actionListener 
      */
@@ -90,7 +100,8 @@ class Activity {
     }
 
     /**
-     * 
+     * Activity#filter method is used for adding filter listener for a specific key
+     * The filter listener is invoked before an actor receives an event.
      * @param {string} key 
      * @param {FilterListener} filterListener 
      */
@@ -107,7 +118,6 @@ class Activity {
     }
 
     /**
-     * 
      * @private
      * @param {string} key 
      */
@@ -153,6 +163,12 @@ Activity.getHandler = (activity, key) => {
     }
 }
 
+/**
+ * 
+ * @param {Activity} activity 
+ * @param {string} key 
+ * @returns {FilterListener|null}
+ */
 Activity.getFilter = (activity, key) => {
     let list = key.split('.')
     let handlerKey = list.pop()

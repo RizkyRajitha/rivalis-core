@@ -31,6 +31,11 @@ class Event {
     data = null
 
     /**
+     * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
+     * @author Daniel Kalevski
+     * @since 0.5.0
+     * 
+     * // TODO: write description
      * 
      * @param {Object.<string,number>} clock 
      * @param {string} sender 
