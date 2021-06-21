@@ -25,6 +25,11 @@ class SharedStorage {
     namepsace = null
  
      /**
+     * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
+     * @author Daniel Kalevski
+     * @since 0.5.0
+     * 
+     * // TODO: write description
      * 
      * @param {SharedStorageAdapter} adapter 
      * @param {string} namespace 
