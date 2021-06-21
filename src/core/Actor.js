@@ -141,7 +141,7 @@ class Actor {
      */
     handleEvent(event) {
         this.clock.update(event.getVectorClock())
-        let filter = Activity.getFilter(this.context, event.key)
+        let filter = Activity.getFilter(this.context.activity, event.key)
         if (filter) {
             filter(this, event, this.engine.context)
         } else {

@@ -18,9 +18,8 @@ import DataStorage from '../storages/DataStorage'
 
 /**
  * @class
- * @extends {Activity}
  */
-class Context extends Activity {
+class Context {
 
     /**
      * unique context identifier
@@ -45,6 +44,12 @@ class Context extends Activity {
      * @type {EventService}
      */
     events = null
+
+    /**
+     * 
+     * @type {Activity}
+     */
+    activity = null
 
     /**
      * @private
@@ -73,8 +78,8 @@ class Context extends Activity {
      * @param {Adapter} adapter adapter used for storing and sharing data
      */
     constructor(id, adapter) {
-        super()
         this.id = id
+        this.activity = new Activity()
         this.engine = new ContextEngine(this, adapter)
         this.emitter = new EventEmitter()
     }

@@ -32,7 +32,7 @@ class ActionService {
      * @returns {Promise.<any>}
      */
     execute(actor, key, data) {
-        let actionHandler = Activity.getHandler(this.engine.context, key)
+        let actionHandler = Activity.getHandler(this.engine.context.activity, key)
         if (actionHandler === null) {
             return Promise.reject(new Error(`there is no action handler for key=(${key})`))
         }
