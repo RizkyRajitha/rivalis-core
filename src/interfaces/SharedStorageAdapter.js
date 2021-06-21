@@ -14,7 +14,9 @@ class SharedStorageAdapter {
      * 
      * @returns {Promise.<any>}
      */
-    initialize() {}
+    initialize() {
+        return Promise.reject(new Error('SharedStorageAdapter#initialize not implemented'))
+    }
 
      /**
      * 
@@ -23,7 +25,9 @@ class SharedStorageAdapter {
      * @param {string} value
      * @returns {Promise.<any>} 
      */
-    save(namespace, key, value) {}
+    save(namespace, key, value) {
+        return Promise.reject(new Error('SharedStorageAdapter#save not implemented'))
+    }
 
     /**
      * 
@@ -32,7 +36,9 @@ class SharedStorageAdapter {
      * @param {string} value
      * @returns {Promise.<boolean>} 
      */
-    savenx(namespace, key, value) {}
+    savenx(namespace, key, value) {
+        return Promise.reject(new Error('SharedStorageAdapter#savenx not implemented'))
+    }
 
     /**
      * 
@@ -40,7 +46,9 @@ class SharedStorageAdapter {
      * @param {string} key 
      * @returns {Promise.<string|null>}
      */
-    get(namespace, key) {}
+    get(namespace, key) {
+        return Promise.reject(new Error('SharedStorageAdapter#get not implemented'))
+    }
 
     /**
      * 
@@ -48,7 +56,9 @@ class SharedStorageAdapter {
      * @param {string} key
      * @returns {Promise.<boolean>} 
      */
-    exist(namespace, key) {}
+    exist(namespace, key) {
+        return Promise.reject(new Error('SharedStorageAdapter#exist not implemented'))
+    }
 
      /**
      * 
@@ -56,28 +66,36 @@ class SharedStorageAdapter {
      * @param {string} key
      * @returns {Promise.<any>} 
      */
-    delete(namespace, key) {}
+    delete(namespace, key) {
+        return Promise.reject(new Error('SharedStorageAdapter#delete not implemented'))
+    }
 
     /**
      * 
      * @param {string} namespace
      * @returns {Promise.<Object.<string,string>>} 
      */
-    getAll(namespace) {}
+    getAll(namespace) {
+        return Promise.reject(new Error('SharedStorageAdapter#getAll not implemented'))
+    }
 
     /**
      * 
      * @param {string} namespace 
      * @returns {Promise.<number>} 
      */
-    count(namespace) {}
+    count(namespace) {
+        return Promise.reject(new Error('SharedStorageAdapter#count not implemented'))
+    }
 
     /**
      * 
      * @param {string} namespace 
      * @returns {Promise.<any>} 
      */
-    clear(namespace) {}
+    clear(namespace) {
+        return Promise.reject(new Error('SharedStorageAdapter#clear not implemented'))
+    }
 
 }
 

@@ -17,19 +17,25 @@ class Adapter {
      * 
      * @returns {Promise.<any>}
      */
-    initialize() {/** TODO: throw error **/ }
+    initialize() {
+        return Promise.reject(new Error('Adapter#initialize not implemented'))
+    }
 
     /**
      * 
      * @returns {SharedStorageAdapter}
      */
-    getSharedStorage() {}
+    getSharedStorage() {
+        throw new Error('Adapter#getSharedStorage not implemented')
+    }
 
     /**
      * 
      * @returns {MessageBrokerAdapter}
      */
-    getMessageBroker() {}
+    getMessageBroker() {
+        throw new Error('Adapter#getMessageBroker not implemented')
+    }
 
 }
 

@@ -19,7 +19,9 @@ class MessageBrokerAdapter {
      * 
      * @returns {Promise.<any>}
      */
-    initialize() {}
+    initialize() {
+        return Promise.reject(new Error('MessageBrokerAdapter#initialize not implemented'))
+    }
 
     /**
      * subscribe to specific address for receiving messages
@@ -28,7 +30,9 @@ class MessageBrokerAdapter {
      * @param {MessageListener} listener
      * @returns {Promise.<any>} 
      */
-    subscribe(namespace, address, listener) {}
+    subscribe(namespace, address, listener) {
+        return Promise.reject(new Error('MessageBrokerAdapter#subscribe not implemented'))
+    }
  
     /**
      * unsubscribe of already subscribed address
@@ -37,7 +41,9 @@ class MessageBrokerAdapter {
      * @param {MessageListener} listener
      * @returns {Promise.<any>}
      */
-    unsubscribe(namespace, address, listener) {}
+    unsubscribe(namespace, address, listener) {
+        return Promise.reject(new Error('MessageBrokerAdapter#unsubscribe not implemented'))
+    }
  
     /**
      * publish message to an address
@@ -46,7 +52,9 @@ class MessageBrokerAdapter {
      * @param {string} message
      * @returns {Promise.<any>} 
      */
-    publish(namespace, address, message) {}
+    publish(namespace, address, message) {
+        return Promise.reject(new Error('MessageBrokerAdapter#publish not implemented'))
+    }
 
 }
 
