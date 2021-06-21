@@ -66,7 +66,7 @@ class Persistence {
 
     /**
      * 
-     * @returns {Promise.<any>}
+     * @returns {Promise.<void>}
      */
     initialize() {
         return this.events.initialize().then(() => {
@@ -76,7 +76,7 @@ class Persistence {
 
     /**
      * 
-     * @returns {Promise.<any>}
+     * @returns {Promise.<void>}
      */
     dispose() {
         return this.events.dispose().then(() => {

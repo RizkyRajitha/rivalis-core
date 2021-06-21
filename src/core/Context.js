@@ -93,7 +93,7 @@ class Context {
     /**
      * Context#initialize method must be invoked before using the context instance.
      * This method starts the important instance procedures.
-     * @returns {Promise.<any>}
+     * @returns {Promise.<void>}
      */
     initialize() {
         return this.persistence.initialize().then(() => {
@@ -109,21 +109,24 @@ class Context {
 
     /**
      * Context#dispose method can be used to dispose the context and all inner procedures
-     * @returns {Promise.<any>}
+     * @returns {Promise.<void>}
      */
     dispose() {
-        this.persistence.events.unsubscribe(this.handleEvent, this)
-        this.persistence.state.unsubscribe(this.handleState, this)
-        
-        ActorService.dispose(this.actors)
-        
-        this.actors = null
-        this.actions = null
-        this.events = null
-        return this.persistence.dispose().then(() => {
+        return ActorService.dispose(this.actors).then(() => {
+            
+            this.persistence.events.unsubscribe(this.handleEvent, this)
+            this.persistence.state.unsubscribe(this.handleState, this)
+            
+            this.actors = null
+            this.actions = null
+            this.events = null
+
+            return this.persistence.dispose()
+        }).then(() => {
             this.emitter.emit(Context.State.DISPOSE, this)
             this.emitter.removeAllListeners()
             this.emitter = null
+            this.persistence = null
         })
     }
 

@@ -41,6 +41,9 @@ class Actor {
      */
     clock = null
 
+
+    
+
     /**
      * @private
      * @type {Signal.<Event>}
@@ -118,6 +121,14 @@ class Actor {
     }
 
     /**
+     * 
+     * @returns {}
+     */
+    leave() {
+        return this.context.actors.leave(this)
+    }
+
+    /**
      * @private
      * @returns {Promise.<any>}
      */
@@ -148,7 +159,7 @@ class Actor {
  * avoid calling this directly
  * @param {Actor} actor
  */
-Actor.dispose = (actor) => {
+Actor.dispose = actor => {
     actor.dispose()
 }
 

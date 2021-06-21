@@ -7,7 +7,7 @@ class ActorService {
     /**
      * 
      * @private
-     * @type {Map.<Actor>}
+     * @type {Map.<string,Actor>}
      */
     actors = null
 
@@ -80,7 +80,7 @@ class ActorService {
     /**
      * 
      * @param {Actor} actor 
-     * @returns {Promise.<any>}
+     * @returns {Promise.<void>}
      */
     leave(actor) {
         if (!this.actors.has(actor.id)) {
@@ -88,7 +88,10 @@ class ActorService {
         }
         Actor.dispose(this.actors.get(actor.id))
         this.actors.delete(actor.id)
-        return this.persistence.state.emit({ key: Context.State.ACTOR_LEAVE, data: { id: actor.id } })
+        
+        return this.persistence.state.emit({ key: Context.State.ACTOR_LEAVE, data: { id: actor.id } }).then(() => {
+            return this.persistence.actors.delete(actor.id)
+        })
     }
 
     /**
@@ -133,11 +136,16 @@ class ActorService {
         }
     }
 
+    /**
+     * @private
+     */
     dispose() {
-        this.actors.forEach(actor => Actor.dispose(actor))
-        this.persistence.state.unsubscribe(this.handleState, this)
-        this.actors.clear()
-        this.actors = null
+        let promises = []
+        this.actors.forEach(actor => promises.push(this.leave(actor)))
+        return Promise.all(promises).then(() => {
+            this.persistence.state.unsubscribe(this.handleState, this)
+            this.actors = null
+        })
     }
 
 }
@@ -147,7 +155,7 @@ class ActorService {
  * @param {ActorService} actorService 
  */
 ActorService.dispose = (actorService) => {
-    actorService.dispose()
+    return actorService.dispose()
 }
 
 export default ActorService
