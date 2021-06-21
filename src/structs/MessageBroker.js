@@ -71,7 +71,7 @@ class MessageBroker {
 
     /**
      * 
-     * @returns {Promise.<any>}
+     * @returns {Promise.<void>}
      */
     initialize() {
         if (!this.subscribed) {
@@ -102,12 +102,16 @@ class MessageBroker {
     /**
      * 
      * @param {T} message
-     * @returns {Promise.<any>}
+     * @returns {Promise.<void>}
      */
     emit(message) {
         return this.adapter.publish(this.namespace, this.address, this.mapInput(message))
     }
 
+    /**
+     * 
+     * @returns {Promise.<void>}
+     */
     dispose() {
         return this.adapter.unsubscribe(this.namespace, this.address, this.messageHandler)
     }

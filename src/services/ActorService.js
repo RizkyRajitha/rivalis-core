@@ -117,7 +117,10 @@ class ActorService {
     }
 
     dispose() {
+        this.actors.forEach(actor => Actor.dispose(actor))
         this.provider.state.unsubscribe(this.handleState, this)
+        this.actors.clear()
+        this.actors = null
     }
 
 }

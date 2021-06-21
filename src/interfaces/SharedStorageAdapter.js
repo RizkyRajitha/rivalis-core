@@ -15,7 +15,7 @@ class SharedStorageAdapter {
      * @returns {Promise.<any>}
      */
     initialize() {
-        return Promise.reject(new Error('SharedStorageAdapter#initialize not implemented'))
+        return Promise.reject(new Error('SharedStorageAdapter#initialize is not implemented'))
     }
 
      /**
@@ -26,7 +26,7 @@ class SharedStorageAdapter {
      * @returns {Promise.<any>} 
      */
     save(namespace, key, value) {
-        return Promise.reject(new Error('SharedStorageAdapter#save not implemented'))
+        return Promise.reject(new Error('SharedStorageAdapter#save is not implemented'))
     }
 
     /**
@@ -37,7 +37,7 @@ class SharedStorageAdapter {
      * @returns {Promise.<boolean>} 
      */
     savenx(namespace, key, value) {
-        return Promise.reject(new Error('SharedStorageAdapter#savenx not implemented'))
+        return Promise.reject(new Error('SharedStorageAdapter#savenx is not implemented'))
     }
 
     /**
@@ -47,7 +47,7 @@ class SharedStorageAdapter {
      * @returns {Promise.<string|null>}
      */
     get(namespace, key) {
-        return Promise.reject(new Error('SharedStorageAdapter#get not implemented'))
+        return Promise.reject(new Error('SharedStorageAdapter#get is not implemented'))
     }
 
     /**
@@ -57,7 +57,7 @@ class SharedStorageAdapter {
      * @returns {Promise.<boolean>} 
      */
     exist(namespace, key) {
-        return Promise.reject(new Error('SharedStorageAdapter#exist not implemented'))
+        return Promise.reject(new Error('SharedStorageAdapter#exist is not implemented'))
     }
 
      /**
@@ -67,7 +67,7 @@ class SharedStorageAdapter {
      * @returns {Promise.<any>} 
      */
     delete(namespace, key) {
-        return Promise.reject(new Error('SharedStorageAdapter#delete not implemented'))
+        return Promise.reject(new Error('SharedStorageAdapter#delete is not implemented'))
     }
 
     /**
@@ -76,7 +76,7 @@ class SharedStorageAdapter {
      * @returns {Promise.<Object.<string,string>>} 
      */
     getAll(namespace) {
-        return Promise.reject(new Error('SharedStorageAdapter#getAll not implemented'))
+        return Promise.reject(new Error('SharedStorageAdapter#getAll is not implemented'))
     }
 
     /**
@@ -85,7 +85,7 @@ class SharedStorageAdapter {
      * @returns {Promise.<number>} 
      */
     count(namespace) {
-        return Promise.reject(new Error('SharedStorageAdapter#count not implemented'))
+        return Promise.reject(new Error('SharedStorageAdapter#count is not implemented'))
     }
 
     /**
@@ -94,7 +94,15 @@ class SharedStorageAdapter {
      * @returns {Promise.<any>} 
      */
     clear(namespace) {
-        return Promise.reject(new Error('SharedStorageAdapter#clear not implemented'))
+        return Promise.reject(new Error('SharedStorageAdapter#clear is not implemented'))
+    }
+
+    /**
+     * 
+     * @returns {Promise.<any>}
+     */
+    dispose() {
+        return Promise.reject(new Error('SharedStorageAdapter#dispose is not implemented'))
     }
 
 }

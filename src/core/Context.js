@@ -116,6 +116,8 @@ class Context {
         this.events = null
         return this.provider.dispose().then(() => {
             this.emitter.emit(Context.State.DISPOSE, this)
+            this.emitter.removeAllListeners()
+            this.emitter = null
         })
     }
 
