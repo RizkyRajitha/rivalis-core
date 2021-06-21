@@ -19,7 +19,7 @@
 
 Rivalis is open source framework for building multiplayer servers.
 - **Extensible** - Rivalis can work with multiple protocols at same time.
-- **Scalable** - Rivalis provides interface for integration with any external message broker server
+- **Scalable** - Rivalis provides interfaces for integration with any external services
 - **Partial event ordering** - Rivalis has built-in implementation for partial event ordering using [Vector Clock](https://en.wikipedia.org/wiki/Vector_clock) data structure
 - **Easy to use** - Rivalis provides extensible & well designed API, read more about that in the [documentation](https://rivalis.io/docs)
 
@@ -41,23 +41,9 @@ Rivalis is open source framework for building multiplayer servers.
 
 **server.js**
 ```js
-const http = require('http')
-const { Rivalis } = require('@rivalis/core')
-const { WebSocketProtocol } = require('@rivalis/protocol-websocket')
 
-const httpServer = http.createServer()
+// TODO: write this
 
-const wsProtocol = new WebSocketProtocol({ server: httpServer })
-
-const gameServer = new Rivalis({
-    protocols: [ wsProtocol ]
-})
-
-httpServer.listen(3000, () => {
-    console.log('websocket server listen on 3000 port')
-})
-
-gameServer.initialize()
 ```
 Follow the official [documentation](https://rivalis.io/docs).
 

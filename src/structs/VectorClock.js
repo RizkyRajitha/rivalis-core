@@ -15,7 +15,12 @@ class VectorClock {
     data = {}
 
     /**
+     * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
+     * @author Daniel Kalevski
+     * @since 0.5.0
+     * 
      * Vector Clock implementation used for synchronization of the events
+     * 
      * @param {string} nodeId unique identifier of the node
      * @param {Object.<string, number>} data clock data
      */

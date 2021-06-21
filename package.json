@@ -1,6 +1,6 @@
 {
   "name": "@rivalis/core",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Rivalis, scalable & scriptable multiplayer game logic framework",
   "main": "lib/index.js",
   "scripts": {
@@ -32,24 +32,23 @@
   },
   "homepage": "https://github.com/rivalis/rivalis-core#readme",
   "devDependencies": {
-    "@babel/cli": "7.12.13",
-    "@babel/core": "7.12.13",
-    "@babel/eslint-parser": "7.12.13",
-    "@babel/node": "7.12.13",
-    "@babel/plugin-proposal-class-properties": "7.12.13",
-    "@babel/preset-env": "7.12.13",
-    "@babel/register": "7.12.13",
-    "@types/node": "14.14.25",
-    "chai": "4.3.0",
-    "eslint": "7.19.0",
-    "mocha": "8.2.1",
+    "@babel/cli": "^7.14.3",
+    "@babel/core": "^7.14.3",
+    "@babel/eslint-parser": "^7.14.4",
+    "@babel/node": "^7.14.2",
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@babel/preset-env": "^7.14.4",
+    "@babel/register": "^7.13.16",
+    "@types/node": "^14.17.1",
+    "chai": "^4.3.4",
+    "eslint": "^7.27.0",
+    "mocha": "^8.4.0",
     "nodemon": "^2.0.7",
-    "parcel": "1.12.4",
-    "sinon": "9.2.4"
+    "sinon": "^9.2.4"
   },
   "dependencies": {
-    "eventemitter3": "4.0.7",
-    "signals": "1.0.0",
-    "uuid": "8.3.2"
+    "eventemitter3": "^4.0.7",
+    "signals": "^1.0.0",
+    "uuid": "^8.3.2"
   }
 }
