@@ -3,7 +3,7 @@ import Event from './Event'
 import Activity from './Activity'
 import Adapter from '../interfaces/Adapter'
 import VectorClock from '../structs/VectorClock'
-import ContextEngine from '../engines/ContextEngine'
+import ContextProvider from '../providers/ContextProvider'
 import State from '../models/State'
 import ActorService from '../services/ActorService'
 import ActionService from '../services/ActionService'
@@ -53,9 +53,9 @@ class Context {
 
     /**
      * @private
-     * @type {ContextEngine}
+     * @type {ContextProvider}
      */
-    engine = null
+    provider = null
 
     /**
      * @private
@@ -80,7 +80,7 @@ class Context {
     constructor(id, adapter) {
         this.id = id
         this.activity = new Activity()
-        this.engine = new ContextEngine(this, adapter)
+        this.provider = new ContextProvider(this, adapter)
         this.emitter = new EventEmitter()
     }
 
@@ -90,13 +90,13 @@ class Context {
      * @returns {Promise.<any>}
      */
     initialize() {
-        return this.engine.initialize().then(() => {
-            this.engine.events.subscribe(this.handleEvent, this)
-            this.engine.state.subscribe(this.handleState, this)
+        return this.provider.initialize().then(() => {
+            this.provider.events.subscribe(this.handleEvent, this)
+            this.provider.state.subscribe(this.handleState, this)
 
-            this.actors = new ActorService(this.engine)
-            this.actions = new ActionService(this.engine)
-            this.events = new EventService(this.engine)
+            this.actors = new ActorService(this.provider)
+            this.actions = new ActionService(this.provider)
+            this.events = new EventService(this.provider)
             this.emitter.emit(Context.State.INIT, this)
         })
     }
@@ -106,12 +106,15 @@ class Context {
      * @returns {Promise.<any>}
      */
     dispose() {
-        this.engine.events.unsubscribe(this.handleEvent, this)
-        this.engine.state.unsubscribe(this.handleState, this)
+        this.provider.events.unsubscribe(this.handleEvent, this)
+        this.provider.state.unsubscribe(this.handleState, this)
+        
+        ActorService.dispose(this.actors)
+        
         this.actors = null
         this.actions = null
         this.events = null
-        return this.engine.dispose().then(() => {
+        return this.provider.dispose().then(() => {
             this.emitter.emit(Context.State.DISPOSE, this)
         })
     }
@@ -121,7 +124,7 @@ class Context {
      * @type {DataStorage}
      */
     get data() {
-        return this.engine.data
+        return this.provider.data
     }
 
     /**
@@ -154,7 +157,7 @@ class Context {
      * @returns {VectorClock}
      */
     getClock() {
-        return this.engine.clock
+        return this.provider.clock
     }
 
     /**
@@ -192,10 +195,10 @@ Context.State = {
 /**
  * 
  * @param {Context} context 
- * @returns {ContextEngine}
+ * @returns {ContextProvider}
  */
-Context.getEngine = (context) => {
-    return context.engine
+Context.getProvider = (context) => {
+    return context.provider
 }
 
 export default Context

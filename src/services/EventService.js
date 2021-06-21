@@ -1,6 +1,6 @@
 import Actor from '../core/Actor'
 import Event from '../core/Event'
-import ContextEngine from '../engines/ContextEngine'
+import ContextProvider from '../providers/ContextProvider'
 
 class EventService {
 
@@ -12,16 +12,16 @@ class EventService {
      * // TODO: write description
      * 
      * @private
-     * @type {ContextEngine}
+     * @type {ContextProvider}
      */
-    engine = null
+    provider = null
 
     /**
      * 
-     * @param {ContextEngine} engine 
+     * @param {ContextProvider} provider 
      */
-    constructor(engine) {
-        this.engine = engine
+    constructor(provider) {
+        this.provider = provider
     }
 
     /**
@@ -30,7 +30,7 @@ class EventService {
      * @returns {Event}
      */
     create(actor = null) {
-        let clock = actor instanceof Actor ? actor.getClock() : this.engine.context.getClock()
+        let clock = actor instanceof Actor ? actor.getClock() : this.provider.context.getClock()
         clock.increment()
         return new Event(clock.getClock(), clock.nodeId)
     }
@@ -41,7 +41,7 @@ class EventService {
      * @returns {Promise.<any>}
      */
     emit(event) {
-        return this.engine.events.emit(event)
+        return this.provider.events.emit(event)
     }
 
 }

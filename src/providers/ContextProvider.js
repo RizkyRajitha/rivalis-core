@@ -6,7 +6,7 @@ import Context from '../core/Context'
 import Adapter from '../interfaces/Adapter'
 import VectorClock from '../structs/VectorClock'
 
-class ContextEngine {
+class ContextProvider {
 
     /**
      * 
@@ -102,4 +102,4 @@ class ContextEngine {
 
 }
 
-export default ContextEngine
+export default ContextProvider

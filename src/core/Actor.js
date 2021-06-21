@@ -73,7 +73,7 @@ class Actor {
         this.clock = new VectorClock(id)
         this.context = context
         this.onEvent = new Signal()
-        Context.getEngine(this.context).events.subscribe(this.handleEvent, this)
+        Context.getProvider(this.context).events.subscribe(this.handleEvent, this)
         
     }
 
@@ -130,7 +130,7 @@ class Actor {
      * @returns {Promise.<any>}
      */
     dispose() {
-        Context.getEngine(this.context).events.unsubscribe(this.handleEvent, this)
+        Context.getProvider(this.context).events.unsubscribe(this.handleEvent, this)
         this.onEvent.removeAll()
         this.onEvent = null
     }
@@ -143,7 +143,7 @@ class Actor {
         this.clock.update(event.getVectorClock())
         let filter = Activity.getFilter(this.context.activity, event.key)
         if (filter) {
-            filter(this, event, this.engine.context)
+            filter(this, event, this.context)
         } else {
             this.send(event)
         }

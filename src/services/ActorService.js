@@ -1,6 +1,6 @@
 import Context from '../core/Context'
 import Actor from '../core/Actor'
-import ContextEngine from '../engines/ContextEngine'
+import ContextProvider from '../providers/ContextProvider'
 import State from '../models/State'
 import ActorObject from '../models/ActorObject'
 
@@ -16,9 +16,9 @@ class ActorService {
     /**
      * 
      * @private
-     * @type {ContextEngine}
+     * @type {ContextProvider}
      */
-    engine = null
+     provider = null
 
     /**
      * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
@@ -27,12 +27,12 @@ class ActorService {
      * 
      * // TODO: write description
      * 
-     * @param {ContextEngine} engine 
+     * @param {ContextProvider} provider 
      */
-    constructor(engine) {
-        this.engine = engine
+    constructor(provider) {
+        this.provider = provider
         this.actors = new Map()
-        this.engine.state.subscribe(this.handleState, this)
+        this.provider.state.subscribe(this.handleState, this)
     }
 
     /**
@@ -41,7 +41,7 @@ class ActorService {
      * @returns {Promise.<ActorObject|null>}
      */
     get(id) {
-        return this.engine.actors.get(id)
+        return this.provider.actors.get(id)
     }
 
     /**
@@ -49,7 +49,7 @@ class ActorService {
      * @returns {Promise.<Map.<string,ActorObject>>}
      */
     getAll() {
-        return this.engine.actors.getAll()
+        return this.provider.actors.getAll()
     }
 
     /**
@@ -59,13 +59,13 @@ class ActorService {
      * @returns {Promise.<Actor>}
      */
     join(id, data) {
-        return this.engine.actors.savenx(id, { id, data }).then(persisted => {
+        return this.provider.actors.savenx(id, { id, data }).then(persisted => {
             if (!persisted) {
                 throw new Error(`actor=(${id}) already exist in this context`)
             }
-            let actor = new Actor(id, data, this.engine.context)
+            let actor = new Actor(id, data, this.provider.context)
             this.actors.set(id, actor)
-            this.engine.state.emit({ key: Context.State.ACTOR_JOIN, data: { id } })
+            this.provider.state.emit({ key: Context.State.ACTOR_JOIN, data: { id } })
             return actor
         })
     }
@@ -81,7 +81,7 @@ class ActorService {
         }
         Actor.dispose(this.actors.get(actor.id))
         this.actors.delete(actor.id)
-        return this.engine.state.emit({ key: Context.State.ACTOR_LEAVE, data: { id: actor.id } })
+        return this.provider.state.emit({ key: Context.State.ACTOR_LEAVE, data: { id: actor.id } })
     }
 
     /**
@@ -95,7 +95,7 @@ class ActorService {
             if (actorObject === null) {
                 return false
             }
-            return this.engine.state.emit({ key: Context.State.ACTOR_KICK, data: { id, reason } }).then(() => {
+            return this.provider.state.emit({ key: Context.State.ACTOR_KICK, data: { id, reason } }).then(() => {
                 return true
             })
         })
@@ -117,7 +117,7 @@ class ActorService {
     }
 
     dispose() {
-        this.engine.state.unsubscribe(this.handleState, this)
+        this.provider.state.unsubscribe(this.handleState, this)
     }
 
 }

@@ -1,6 +1,6 @@
 import Activity from '../core/Activity'
 import Actor from '../core/Actor'
-import ContextEngine from '../engines/ContextEngine'
+import ContextProvider from '../providers/ContextProvider'
 
 class ActionService {
 
@@ -12,16 +12,16 @@ class ActionService {
      * // TODO: write description
      * 
      * @private
-     * @type {ContextEngine}
+     * @type {ContextProvider}
      */
-    engine = null
+    provider = null
 
     /**
      * 
-     * @param {ContextEngine} engine 
+     * @param {ContextProvider} provider 
      */
-    constructor(engine) {
-        this.engine = engine
+    constructor(provider) {
+        this.provider = provider
     }
 
     /**
@@ -32,12 +32,12 @@ class ActionService {
      * @returns {Promise.<any>}
      */
     execute(actor, key, data) {
-        let actionHandler = Activity.getHandler(this.engine.context.activity, key)
+        let actionHandler = Activity.getHandler(this.provider.context.activity, key)
         if (actionHandler === null) {
             return Promise.reject(new Error(`there is no action handler for key=(${key})`))
         }
         try {
-            let promise = actionHandler(actor, key, data, this.engine.context)
+            let promise = actionHandler(actor, key, data, this.provider.context)
             if (promise instanceof Promise) {
                 return promise.catch(error => {
                     error.message = `action execution failed, actor=(${actor.id}), key=(${key}), data=(${JSON.stringify(data)}) ${error.message}`
