@@ -8,7 +8,7 @@ import ActionService from '../services/ActionService'
 import EventService from '../services/EventService'
 import DataStorage from '../persistence/DataStorage'
 import Persistence from '../persistence/Persistence'
-import Stage from './Stage'
+import Stage from '../interfaces/Stage'
 
 /**
  * @callback StateListener

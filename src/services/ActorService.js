@@ -67,7 +67,7 @@ class ActorService {
      */
     join(id, data) {
         return Promise.resolve().then(() => {
-            return this.context.stage.onJoin(id, data)
+            return this.context.stage.onJoin(this.context, id, data)
         }).then(() => {
             return this.persistence.actors.savenx(id, { id, data })
         }).then(persisted => {
@@ -94,7 +94,7 @@ class ActorService {
         this.actors.delete(actor.id)
         
         return this.persistence.state.emit({ key: Context.State.ACTOR_LEAVE, data: { id: actor.id } }).then(() => {
-            return this.context.stage.onLeave(actor.id, actor.data)
+            return this.context.stage.onLeave(this.context, actor.id, actor.data)
         }).then(() => {
             return this.persistence.actors.delete(actor.id)
         })
