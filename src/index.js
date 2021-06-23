@@ -19,6 +19,7 @@ export const interfaces = {
 import MessageBroker from './structs/MessageBroker'
 import SharedStorage from './structs/SharedStorage'
 import VectorClock from './structs/VectorClock'
+import EventEmitter from 'eventemitter3'
 
 /**
  * @namespace structs
@@ -26,7 +27,8 @@ import VectorClock from './structs/VectorClock'
 export const structs = {
     MessageBroker,
     SharedStorage,
-    VectorClock
+    VectorClock,
+    EventEmitter
 }
 
 import Context from './core/Context'
