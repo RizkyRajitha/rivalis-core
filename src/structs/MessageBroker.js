@@ -1,4 +1,4 @@
-import { Signal } from 'signals'
+import EventEmitter from 'eventemitter3'
 import MessageBrokerAdapter from '../interfaces/MessageBrokerAdapter'
 
 /**
@@ -48,9 +48,9 @@ class MessageBroker {
     /**
      * 
      * @private
-     * @type {Signal.<T>}
+     * @type {EventEmitter.<T>}
      */
-    eventReceiver = new Signal()
+    emitter = null
 
     /**
      * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
@@ -67,6 +67,7 @@ class MessageBroker {
         this.namespace = namespace
         this.address = address
         this.adapter = adapter
+        this.emitter = new EventEmitter()
     }
 
     /**
@@ -87,7 +88,7 @@ class MessageBroker {
      * @param {any} context 
      */
     subscribe(listener, context) {
-        this.eventReceiver.add(listener, context)
+        this.emitter.on('message', listener, context)
     }
 
     /**
@@ -96,7 +97,7 @@ class MessageBroker {
      * @param {any} context 
      */
     unsubscribe(listener, context) {
-        this.eventReceiver.remove(listener, context)
+        this.emitter.off('message', listener, context)
     }
 
     /**
@@ -138,7 +139,7 @@ class MessageBroker {
      */
     messageHandler = message => {
         message = this.mapOutput(message)
-        this.eventReceiver.dispatch(message)
+        this.emitter.emit('message', message)
     }
 
 }
