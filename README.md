@@ -2,10 +2,10 @@
 
 [![logo](https://user-images.githubusercontent.com/10467454/113154097-f834d280-9237-11eb-95a9-bd62cdde4677.png)](https://rivalis.io)
 
-[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
-[![forthebadge](https://forthebadge.com/images/badges/fo-real.svg)](https://forthebadge.com)
-[![forthebadge](https://forthebadge.com/images/badges/uses-js.svg)](https://forthebadge.com)
-[![forthebadge](https://forthebadge.com/images/badges/open-source.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://rivalis.io)
+[![forthebadge](https://forthebadge.com/images/badges/fo-real.svg)](https://rivalis.io)
+[![forthebadge](https://forthebadge.com/images/badges/uses-js.svg)](https://rivalis.io)
+[![forthebadge](https://forthebadge.com/images/badges/open-source.svg)](https://rivalis.io)
 
 
 [![GitHub](https://img.shields.io/github/license/kalevski/rivalis-core?style=for-the-badge)](https://github.com/rivalis/rivalis-core/blob/main/LICENSE)

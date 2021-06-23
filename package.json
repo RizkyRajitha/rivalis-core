@@ -1,6 +1,6 @@
 {
   "name": "@rivalis/core",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Rivalis, scalable & scriptable multiplayer game logic framework",
   "main": "lib/index.js",
   "scripts": {
