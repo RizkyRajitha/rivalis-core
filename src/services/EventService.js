@@ -46,7 +46,7 @@ class EventService {
     /**
      * 
      * @param {Event} event 
-     * @returns {Promise.<any>}
+     * @returns {Promise.<void>}
      */
     emit(event) {
         return this.persistence.events.emit(event)

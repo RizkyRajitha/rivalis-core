@@ -3,6 +3,8 @@
  * @param {string} message
  */
 
+import Exception from '../helpers/Exception'
+
 /**
  * @interface MessageBrokerAdapter
  * 
@@ -20,7 +22,7 @@ class MessageBrokerAdapter {
      * @returns {Promise.<void>}
      */
     initialize() {
-        return Promise.reject(new Error('MessageBrokerAdapter#initialize is not implemented'))
+        return Promise.reject(new Exception('MessageBrokerAdapter#initialize is not implemented', Exception.Code.INTERNAL))
     }
 
     /**
@@ -31,7 +33,7 @@ class MessageBrokerAdapter {
      * @returns {Promise.<void>} 
      */
     subscribe(namespace, address, listener) {
-        return Promise.reject(new Error('MessageBrokerAdapter#subscribe is not implemented'))
+        return Promise.reject(new Exception('MessageBrokerAdapter#subscribe is not implemented', Exception.Code.INTERNAL))
     }
  
     /**
@@ -42,7 +44,7 @@ class MessageBrokerAdapter {
      * @returns {Promise.<void>}
      */
     unsubscribe(namespace, address, listener) {
-        return Promise.reject(new Error('MessageBrokerAdapter#unsubscribe is not implemented'))
+        return Promise.reject(new Exception('MessageBrokerAdapter#unsubscribe is not implemented', Exception.Code.INTERNAL))
     }
  
     /**
@@ -53,7 +55,7 @@ class MessageBrokerAdapter {
      * @returns {Promise.<void>} 
      */
     publish(namespace, address, message) {
-        return Promise.reject(new Error('MessageBrokerAdapter#publish is not implemented'))
+        return Promise.reject(new Exception('MessageBrokerAdapter#publish is not implemented', Exception.Code.INTERNAL))
     }
 
     /**
@@ -61,7 +63,7 @@ class MessageBrokerAdapter {
      * @returns {Promise.<void>}
      */
     dispose() {
-        return Promise.reject(new Error('MessageBrokerAdapter#dispose is not implemented'))
+        return Promise.reject(new Exception('MessageBrokerAdapter#dispose is not implemented', Exception.Code.INTERNAL))
     }
 
 }

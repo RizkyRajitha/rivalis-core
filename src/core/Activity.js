@@ -1,6 +1,8 @@
+import Exception from '../helpers/Exception'
 import Context from './Context'
 import Actor from './Actor'
 import Event from './Event'
+
 
 /**
  * 
@@ -74,10 +76,10 @@ class Activity {
     use(key, activity) {
         this.isKeyValid(key)
         if (!(activity instanceof Activity)) {
-            throw new Error('activity must be an instance of Activity class')
+            throw new Exception('activity must be an instance of Activity class', Exception.Code.INTERNAL)
         }
         if (this.activities.has(key)) {
-            throw new Error(`activity with name [${key}] is already registered`)
+            throw new Exception(`activity with name [${key}] is already registered`, Exception.Code.INTERNAL)
         }
         this.activities.set(key, activity)
     }
@@ -91,10 +93,10 @@ class Activity {
     handle(key, actionListener) {
         this.isKeyValid(key)
         if (typeof actionListener !== 'function') {
-            throw new Error('actionListener must be a function')
+            throw new Exception('actionListener must be a function', Exception.Code.INTERNAL)
         }
         if (this.handlers.has(key)) {
-            throw new Error(`listener with name [${key}] is already registered`)
+            throw new Exception(`listener with name [${key}] is already registered`, Exception.Code.INTERNAL)
         }
         this.handlers.set(key, actionListener)
     }
@@ -108,11 +110,11 @@ class Activity {
     filter(key, filterListener) {
         this.isKeyValid(key)
         if (typeof filterListener !== 'function') {
-            throw new Error('filterListener must be a function')
+            throw new Exception('filterListener must be a function', Exception.Code.INTERNAL)
         }
 
         if (this.filters.has(key)) {
-            throw new Error(`filter on key [${key}] is already registered`)
+            throw new Exception(`filter on key [${key}] is already registered`, Exception.Code.INTERNAL)
         }
         this.filters.set(key, filterListener)
     }
@@ -123,7 +125,7 @@ class Activity {
      */
     isKeyValid(key) {
         if (!this.nameRegExp.test(key)) {
-            throw new Error(`invalid activity key [${key}], key can contain only letters & numbers`)
+            throw new Exception(`invalid activity key [${key}], key can contain only letters & numbers`, Exception.Code.INTERNAL)
         }
     }
 }

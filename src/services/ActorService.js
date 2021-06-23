@@ -1,6 +1,7 @@
 import Context from '../core/Context'
 import Actor from '../core/Actor'
 import Persistence from '../persistence/Persistence'
+import Exception from '../helpers/Exception'
 
 class ActorService {
 
@@ -72,7 +73,7 @@ class ActorService {
             return this.persistence.actors.savenx(id, { id, data })
         }).then(persisted => {
             if (!persisted) {
-                throw new Error(`actor=(${id}) already exist in this context`)
+                throw new Exception(`actor=(${id}) already exist in this context`, Exception.Code.ACTOR_ALREADY_EXIST)
             }
             let actor = new Actor(id, data, this.context)
             this.actors.set(id, actor)
@@ -88,7 +89,7 @@ class ActorService {
      */
     leave(actor) {
         if (!this.actors.has(actor.id)) {
-            return Promise.reject(new Error(`actor id=(${actor.id}) doesn't exist in this context instance`))
+            return Promise.reject(new Exception(`actor id=(${actor.id}) doesn't exist in this context instance`, Exception.Code.ACTOR_NOT_EXIST))
         }
         Actor.dispose(this.actors.get(actor.id))
         this.actors.delete(actor.id)

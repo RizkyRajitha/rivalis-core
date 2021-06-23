@@ -78,6 +78,16 @@ class Persistence {
      * 
      * @returns {Promise.<void>}
      */
+    clear() {
+        return this.actors.clear().then(() => {
+            return this.data.clear()
+        })
+    }
+
+    /**
+     * 
+     * @returns {Promise.<void>}
+     */
     dispose() {
         return this.events.dispose().then(() => {
             return this.state.dispose()

@@ -1,6 +1,7 @@
 import Activity from '../core/Activity'
 import Actor from '../core/Actor'
 import Context from '../core/Context'
+import Exception from '../helpers/Exception'
 
 class ActionService {
 
@@ -33,20 +34,18 @@ class ActionService {
     execute(actor, key, data) {
         let actionHandler = Activity.getHandler(this.context.activity, key)
         if (actionHandler === null) {
-            return Promise.reject(new Error(`there is no action handler for key=(${key})`))
+            return Promise.reject(new Exception(`there is no action handler for key=(${key})`), Exception.Code.ACTION_NOT_EXIST)
         }
         try {
             let promise = actionHandler(actor, key, data, this.context)
             if (promise instanceof Promise) {
                 return promise.catch(error => {
-                    error.message = `action execution failed, actor=(${actor.id}), key=(${key}), data=(${JSON.stringify(data)}) ${error.message}`
-                    throw error
+                    throw new Exception(`action execution failed, actor=(${actor.id}), key=(${key}), data=(${JSON.stringify(data)}) ${error.message}`, Exception.Code.ACTION_EXECUTION_FAILED)
                 })
             }
             return Promise.resolve()
         } catch (error) {
-            error.message = `action execution failed, actor=(${actor.id}), key=(${key}), data=(${JSON.stringify(data)}) ${error.message}`
-            return Promise.reject(error)
+            return Promise.reject(new Exception(`action execution failed, actor=(${actor.id}), key=(${key}), data=(${JSON.stringify(data)}) ${error.message}`, Exception.Code.ACTION_EXECUTION_FAILED))
         }
     }
 

@@ -1,3 +1,4 @@
+import Exception from '../helpers/Exception'
 import MessageBrokerAdapter from './MessageBrokerAdapter'
 import SharedStorageAdapter from './SharedStorageAdapter'
 
@@ -18,7 +19,7 @@ class Adapter {
      * @returns {Promise.<void>}
      */
     initialize() {
-        return Promise.reject(new Error('Adapter#initialize is not implemented'))
+        return Promise.reject(new Exception('Adapter#initialize is not implemented', Exception.Code.INTERNAL))
     }
 
     /**
@@ -26,7 +27,7 @@ class Adapter {
      * @returns {SharedStorageAdapter}
      */
     getSharedStorage() {
-        throw new Error('Adapter#getSharedStorage is not implemented')
+        throw new Exception('Adapter#getSharedStorage is not implemented', Exception.Code.INTERNAL)
     }
 
     /**
@@ -34,7 +35,7 @@ class Adapter {
      * @returns {MessageBrokerAdapter}
      */
     getMessageBroker() {
-        throw new Error('Adapter#getMessageBroker is not implemented')
+        throw new Exception('Adapter#getMessageBroker is not implemented', Exception.Code.INTERNAL)
     }
 
     /**
@@ -42,7 +43,7 @@ class Adapter {
      * @returns {Promise.<void>}
      */
     dispose() {
-        throw new Error('Adapter#dispose not is implemented')
+        throw new Exception('Adapter#dispose not is implemented', Exception.Code.INTERNAL)
     }
 
 }

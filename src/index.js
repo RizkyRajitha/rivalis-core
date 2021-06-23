@@ -1,14 +1,19 @@
 import Adapter from './interfaces/Adapter'
 import MessageBrokerAdapter from './interfaces/MessageBrokerAdapter'
 import SharedStorageAdapter from './interfaces/SharedStorageAdapter'
-
+import Stage from './interfaces/Stage'
+import Protocol from './interfaces/Protocol'
+import AuthResolver from './interfaces/AuthResolver'
 /**
  * @namespace interfaces
  */
 export const interfaces = {
     Adapter,
     MessageBrokerAdapter,
-    SharedStorageAdapter
+    SharedStorageAdapter,
+    Stage,
+    Protocol,
+    AuthResolver
 }
 
 import MessageBroker from './structs/MessageBroker'
@@ -26,10 +31,14 @@ export const structs = {
 
 import Context from './core/Context'
 import Activity from './core/Activity'
+import Actor from './core/Actor'
 import Event from './core/Event'
+import Node from './core/Node'
 
 export {
     Context,
     Activity,
-    Event
+    Actor,
+    Event,
+    Node
 }
