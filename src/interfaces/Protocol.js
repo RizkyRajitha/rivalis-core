@@ -1,6 +1,6 @@
 import Actor from '../core/Actor'
 import Node from '../core/Node'
-import Exception from '../helpers/Exception'
+import Exception from '../core/Exception'
 import AuthResolver from './AuthResolver'
 
 class Protocol {

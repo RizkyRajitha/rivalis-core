@@ -1,4 +1,4 @@
-import Exception from '../helpers/Exception'
+import Exception from './Exception'
 import Context from './Context'
 import Actor from './Actor'
 import Event from './Event'

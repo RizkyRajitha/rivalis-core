@@ -1,7 +1,7 @@
 import Activity from '../core/Activity'
 import Actor from '../core/Actor'
 import Context from '../core/Context'
-import Exception from '../helpers/Exception'
+import Exception from '../core/Exception'
 
 class ActionService {
 

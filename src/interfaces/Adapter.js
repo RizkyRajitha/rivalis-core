@@ -1,4 +1,4 @@
-import Exception from '../helpers/Exception'
+import Exception from '../core/Exception'
 import MessageBrokerAdapter from './MessageBrokerAdapter'
 import SharedStorageAdapter from './SharedStorageAdapter'
 

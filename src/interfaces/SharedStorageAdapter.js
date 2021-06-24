@@ -1,4 +1,4 @@
-import Exception from '../helpers/Exception'
+import Exception from '../core/Exception'
 
 /**
  * @interface SharedStorageAdapter

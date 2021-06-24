@@ -1,4 +1,4 @@
-import Exception from '../helpers/Exception'
+import Exception from './Exception'
 import Adapter from '../interfaces/Adapter'
 import AuthResolver from '../interfaces/AuthResolver'
 import Protocol from '../interfaces/Protocol'

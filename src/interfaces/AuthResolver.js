@@ -5,7 +5,7 @@
  * @property {Object.<string,any>} data
  */
 
-import Exception from '../helpers/Exception'
+import Exception from '../core/Exception'
 
 class AuthResolver {
 
