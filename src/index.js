@@ -36,11 +36,13 @@ import Activity from './core/Activity'
 import Actor from './core/Actor'
 import Event from './core/Event'
 import Node from './core/Node'
+import Exception from './core/Exception'
 
 export {
     Context,
     Activity,
     Actor,
     Event,
-    Node
+    Node,
+    Exception
 }
