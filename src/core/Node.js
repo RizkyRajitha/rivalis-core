@@ -94,7 +94,7 @@ class Node {
         if (!this.stages.has(type)) {
             return Promise.reject(new Exception(`stage type=(${type}) is not defined`, Exception.Code.INTERNAL))
         }
-        this.persistence.contexts.savenx(contextId, { id: contextId, type }).then(persisted => {
+        return this.persistence.contexts.savenx(contextId, { id: contextId, type }).then(persisted => {
             if (!persisted) {
                 throw new Exception(`context=(${contextId}) already exist!`, Exception.Code.INTERNAL)
             }
