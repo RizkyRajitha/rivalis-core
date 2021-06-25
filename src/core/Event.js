@@ -67,23 +67,4 @@ class Event {
     }
 }
 
-/**
- * 
- * @param {Event} event
- * @returns {string} 
- */
-Event.stringify = event => {
-    return JSON.stringify(event)
-}
-
-/**
- * 
- * @param {string} event
- * @returns {Event} 
- */
-Event.parse = event => {
-    const { key, clock, sender, data } = JSON.parse(event)
-    return new Event(clock, sender).set(key, data)
-}
-
 export default Event

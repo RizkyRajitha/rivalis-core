@@ -1,6 +1,6 @@
 {
   "name": "@rivalis/core",
-  "version": "0.5.5",
+  "version": "0.6.0",
   "description": "Rivalis, scalable & scriptable multiplayer game logic framework",
   "main": "lib/index.js",
   "scripts": {
@@ -46,6 +46,7 @@
     "nodemon": "^2.0.7"
   },
   "dependencies": {
-    "eventemitter3": "^4.0.7"
+    "eventemitter3": "^4.0.7",
+    "lz-string": "^1.4.4"
   }
 }

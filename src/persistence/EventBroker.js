@@ -1,6 +1,7 @@
 import MessageBrokerAdapter from '../interfaces/MessageBrokerAdapter'
 import MessageBroker from '../structs/MessageBroker'
 import Event from '../core/Event'
+import Codec from '../structs/Codec'
 
 /**
  * 
@@ -27,14 +28,14 @@ class EventBroker extends MessageBroker {
      * @param {Event} message 
      * @returns {string}
      */
-    mapInput = message => Event.stringify(message)
+    mapInput = message => Codec.getInstance().events.encode(message)
 
     /**
      * @private
      * @param {string} message 
      * @returns {Event}
      */
-    mapOutput = message => Event.parse(message)
+    mapOutput = message => Codec.getInstance().events.decode(message)
 }
 
 export default EventBroker

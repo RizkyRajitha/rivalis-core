@@ -20,7 +20,8 @@ import MessageBroker from './structs/MessageBroker'
 import SharedStorage from './structs/SharedStorage'
 import VectorClock from './structs/VectorClock'
 import EventEmitter from './structs/EventEmitter'
-
+import CodecExecutor from './structs/CodecExecutor'
+import Codec from './structs/Codec'
 /**
  * @namespace structs
  */
@@ -28,7 +29,9 @@ export const structs = {
     MessageBroker,
     SharedStorage,
     VectorClock,
-    EventEmitter
+    EventEmitter,
+    CodecExecutor,
+    Codec
 }
 
 import Context from './core/Context'
