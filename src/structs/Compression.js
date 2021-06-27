@@ -5,19 +5,19 @@ class Compression {
     /**
      * 
      * @param {string} data 
-     * @returns {string}
+     * @returns {Uint8Array}
      */
     compress(data) {
-        return LZString.compress(data)
+        return LZString.compressToUint8Array(data)
     }
 
     /**
      * 
-     * @param {string} data 
+     * @param {Uint8Array} data 
      * @returns {string}
      */
     decompress(data) {
-        return LZString.decompress(data)
+        return LZString.decompressFromUint8Array(data)
     }
 
 }

@@ -45,7 +45,7 @@ import Compression from './Compression'
 
     /**
      * @param {T} object
-     * @returns {string} 
+     * @returns {Uint8Array} 
      */
     encode(object) {
         let list = []
@@ -58,7 +58,7 @@ import Compression from './Compression'
 
     /**
      * 
-     * @param {string} data 
+     * @param {Uint8Array} data 
      * @returns {T}
      */
     decode(data) {
