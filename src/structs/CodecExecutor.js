@@ -1,4 +1,5 @@
 import LZString from 'lz-string'
+import Compression from './Compression'
 
 /**
  * @template T
@@ -14,6 +15,12 @@ import LZString from 'lz-string'
 
     /**
      * @private
+     * @type {Compression}
+     */
+    compression = null
+
+    /**
+     * @private
      * @type {Array.<string>}
      */
     propList = null
@@ -25,21 +32,15 @@ import LZString from 'lz-string'
     castFn =  null
 
     /**
-     * @private
-     * @type {string}
-     */
-    signature = null
-
-    /**
      * 
+     * @param {Compression} compression
      * @param {Array.<string>} propList 
-     * @param {CastFn} castFn 
-     * @param {string} signature
+     * @param {CastFn} castFn
      */
-    constructor(propList, signature, castFn) {
+    constructor(compression, propList, castFn) {
+        this.compression = compression
         this.propList = propList
         this.castFn = castFn
-        this.signature = signature
     }
 
     /**
@@ -51,8 +52,8 @@ import LZString from 'lz-string'
         for (let prop of this.propList) {
             list.push(object[prop])
         }
-        let text = JSON.stringify(list)
-        return LZString.compressToBase64(text)
+        let data = JSON.stringify(list)
+        return this.compression.compress(data)
     }
 
     /**
@@ -61,7 +62,7 @@ import LZString from 'lz-string'
      * @returns {T}
      */
     decode(data) {
-        let json = LZString.decompressFromBase64(data)
+        let json = this.compression.decompress(data)
         let list = JSON.parse(json)
         return this.castFn(list, this.propList)
     }
