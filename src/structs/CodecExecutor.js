@@ -45,24 +45,26 @@ import Compression from './Compression'
 
     /**
      * @param {T} object
-     * @returns {Uint8Array} 
+     * @param {boolean} [compress=false]
+     * @returns {Uint8Array|string} 
      */
-    encode(object) {
+    encode(object, compress = false) {
         let list = []
         for (let prop of this.propList) {
             list.push(object[prop])
         }
         let data = JSON.stringify(list)
-        return this.compression.compress(data)
+        return compress ? this.compression.compress(data) : data
     }
 
     /**
      * 
-     * @param {Uint8Array} data 
+     * @param {Uint8Array|string} data 
+     * @param {boolean} [compressed=false]
      * @returns {T}
      */
-    decode(data) {
-        let json = this.compression.decompress(data)
+    decode(data, compressed = false) {
+        let json = compressed ? this.compression.decompress(data) : data
         let list = JSON.parse(json)
         return this.castFn(list, this.propList)
     }
