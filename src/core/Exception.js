@@ -36,7 +36,7 @@ class Exception extends Error {
     ACTOR_ALREADY_EXIST: getCode(4),
     ACTOR_NOT_EXIST: getCode(5),
 
-    ACTOR_FAILED_AUTH: getCode(6)
+    NODE_AUTH_FAILED: getCode(6)
 }
 
 /**
