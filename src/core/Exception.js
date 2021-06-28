@@ -34,7 +34,23 @@ class Exception extends Error {
     ACTION_EXECUTION_FAILED: getCode(3),
 
     ACTOR_ALREADY_EXIST: getCode(4),
-    ACTOR_NOT_EXIST: getCode(5)
-    
+    ACTOR_NOT_EXIST: getCode(5),
+
+    ACTOR_FAILED_AUTH: getCode(6)
 }
+
+/**
+ * 
+ * @param {string} code 
+ * @returns {string}
+ */
+Exception.getException = code => {
+    for (let key in Exception.Code) {
+        if (code === Exception.Code[key]) {
+            return key
+        }
+    }
+    return null
+}
+
 export default Exception
