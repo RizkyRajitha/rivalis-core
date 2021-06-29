@@ -125,7 +125,7 @@ class Actor {
 
     /**
      * 
-     * @returns {}
+     * @returns {Promise.<void>}
      */
     leave() {
         return this.context.actors.leave(this)
