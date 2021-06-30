@@ -4,6 +4,7 @@ import SharedStorageAdapter from './interfaces/SharedStorageAdapter'
 import Stage from './interfaces/Stage'
 import Protocol from './interfaces/Protocol'
 import AuthResolver from './interfaces/AuthResolver'
+import LogReporter from './interfaces/LogReporter'
 /**
  * @namespace interfaces
  */
@@ -13,7 +14,8 @@ export const interfaces = {
     SharedStorageAdapter,
     Stage,
     Protocol,
-    AuthResolver
+    AuthResolver,
+    LogReporter
 }
 
 import MessageBroker from './structs/MessageBroker'
@@ -22,6 +24,9 @@ import VectorClock from './structs/VectorClock'
 import EventEmitter from './structs/EventEmitter'
 import CodecExecutor from './structs/CodecExecutor'
 import Codec from './structs/Codec'
+import Logger from './structs/Logger'
+import LoggingFactory from './structs/LoggingFactory'
+
 /**
  * @namespace structs
  */
@@ -31,7 +36,9 @@ export const structs = {
     VectorClock,
     EventEmitter,
     CodecExecutor,
-    Codec
+    Codec,
+    Logger,
+    LoggingFactory
 }
 
 import Context from './core/Context'
