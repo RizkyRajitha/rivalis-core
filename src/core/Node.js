@@ -149,6 +149,9 @@ class Node {
             if (!this.stages.has(type)) {
                 throw new Exception(`stage=(${type}) is not available on this node`, Exception.Code.INTERNAL)
             }
+            if (this.contexts.has(contextId)) {
+                return null
+            }
             let logger = this.logging.getLogger(`${type}:${id}`)
             let contextInstance = new Context(id, this.adapter, logger, this.stages.get(type))
             this.contexts.set(contextId, contextInstance)
