@@ -81,7 +81,7 @@ class EventEmitter extends Emitter {
     /**
      * Calls each of the listeners registered for a given event.
      * @param {string} event 
-     * @param  {...any} messages 
+     * @param  {...T} messages 
      * @returns {boolean}
      */
     emit(event, ...messages) {
@@ -91,7 +91,7 @@ class EventEmitter extends Emitter {
     /**
      * Return the listeners registered for a given event.
      * @param {string} event
-     * @returns {Array.<any>}
+     * @returns {Array.<EventListener>}
      */
     listeners(event) {
         return super.listeners(event)
@@ -107,10 +107,11 @@ class EventEmitter extends Emitter {
 
     /**
      * Return the number of listeners listening to a given event.
+     * @param {string} event
      * @returns {number}
      */
-    listenerCount() {
-        return super.listenerCount()
+    listenerCount(event) {
+        return super.listenerCount(event)
     }
 }
 
