@@ -9,6 +9,7 @@ import EventService from '../services/EventService'
 import DataStorage from '../persistence/DataStorage'
 import Persistence from '../persistence/Persistence'
 import Stage from '../interfaces/Stage'
+import Logger from '../structs/Logger'
 
 /**
  * @callback StateListener
@@ -76,6 +77,12 @@ class Context {
     stage = null
 
     /**
+     * @private
+     * @type {Logger}
+     */
+    logger = null
+
+    /**
      * 
      * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
      * @author Daniel Kalevski
@@ -87,11 +94,13 @@ class Context {
      * 
      * @param {string} id unique context identifier
      * @param {Adapter} adapter adapter used for storing and sharing data
+     * @param {Logger} logger logger instace for logging state and actions of the context
      * @param {Stage} [stage=null] stage used for handling events
      */
-    constructor(id, adapter, stage = null) {
+    constructor(id, adapter, logger, stage = null) {
         this.id = id
         this.stage = stage ? stage : new Stage()
+        this.logger = logger
         this.activity = new Activity()
         this.clock = new VectorClock(id)
         this.persistence = new Persistence(id, adapter)
@@ -114,6 +123,7 @@ class Context {
             return this.stage.onInit(this)
         }).then(() => {
             this.emitter.emit(Context.State.INIT, this)
+            this.logger.info('context succesfully initalized')
         })
     }
 
@@ -139,6 +149,7 @@ class Context {
             this.emitter.removeAllListeners()
             this.emitter = null
             this.persistence = null
+            this.logger.info('context succesfully disposed')
         })
     }
 
@@ -180,6 +191,7 @@ class Context {
      * @param {Event} event 
      */
     handleEvent(event) {
+        this.logger.trace('event: ', event)
         this.clock.update(event.getVectorClock())
         this.stage.onEmit(this, event)
         this.emitter.emit(Context.State.EMIT, event)
@@ -190,6 +202,7 @@ class Context {
      * @param {Object.<string,any>} state 
      */
     handleState(state) {
+        this.logger.trace('state: ', state)
         const { key, data } = state
         this.emitter.emit(key, data)
     }
@@ -213,8 +226,17 @@ Context.State = {
  * @param {Context} context 
  * @returns {Persistence}
  */
-Context.getPersistence = (context) => {
+Context.getPersistence = context => {
     return context.persistence
+}
+
+/**
+ * 
+ * @param {Context} context 
+ * @returns {Logger}
+ */
+Context.getLogger = context => {
+    return context.logger
 }
 
 export default Context

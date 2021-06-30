@@ -6,6 +6,8 @@ import Stage from '../interfaces/Stage'
 import NodePersistence from '../persistence/NodePersistence'
 import Persistence from '../persistence/Persistence'
 import Context from './Context'
+import LoggingFactory from '../structs/LoggingFactory'
+import BasicLogReporter from '../structs/BasicLogReporter'
 
 class Node {
 
@@ -46,16 +48,29 @@ class Node {
     stages = null
     
     /**
+     * @private
+     * @type {LoggingFactory}
+     */
+    logging = null
+
+    /**
      * 
      * @param {Adapter} adapter 
      * @param {AuthResolver} authResolver
+     * @param {LoggingFactory} [loggingFactory]
      */
-    constructor(adapter, authResolver) {
+    constructor(adapter, authResolver, loggingFactory = null) {
         this.adapter = adapter
         this.authResolver = authResolver || new AuthResolver()
         this.protocols = []
         this.contexts = new Map()
         this.stages = new Map()
+        if (loggingFactory === null) {
+            this.logging = new LoggingFactory()
+            this.logging.setReporter(new BasicLogReporter())
+        } else {
+            this.logging = loggingFactory
+        }
     }
 
     run() {
@@ -134,7 +149,8 @@ class Node {
             if (!this.stages.has(type)) {
                 throw new Exception(`stage=(${type}) is not available on this node`, Exception.Code.INTERNAL)
             }
-            let contextInstance = new Context(id, this.adapter, this.stages.get(type))
+            let logger = this.logging.getLogger(`${type}:${id}`)
+            let contextInstance = new Context(id, this.adapter, logger, this.stages.get(type))
             this.contexts.set(contextId, contextInstance)
             return contextInstance.initialize()
         }).then(() => {
