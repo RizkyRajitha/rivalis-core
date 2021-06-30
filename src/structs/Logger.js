@@ -108,7 +108,7 @@ class Logger {
      * @param  {...any} args 
      */
     log(level, ...args) {
-        let logs = [this.namespace]
+        let logs = []
         let stack = ''
 
         for (let i = 0; i < args.length; i++) {
@@ -124,7 +124,7 @@ class Logger {
             }
             
         }
-        this.reporter.log(level, `[${this.namespace}] ${logs.join(' ')} ${stack}`)
+        this.reporter.log(level, `[${this.namespace}]: ${logs.join(' ')} ${stack}`)
     }
 }
 

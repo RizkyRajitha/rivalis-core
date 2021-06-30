@@ -191,7 +191,7 @@ class Context {
      * @param {Event} event 
      */
     handleEvent(event) {
-        this.logger.trace('event: ', event)
+        this.logger.trace('event emitted', event)
         this.clock.update(event.getVectorClock())
         this.stage.onEmit(this, event)
         this.emitter.emit(Context.State.EMIT, event)
@@ -202,8 +202,8 @@ class Context {
      * @param {Object.<string,any>} state 
      */
     handleState(state) {
-        this.logger.trace('state: ', state)
         const { key, data } = state
+        this.logger.trace(key, data)
         this.emitter.emit(key, data)
     }
 }
