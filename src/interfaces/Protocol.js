@@ -31,7 +31,7 @@ class Protocol {
      * @returns {Logger}
      */
     getLogger() {
-        this.node.logging.getLogger('protocol')
+        return this.node.logging.getLogger('protocol')
     }
 
     /**
