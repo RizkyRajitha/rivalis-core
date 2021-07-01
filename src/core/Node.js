@@ -8,6 +8,7 @@ import Persistence from '../persistence/Persistence'
 import Context from './Context'
 import LoggingFactory from '../structs/LoggingFactory'
 import BasicLogReporter from '../structs/BasicLogReporter'
+import Logger from '../structs/Logger'
 
 class Node {
 
@@ -54,6 +55,12 @@ class Node {
     logging = null
 
     /**
+     * @private
+     * @type {Logger}
+     */
+    logger = null
+
+    /**
      * 
      * @param {Adapter} adapter 
      * @param {AuthResolver} authResolver
@@ -71,6 +78,7 @@ class Node {
         } else {
             this.logging = loggingFactory
         }
+        this.logger = this.logging.getLogger('node')
     }
 
     run() {
@@ -79,6 +87,7 @@ class Node {
             return this.persistence.initialize()
         }).then(() => {
             this.persistence.events.subscribe(this.handleEvent, this)
+            this.logger.info('ready to handle contexts')
         })
     }
 
@@ -95,6 +104,7 @@ class Node {
         return Promise.all(promises).then(() => {
             return this.persistence.dispose()
         }).then(() => {
+            this.logger.info('shutdown')
             return this.adapter.dispose()
         })
     }
@@ -113,6 +123,7 @@ class Node {
             if (!persisted) {
                 throw new Exception(`context=(${contextId}) already exist!`, Exception.Code.INTERNAL)
             }
+            this.logger.trace(`context created id=(${contextId}) type=(${type})`)
         })
     }
 
@@ -131,6 +142,7 @@ class Node {
             return this.persistence.contexts.delete(contextId)
         }).then(() => {
             let persistence = new Persistence(contextId, this.adapter)
+            this.logger.trace(`context destroyed id=(${contextId}) `)
             return persistence.clear()
         })
     }
@@ -155,6 +167,7 @@ class Node {
             let logger = this.logging.getLogger(`${type}:${id}`)
             let contextInstance = new Context(id, this.adapter, logger, this.stages.get(type))
             this.contexts.set(contextId, contextInstance)
+            this.logger.trace(`context obtained id=(${contextId})`)
             return contextInstance.initialize()
         }).then(() => {
             return this.contexts.get(contextId)
@@ -203,6 +216,7 @@ class Node {
      * @param {Object.<string,any>} event 
      */
     handleEvent({ key, data }) {
+        this.logger.trace(key, data)
         if (key === 'destroy') {
             let context = this.contexts.get(data)
             if (context) {

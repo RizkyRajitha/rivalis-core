@@ -1,6 +1,5 @@
 import EventEmitter from 'eventemitter3'
 import Event from './Event'
-import Activity from './Activity'
 import Adapter from '../interfaces/Adapter'
 import VectorClock from '../structs/VectorClock'
 import ActorService from '../services/ActorService'
@@ -10,6 +9,7 @@ import DataStorage from '../persistence/DataStorage'
 import Persistence from '../persistence/Persistence'
 import Stage from '../interfaces/Stage'
 import Logger from '../structs/Logger'
+import Activity from './Activity'
 
 /**
  * @callback StateListener
@@ -123,7 +123,7 @@ class Context {
             return this.stage.onInit(this)
         }).then(() => {
             this.emitter.emit(Context.State.INIT, this)
-            this.logger.info('context succesfully initalized')
+            this.logger.info('context succesfully initialized')
         })
     }
 
@@ -191,8 +191,8 @@ class Context {
      * @param {Event} event 
      */
     handleEvent(event) {
-        this.logger.trace('event emitted', event)
         this.clock.update(event.getVectorClock())
+        this.logger.trace('event emitted', event)
         this.stage.onEmit(this, event)
         this.emitter.emit(Context.State.EMIT, event)
     }

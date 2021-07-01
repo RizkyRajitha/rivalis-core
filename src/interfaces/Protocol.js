@@ -1,7 +1,7 @@
 import Actor from '../core/Actor'
 import Node from '../core/Node'
 import Exception from '../core/Exception'
-import AuthResolver from './AuthResolver'
+import Logger from '../structs/Logger'
 
 class Protocol {
 
@@ -24,6 +24,14 @@ class Protocol {
         }).then(context => {
             return context.actors.join(auth.actorId, auth.data)
         })
+    }
+
+    /**
+     * @protected
+     * @returns {Logger}
+     */
+    getLogger() {
+        this.node.logging.getLogger('protocol')
     }
 
     /**
