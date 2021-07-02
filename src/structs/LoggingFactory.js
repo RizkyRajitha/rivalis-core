@@ -1,4 +1,5 @@
 import LogReporter from '../interfaces/LogReporter'
+import BasicLogReporter from './BasicLogReporter'
 import Logger from './Logger'
 
 class LoggingFactory {
@@ -23,6 +24,7 @@ class LoggingFactory {
     constructor() {
         this.level = Logger.LEVEL.INFO
         this.loggerMap = new Map()
+        this.reporter = new BasicLogReporter()
     }
 
     /**

@@ -13,6 +13,11 @@ import Logger from '../structs/Logger'
 class Node {
 
     /**
+     * @type {LoggingFactory}
+     */
+    logging = null
+
+    /**
      * @private
      * @type {NodePersistence}
      */
@@ -47,12 +52,6 @@ class Node {
      * @type {Map.<string,Stage>}
      */
     stages = null
-    
-    /**
-     * @private
-     * @type {LoggingFactory}
-     */
-    logging = null
 
     /**
      * @private
@@ -64,20 +63,14 @@ class Node {
      * 
      * @param {Adapter} adapter 
      * @param {AuthResolver} authResolver
-     * @param {LoggingFactory} [loggingFactory]
      */
-    constructor(adapter, authResolver, loggingFactory = null) {
+    constructor(adapter, authResolver) {
         this.adapter = adapter
         this.authResolver = authResolver || new AuthResolver()
         this.protocols = []
         this.contexts = new Map()
         this.stages = new Map()
-        if (loggingFactory === null) {
-            this.logging = new LoggingFactory()
-            this.logging.setReporter(new BasicLogReporter())
-        } else {
-            this.logging = loggingFactory
-        }
+        this.logging = new LoggingFactory()
         this.logger = this.logging.getLogger('node')
     }
 
