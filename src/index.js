@@ -26,6 +26,7 @@ import CodecExecutor from './structs/CodecExecutor'
 import Codec from './structs/Codec'
 import Logger from './structs/Logger'
 import LoggingFactory from './structs/LoggingFactory'
+import BasicLogReporter from './structs/BasicLogReporter'
 
 /**
  * @namespace structs
@@ -38,7 +39,8 @@ export const structs = {
     CodecExecutor,
     Codec,
     Logger,
-    LoggingFactory
+    LoggingFactory,
+    BasicLogReporter
 }
 
 import Context from './core/Context'
