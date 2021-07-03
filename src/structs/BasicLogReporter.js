@@ -15,7 +15,14 @@ class BasicLogReporter extends LogReporter {
     }
 
     log(level, message) {
-        console.log(`[${this.levels[level]}]${message}`)
+        let print = `[${this.levels[level]}]${message}`
+        if (level === Logger.LEVEL.ERROR) {
+            console.error(print)
+        } else if (level === Logger.LEVEL.WARNING) {
+            console.warn(print)
+        } else {
+            console.log(print)
+        }
     }
 
 }
