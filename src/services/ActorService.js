@@ -1,7 +1,8 @@
 import Context from '../core/Context'
 import Actor from '../core/Actor'
-import Persistence from '../persistence/Persistence'
+import Sync from '../persistence/Sync'
 import Exception from '../core/Exception'
+import Stage from '../core/Stage'
 
 class ActorService {
 
@@ -15,9 +16,9 @@ class ActorService {
     /**
      * 
      * @private
-     * @type {Persistence}
+     * @type {Sync}
      */
-    persistence = null
+    sync = null
 
     /**
      * 
@@ -27,20 +28,28 @@ class ActorService {
     context = null
 
     /**
+     * @private
+     * @type {Stage}
+     */
+    stage = null
+
+    /**
      * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
      * @author Daniel Kalevski
      * @since 0.5.0
      * 
      * // TODO: write description
      * 
-     * @param {Persistence} persistence
      * @param {Context} context 
+     * @param {Sync} sync
+     * @param {Stage} stage
      */
-    constructor(persistence, context) {
-        this.persistence = persistence
+    constructor(context, sync, stage) {
         this.context = context
+        this.sync = sync
+        this.stage = stage
         this.actors = new Map()
-        this.persistence.state.subscribe(this.handleState, this)
+        this.sync.state.subscribe(this.handleState, this)
     }
 
     /**
@@ -49,7 +58,7 @@ class ActorService {
      * @returns {Promise.<Object.<string,any>|null>}
      */
     get(id) {
-        return this.persistence.actors.get(id)
+        return this.sync.actors.get(id)
     }
 
     /**
@@ -57,7 +66,7 @@ class ActorService {
      * @returns {Promise.<Map.<string,Object.<string,any>>>}
      */
     getAll() {
-        return this.persistence.actors.getAll()
+        return this.sync.actors.getAll()
     }
 
     /**
@@ -68,16 +77,16 @@ class ActorService {
      */
     join(id, data) {
         return Promise.resolve().then(() => {
-            return this.context.stage.onJoin(this.context, id, data)
+            return this.stage.onJoin(this.context, id, data)
         }).then(() => {
-            return this.persistence.actors.savenx(id, { id, data })
+            return this.sync.actors.savenx(id, { id, data })
         }).then(persisted => {
             if (!persisted) {
                 throw new Exception(`actor=(${id}) already exist in this context`, Exception.Code.ACTOR_ALREADY_EXIST)
             }
             let actor = new Actor(id, data, this.context)
             this.actors.set(id, actor)
-            this.persistence.state.emit({ key: Context.State.ACTOR_JOIN, data: { id } })
+            this.sync.state.emit({ key: Context.State.ACTOR_JOIN, data: { id } })
             return actor
         })
     }
@@ -94,10 +103,10 @@ class ActorService {
         Actor.dispose(this.actors.get(actor.id))
         this.actors.delete(actor.id)
         
-        return this.persistence.state.emit({ key: Context.State.ACTOR_LEAVE, data: { id: actor.id } }).then(() => {
-            return this.context.stage.onLeave(this.context, actor.id, actor.data)
+        return this.sync.state.emit({ key: Context.State.ACTOR_LEAVE, data: { id: actor.id } }).then(() => {
+            return this.stage.onLeave(this.context, actor.id, actor.data)
         }).then(() => {
-            return this.persistence.actors.delete(actor.id)
+            return this.sync.actors.delete(actor.id)
         })
     }
 
@@ -112,7 +121,7 @@ class ActorService {
             if (actorObject === null) {
                 return false
             }
-            return this.persistence.state.emit({ key: Context.State.ACTOR_KICK, data: { id, reason } }).then(() => {
+            return this.sync.state.emit({ key: Context.State.ACTOR_KICK, data: { id, reason } }).then(() => {
                 return true
             })
         })
@@ -150,7 +159,7 @@ class ActorService {
         let promises = []
         this.actors.forEach(actor => promises.push(this.leave(actor)))
         return Promise.all(promises).then(() => {
-            this.persistence.state.unsubscribe(this.handleState, this)
+            this.sync.state.unsubscribe(this.handleState, this)
             this.actors = null
         })
     }

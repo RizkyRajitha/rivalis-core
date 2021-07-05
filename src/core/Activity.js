@@ -76,10 +76,10 @@ class Activity {
     use(key, activity) {
         this.isKeyValid(key)
         if (!(activity instanceof Activity)) {
-            throw new Exception('activity must be an instance of Activity class', Exception.Code.INTERNAL)
+            throw new Exception('activity must be an instance of Activity class')
         }
         if (this.activities.has(key)) {
-            throw new Exception(`activity with name [${key}] is already registered`, Exception.Code.INTERNAL)
+            throw new Exception(`activity with name [${key}] is already registered`)
         }
         this.activities.set(key, activity)
     }
@@ -93,10 +93,10 @@ class Activity {
     handle(key, actionListener) {
         this.isKeyValid(key)
         if (typeof actionListener !== 'function') {
-            throw new Exception('actionListener must be a function', Exception.Code.INTERNAL)
+            throw new Exception('actionListener must be a function')
         }
         if (this.handlers.has(key)) {
-            throw new Exception(`listener with name [${key}] is already registered`, Exception.Code.INTERNAL)
+            throw new Exception(`listener with name [${key}] is already registered`)
         }
         this.handlers.set(key, actionListener)
     }
@@ -110,11 +110,11 @@ class Activity {
     filter(key, filterListener) {
         this.isKeyValid(key)
         if (typeof filterListener !== 'function') {
-            throw new Exception('filterListener must be a function', Exception.Code.INTERNAL)
+            throw new Exception('filterListener must be a function')
         }
 
         if (this.filters.has(key)) {
-            throw new Exception(`filter on key [${key}] is already registered`, Exception.Code.INTERNAL)
+            throw new Exception(`filter on key [${key}] is already registered`)
         }
         this.filters.set(key, filterListener)
     }
@@ -125,7 +125,7 @@ class Activity {
      */
     isKeyValid(key) {
         if (!this.nameRegExp.test(key)) {
-            throw new Exception(`invalid activity key [${key}], key can contain only letters & numbers`, Exception.Code.INTERNAL)
+            throw new Exception(`invalid activity key [${key}], key can contain only letters & numbers`)
         }
     }
 }

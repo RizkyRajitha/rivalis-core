@@ -19,7 +19,7 @@ class Adapter {
      * @returns {Promise.<void>}
      */
     initialize() {
-        return Promise.reject(new Exception('Adapter#initialize is not implemented', Exception.Code.INTERNAL))
+        return Promise.reject(new Exception('Adapter#initialize is not implemented'))
     }
 
     /**
@@ -27,7 +27,7 @@ class Adapter {
      * @returns {SharedStorageAdapter}
      */
     getSharedStorage() {
-        throw new Exception('Adapter#getSharedStorage is not implemented', Exception.Code.INTERNAL)
+        throw new Exception('Adapter#getSharedStorage is not implemented')
     }
 
     /**
@@ -35,7 +35,7 @@ class Adapter {
      * @returns {MessageBrokerAdapter}
      */
     getMessageBroker() {
-        throw new Exception('Adapter#getMessageBroker is not implemented', Exception.Code.INTERNAL)
+        throw new Exception('Adapter#getMessageBroker is not implemented')
     }
 
     /**
@@ -43,7 +43,7 @@ class Adapter {
      * @returns {Promise.<void>}
      */
     dispose() {
-        throw new Exception('Adapter#dispose not is implemented', Exception.Code.INTERNAL)
+        throw new Exception('Adapter#dispose not is implemented')
     }
 
 }

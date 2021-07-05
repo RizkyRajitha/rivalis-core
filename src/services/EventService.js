@@ -1,15 +1,15 @@
 import Actor from '../core/Actor'
 import Context from '../core/Context'
 import Event from '../core/Event'
-import Persistence from '../persistence/Persistence'
+import Sync from '../persistence/Sync'
 
 class EventService {
 
     /**
      * @private
-     * @type {Persistence}
+     * @type {Sync}
      */
-    persistence = null
+    sync = null
 
     /**
      * @private
@@ -24,12 +24,12 @@ class EventService {
      * 
      * // TODO: write description
      * 
-     * @param {Persistence} persistence
      * @param {Context} context 
+     * @param {Sync} sync
      */
-    constructor(persistence, context) {
-        this.persistence = persistence
+    constructor(context, sync) {
         this.context = context
+        this.sync = sync
     }
 
     /**
@@ -49,7 +49,7 @@ class EventService {
      * @returns {Promise.<void>}
      */
     emit(event) {
-        return this.persistence.events.emit(event)
+        return this.sync.events.emit(event)
     }
 
 }

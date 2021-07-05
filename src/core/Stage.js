@@ -1,5 +1,5 @@
-import Context from '../core/Context'
-import Event from '../core/Event'
+import Context from './Context'
+import Event from './Event'
 
 /**
  * @interface stage

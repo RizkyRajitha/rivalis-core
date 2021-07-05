@@ -76,7 +76,7 @@ class Actor {
         this.clock = new VectorClock(id)
         this.context = context
         this.emitter = new EventEmitter()
-        Context.getPersistence(this.context).events.subscribe(this.handleEvent, this)
+        Context.getSync(this.context).events.subscribe(this.handleEvent, this)
         
     }
 
@@ -136,7 +136,7 @@ class Actor {
      * @returns {Promise.<any>}
      */
     dispose() {
-        Context.getPersistence(this.context).events.unsubscribe(this.handleEvent, this)
+        Context.getSync(this.context).events.unsubscribe(this.handleEvent, this)
         this.emitter.emit('dispose')
         this.emitter.removeAllListeners()
         this.emitter = null

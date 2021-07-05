@@ -1,11 +1,11 @@
+import Exception from './Exception'
+
 /**
  * @typedef Auth
  * @property {string} contextId
  * @property {string} actorId
  * @property {Object.<string,any>} data
  */
-
-import Exception from '../core/Exception'
 
 /**
  * @interface AuthResolver
@@ -24,7 +24,7 @@ class AuthResolver {
      * @returns {Promise.<Auth>}
      */
     onAuth(ticket) {
-        return Promise.reject(new Exception('AuthResolver#onAuth is not implemented'))
+        return Promise.reject(new Exception('AuthResolver#onAuth is not implemented', Exception.Code.AUTH_FAILED))
     } 
 
 }

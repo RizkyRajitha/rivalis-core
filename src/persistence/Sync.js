@@ -4,7 +4,7 @@ import ActorStorage from './ActorStorage'
 import DataStorage from './DataStorage'
 import Adapter from '../interfaces/Adapter'
 
-class Persistence {
+class Sync {
 
     /**
      * 
@@ -101,4 +101,4 @@ class Persistence {
 
 }
 
-export default Persistence
+export default Sync

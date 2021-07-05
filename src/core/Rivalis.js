@@ -1,10 +1,10 @@
 import Exception from './Exception'
 import Adapter from '../interfaces/Adapter'
-import AuthResolver from '../interfaces/AuthResolver'
+import AuthResolver from './AuthResolver'
 import Protocol from '../interfaces/Protocol'
-import Stage from '../interfaces/Stage'
+import Stage from './Stage'
 import NodePersistence from '../persistence/NodePersistence'
-import Persistence from '../persistence/Persistence'
+import Sync from '../persistence/Sync'
 import Context from './Context'
 import LoggingFactory from '../structs/LoggingFactory'
 import Logger from './Logger'
@@ -109,11 +109,11 @@ class Rivalis {
      */
     create(contextId, type) {
         if (!this.stages.has(type)) {
-            return Promise.reject(new Exception(`stage type=(${type}) is not defined`, Exception.Code.INTERNAL))
+            return Promise.reject(new Exception(`stage type=(${type}) is not defined`))
         }
         return this.persistence.contexts.savenx(contextId, { id: contextId, type }).then(persisted => {
             if (!persisted) {
-                throw new Exception(`context=(${contextId}) already exist!`, Exception.Code.INTERNAL)
+                throw new Exception(`context=(${contextId}) already exist!`)
             }
             this.logger.trace(`context created id=(${contextId}) type=(${type})`)
         })
@@ -129,7 +129,7 @@ class Rivalis {
             if (context) {
                 return this.persistence.events.emit({ key: 'destroy', data: contextId })
             }
-            throw new Exception(`context=(${contextId}) doesn't exist!`, Exception.Code.INTERNAL)
+            throw new Exception(`context=(${contextId}) doesn't exist!`)
         }).then(() => {
             return this.persistence.contexts.delete(contextId)
         }).then(() => {
@@ -151,7 +151,7 @@ class Rivalis {
             }
             const { id, type } = context
             if (!this.stages.has(type)) {
-                throw new Exception(`stage=(${type}) is not available on this node`, Exception.Code.INTERNAL)
+                throw new Exception(`stage=(${type}) is not available on this node`)
             }
             if (this.contexts.has(contextId)) {
                 return null
@@ -174,7 +174,7 @@ class Rivalis {
      */
     define(type, stage) {
         if (this.stages.has(type)) {
-            throw new Exception(`stage=(${type}) already exist!`, Exception.Code.INTERNAL)
+            throw new Exception(`stage=(${type}) already exist!`)
         }
         this.stages.set(type, stage)
         return this
@@ -186,7 +186,7 @@ class Rivalis {
      * @returns {this}
      */
     enable(protocol) {
-        Protocol.setNode(protocol, this)
+        Protocol.setRivalis(protocol, this)
         return Protocol.handle(protocol)
     }
 

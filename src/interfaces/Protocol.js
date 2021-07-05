@@ -28,10 +28,11 @@ class Protocol {
 
     /**
      * @protected
+     * @param {string} namespace
      * @returns {Logger}
      */
-    getLogger() {
-        return this.node.logging.getLogger('protocol')
+    getLogger(namespace = 'default') {
+        return this.rivalis.logging.getLogger(`protocol:${namespace}`)
     }
 
     /**
@@ -39,7 +40,7 @@ class Protocol {
      * @returns {Promise.<void>}
      */
     handle() {
-        return Promise.reject(new Exception('Protocol#handle is not implemented', Exception.Code.INTERNAL))
+        return Promise.reject(new Exception('Protocol#handle is not implemented'))
     }
 
     /**
@@ -47,7 +48,7 @@ class Protocol {
      * @returns {Promise.<void>}
      */
     dispose() {
-        return Promise.reject(new Exception('Protocol#dispose is not implemented', Exception.Code.INTERNAL))
+        return Promise.reject(new Exception('Protocol#dispose is not implemented'))
     }
 
 }
@@ -55,10 +56,10 @@ class Protocol {
 /**
  * 
  * @param {Protocol} protocol 
- * @param {Node} node 
+ * @param {Rivalis} rivalis 
  */
-Protocol.setNode = (protocol, node) => {
-    protocol.node = node
+Protocol.setRivalis = (protocol, rivalis) => {
+    protocol.rivalis = rivalis
 }
 
 /**

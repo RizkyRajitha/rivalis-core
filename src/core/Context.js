@@ -6,8 +6,8 @@ import ActorService from '../services/ActorService'
 import ActionService from '../services/ActionService'
 import EventService from '../services/EventService'
 import DataStorage from '../persistence/DataStorage'
-import Persistence from '../persistence/Persistence'
-import Stage from '../interfaces/Stage'
+import Sync from '../persistence/Sync'
+import Stage from './Stage'
 import Logger from './Logger'
 import Activity from './Activity'
 
@@ -47,22 +47,16 @@ class Context {
     events = null
 
     /**
-     * 
-     * @type {Activity}
-     */
-    activity = null
-
-    /**
-     * 
+     * @readonly
      * @type {VectorClock}
      */
     clock = null
 
     /**
      * @private
-     * @type {Persistence}
+     * @type {Sync}
      */
-    persistence = null
+    sync = null
 
     /**
      * @private
@@ -81,6 +75,12 @@ class Context {
      * @type {Logger}
      */
     logger = null
+
+    /**
+     * @private
+     * @type {Activity}
+     */
+    activity = null
 
     /**
      * 
@@ -103,7 +103,7 @@ class Context {
         this.logger = logger
         this.activity = new Activity()
         this.clock = new VectorClock(id)
-        this.persistence = new Persistence(id, adapter)
+        this.sync = new Sync(id, adapter)
         this.emitter = new EventEmitter()
     }
 
@@ -113,13 +113,13 @@ class Context {
      * @returns {Promise.<void>}
      */
     initialize() {
-        return this.persistence.initialize().then(() => {
-            this.persistence.events.subscribe(this.handleEvent, this)
-            this.persistence.state.subscribe(this.handleState, this)
+        return this.sync.initialize().then(() => {
+            this.sync.events.subscribe(this.handleEvent, this)
+            this.sync.state.subscribe(this.handleState, this)
 
-            this.actors = new ActorService(this.persistence, this)
+            this.actors = new ActorService(this, this.sync, this.stage)
             this.actions = new ActionService(this)
-            this.events = new EventService(this.persistence, this)
+            this.events = new EventService(this, this.sync)
             return this.stage.onInit(this)
         }).then(() => {
             this.emitter.emit(Context.State.INIT, this)
@@ -136,19 +136,19 @@ class Context {
             return this.stage.onDispose(this)
         }).then(() => {
             
-            this.persistence.events.unsubscribe(this.handleEvent, this)
-            this.persistence.state.unsubscribe(this.handleState, this)
+            this.sync.events.unsubscribe(this.handleEvent, this)
+            this.sync.state.unsubscribe(this.handleState, this)
             
             this.actors = null
             this.actions = null
             this.events = null
 
-            return this.persistence.dispose()
+            return this.sync.dispose()
         }).then(() => {
             this.emitter.emit(Context.State.DISPOSE, this)
             this.emitter.removeAllListeners()
             this.emitter = null
-            this.persistence = null
+            this.sync = null
             this.logger.info('context succesfully disposed')
         })
     }
@@ -158,7 +158,17 @@ class Context {
      * @type {DataStorage}
      */
     get data() {
-        return this.persistence.data
+        return this.sync.data
+    }
+
+    /**
+     * Context#use can be used to add activity to the context
+     * @param {string} key 
+     * @param {Activity} activity 
+     * @returns 
+     */
+    use(key, activity) {
+        return this.activity.use(key, activity)
     }
 
     /**
@@ -224,10 +234,10 @@ Context.State = {
 /**
  * 
  * @param {Context} context 
- * @returns {Persistence}
+ * @returns {Sync}
  */
-Context.getPersistence = context => {
-    return context.persistence
+Context.getSync = context => {
+    return context.sync
 }
 
 /**

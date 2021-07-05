@@ -1,9 +1,7 @@
 import Adapter from './interfaces/Adapter'
 import MessageBrokerAdapter from './interfaces/MessageBrokerAdapter'
 import SharedStorageAdapter from './interfaces/SharedStorageAdapter'
-import Stage from './interfaces/Stage'
 import Protocol from './interfaces/Protocol'
-import AuthResolver from './interfaces/AuthResolver'
 import LogReporter from './interfaces/LogReporter'
 /**
  * @namespace interfaces
@@ -12,9 +10,7 @@ export const interfaces = {
     Adapter,
     MessageBrokerAdapter,
     SharedStorageAdapter,
-    Stage,
     Protocol,
-    AuthResolver,
     LogReporter
 }
 
@@ -48,6 +44,8 @@ import Event from './core/Event'
 import Rivalis from './core/Rivalis'
 import Exception from './core/Exception'
 import Logger from './core/Logger'
+import Stage from './core/Stage'
+import AuthResolver from './core/AuthResolver'
 
 export {
     Context,
@@ -56,5 +54,7 @@ export {
     Event,
     Rivalis,
     Exception,
-    Logger
+    Logger,
+    Stage,
+    AuthResolver
 }

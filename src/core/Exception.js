@@ -21,9 +21,9 @@ class Exception extends Error {
      * @param {string} message 
      * @param {strubg} code 
      */
-    constructor(message, code) {
+    constructor(message, code = null) {
         super(message)
-        this.code = code
+        this.code = code === null ? Exception.Code.INTERNAL : code
     }
 }
 
@@ -41,7 +41,8 @@ class Exception extends Error {
     ACTOR_ALREADY_EXIST: getCode(4),
     ACTOR_NOT_EXIST: getCode(5),
 
-    NODE_AUTH_FAILED: getCode(6)
+    AUTH_FAILED: getCode(6),
+    ACCESS_DENIED: getCode(7)
 }
 
 /**
