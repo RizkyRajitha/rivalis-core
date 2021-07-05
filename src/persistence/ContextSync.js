@@ -4,7 +4,7 @@ import ActorStorage from './ActorStorage'
 import DataStorage from './DataStorage'
 import Adapter from '../interfaces/Adapter'
 
-class Sync {
+class ContextSync {
 
     /**
      * 
@@ -101,4 +101,4 @@ class Sync {
 
 }
 
-export default Sync
+export default ContextSync

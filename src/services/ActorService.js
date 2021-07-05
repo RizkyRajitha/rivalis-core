@@ -1,6 +1,6 @@
 import Context from '../core/Context'
 import Actor from '../core/Actor'
-import Sync from '../persistence/Sync'
+import ContextSync from '../persistence/ContextSync'
 import Exception from '../core/Exception'
 import Stage from '../core/Stage'
 
@@ -16,7 +16,7 @@ class ActorService {
     /**
      * 
      * @private
-     * @type {Sync}
+     * @type {ContextSync}
      */
     sync = null
 
@@ -41,7 +41,7 @@ class ActorService {
      * // TODO: write description
      * 
      * @param {Context} context 
-     * @param {Sync} sync
+     * @param {ContextSync} sync
      * @param {Stage} stage
      */
     constructor(context, sync, stage) {

@@ -1,13 +1,13 @@
 import Actor from '../core/Actor'
 import Context from '../core/Context'
 import Event from '../core/Event'
-import Sync from '../persistence/Sync'
+import ContextSync from '../persistence/ContextSync'
 
 class EventService {
 
     /**
      * @private
-     * @type {Sync}
+     * @type {ContextSync}
      */
     sync = null
 
@@ -25,7 +25,7 @@ class EventService {
      * // TODO: write description
      * 
      * @param {Context} context 
-     * @param {Sync} sync
+     * @param {ContextSync} sync
      */
     constructor(context, sync) {
         this.context = context

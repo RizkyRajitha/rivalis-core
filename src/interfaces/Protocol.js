@@ -2,6 +2,7 @@ import Actor from '../core/Actor'
 import Rivalis from '../core/Rivalis'
 import Exception from '../core/Exception'
 import Logger from '../core/Logger'
+import AuthResolver from '../core/AuthResolver'
 
 class Protocol {
 
@@ -17,12 +18,22 @@ class Protocol {
      * @returns {Promise.<Actor>}
      */
     connect(ticket) {
-        let auth = { contextId: null, actorId: null, data: null }
+        let auth = {
+            contextId: null,
+            actorId: null,
+            data: null
+        }
         return Promise.resolve().then(() => Rivalis.getAuthResolver(this.rivalis).onAuth(ticket)).then(authObject => {
-            auth = authObject // TODO: validate object before sending forward
-            return this.rivalis.obtain(auth.contextId)
+            AuthResolver.validate(authObject)
+            auth.contextId = authObject.contextId
+            auth.actorId = authObject.actorId
+            auth.data = authObject.data
+            return this.rivalis.contexts.obtain(auth.contextId)
         }).then(context => {
             return context.actors.join(auth.actorId, auth.data)
+        }).then(actor => {
+            this.getLogger().debug(`actor id=(${auth.actorId}) connected to context id=(${auth.contextId})`)
+            return actor
         })
     }
 
@@ -56,18 +67,11 @@ class Protocol {
 /**
  * 
  * @param {Protocol} protocol 
- * @param {Rivalis} rivalis 
- */
-Protocol.setRivalis = (protocol, rivalis) => {
-    protocol.rivalis = rivalis
-}
-
-/**
- * 
- * @param {Protocol} protocol 
+ * @param {Rivalis} rivalis
  * @returns {Promise.<void>}
  */
-Protocol.handle = protocol => {
+Protocol.handle = (protocol, rivalis) => {
+    protocol.rivalis = rivalis
     return protocol.handle()
 }
 

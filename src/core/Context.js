@@ -6,7 +6,7 @@ import ActorService from '../services/ActorService'
 import ActionService from '../services/ActionService'
 import EventService from '../services/EventService'
 import DataStorage from '../persistence/DataStorage'
-import Sync from '../persistence/Sync'
+import ContextSync from '../persistence/ContextSync'
 import Stage from './Stage'
 import Logger from './Logger'
 import Activity from './Activity'
@@ -54,7 +54,7 @@ class Context {
 
     /**
      * @private
-     * @type {Sync}
+     * @type {ContextSync}
      */
     sync = null
 
@@ -103,7 +103,7 @@ class Context {
         this.logger = logger
         this.activity = new Activity()
         this.clock = new VectorClock(id)
-        this.sync = new Sync(id, adapter)
+        this.sync = new ContextSync(id, adapter)
         this.emitter = new EventEmitter()
     }
 
@@ -234,7 +234,7 @@ Context.State = {
 /**
  * 
  * @param {Context} context 
- * @returns {Sync}
+ * @returns {ContextSync}
  */
 Context.getSync = context => {
     return context.sync
