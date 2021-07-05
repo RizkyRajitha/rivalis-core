@@ -1,3 +1,4 @@
+import Exception from '../core/Exception'
 import Stage from '../core/Stage'
 
 class StageService {
