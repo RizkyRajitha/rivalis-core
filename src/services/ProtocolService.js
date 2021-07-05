@@ -15,6 +15,15 @@ class ProtocolService {
      */
     rivalis = null
 
+    /**
+     * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
+     * @author Daniel Kalevski
+     * @since 1.0.0
+     * 
+     * // TODO: write description
+     * 
+     * @param {Rivalis} rivalis 
+     */
     constructor(rivalis) {
         this.rivalis = rivalis
         this.cache = []

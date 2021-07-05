@@ -9,6 +9,14 @@ class StageService {
      */
     cache = null
 
+    /**
+     * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
+     * @author Daniel Kalevski
+     * @since 1.0.0
+     * 
+     * // TODO: write description
+     * 
+     */
     constructor() {
         this.cache = new Map()
     }

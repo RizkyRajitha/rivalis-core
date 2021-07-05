@@ -25,6 +25,11 @@ class ContextService {
     sync = null
 
     /**
+     * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
+     * @author Daniel Kalevski
+     * @since 1.0.0
+     * 
+     * // TODO: write description
      * 
      * @param {Rivalis} rivalis 
      * @param {NodeSync} sync 
@@ -93,7 +98,7 @@ class ContextService {
             let stage = StageService.getStage(this.rivalis.stages, type)
             let cInstance = new Context(id, this.sync.adapter, logger, stage)
             this.cache.set(id, cInstance)
-            this.rivalis.logger.trace('context id=(${contextId}) obtained')
+            this.rivalis.logger.trace(`context id=(${contextId}) obtained`)
             return cInstance.initialize()
         }).then(() => {
             return this.cache.get(contextId)

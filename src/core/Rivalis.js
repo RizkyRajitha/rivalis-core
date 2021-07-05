@@ -54,12 +54,18 @@ class Rivalis {
     logger = null
 
     /**
+     * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
+     * @author Daniel Kalevski
+     * @since 1.0.0
+     * 
+     * // TODO: write description
      * 
      * @param {Adapter} adapter 
+     * @param {AuthResolver} authResolver
      */
-    constructor(adapter) {
+    constructor(adapter, authResolver = null) {
         this.adapter = adapter
-        this.authResolver = new AuthResolver()
+        this.authResolver = authResolver === null ? new AuthResolver() : authResolver
         this.logging = new LoggingFactory()
         this.logger = this.logging.getLogger('rivalis')
     }
@@ -96,16 +102,9 @@ class Rivalis {
         }).then(() => {
             this.sync = null
             return this.adapter.dispose()
-        })
-        
-    }
-
-    /**
-     * 
-     * @param {AuthResolver} authResolver 
-     */
-    setAuthResolver(authResolver) {
-        this.authResolver = authResolver
+        }).then(() => {
+            this.logger.info('node is disposed')
+        })   
     }
 }
 
