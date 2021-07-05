@@ -1,6 +1,16 @@
 import Context from '../core/Context'
 import Event from '../core/Event'
 
+/**
+ * @interface stage
+ * 
+ * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
+ * @author Daniel Kalevski
+ * @since 0.5.0
+ * 
+ * // TODO: write description
+ * 
+ */
 class Stage {
 
     /**

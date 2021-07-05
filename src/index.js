@@ -24,7 +24,6 @@ import VectorClock from './structs/VectorClock'
 import EventEmitter from './structs/EventEmitter'
 import CodecExecutor from './structs/CodecExecutor'
 import Codec from './structs/Codec'
-import Logger from './structs/Logger'
 import LoggingFactory from './structs/LoggingFactory'
 import BasicLogReporter from './structs/BasicLogReporter'
 
@@ -38,7 +37,6 @@ export const structs = {
     EventEmitter,
     CodecExecutor,
     Codec,
-    Logger,
     LoggingFactory,
     BasicLogReporter
 }
@@ -47,14 +45,16 @@ import Context from './core/Context'
 import Activity from './core/Activity'
 import Actor from './core/Actor'
 import Event from './core/Event'
-import Node from './core/Node'
+import Rivalis from './core/Rivalis'
 import Exception from './core/Exception'
+import Logger from './core/Logger'
 
 export {
     Context,
     Activity,
     Actor,
     Event,
-    Node,
-    Exception
+    Rivalis,
+    Exception,
+    Logger
 }

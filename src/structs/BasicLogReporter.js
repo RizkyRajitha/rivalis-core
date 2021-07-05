@@ -1,5 +1,5 @@
 import LogReporter from '../interfaces/LogReporter'
-import Logger from './Logger'
+import Logger from '../core/Logger'
 
 class BasicLogReporter extends LogReporter {
 

@@ -8,7 +8,7 @@ import EventService from '../services/EventService'
 import DataStorage from '../persistence/DataStorage'
 import Persistence from '../persistence/Persistence'
 import Stage from '../interfaces/Stage'
-import Logger from '../structs/Logger'
+import Logger from './Logger'
 import Activity from './Activity'
 
 /**

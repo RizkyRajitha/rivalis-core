@@ -1,6 +1,6 @@
 import LogReporter from '../interfaces/LogReporter'
 import BasicLogReporter from './BasicLogReporter'
-import Logger from './Logger'
+import Logger from '../core/Logger'
 
 class LoggingFactory {
 

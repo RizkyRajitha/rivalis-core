@@ -1,5 +1,5 @@
 import LogReporter from '../interfaces/LogReporter'
-import LoggingFactory from './LoggingFactory'
+import LoggingFactory from '../structs/LoggingFactory'
 
 /**
  * 
@@ -61,6 +61,17 @@ class Logger {
      */
     namespace = null
 
+    /**
+     * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
+     * @author Daniel Kalevski
+     * @since 0.5.0
+     * 
+     * // TODO: write description
+     * 
+     * @param {*} logger 
+     * @param {*} reporter 
+     * @param {*} namespace 
+     */
     constructor(logger, reporter, namespace) {
         this.logger = logger
         this.reporter = reporter
@@ -103,7 +114,7 @@ class Logger {
     }
 
     /**
-     * 
+     * @private
      * @param {number} level 
      * @param  {...any} args 
      */

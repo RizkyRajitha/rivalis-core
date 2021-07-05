@@ -1,15 +1,15 @@
 import Actor from '../core/Actor'
-import Node from '../core/Node'
+import Rivalis from '../core/Rivalis'
 import Exception from '../core/Exception'
-import Logger from '../structs/Logger'
+import Logger from '../core/Logger'
 
 class Protocol {
 
     /**
      * @protected
-     * @type {Node}
+     * @type {Rivalis}
      */
-    node = null
+    rivalis = null
 
     /**
      * @protected
@@ -18,9 +18,9 @@ class Protocol {
      */
     connect(ticket) {
         let auth = { contextId: null, actorId: null, data: null }
-        return Promise.resolve().then(() => Node.getAuthResolver(this.node).onAuth(ticket)).then(authObject => {
-            auth = authObject
-            return this.node.obtain(auth.contextId)
+        return Promise.resolve().then(() => Rivalis.getAuthResolver(this.rivalis).onAuth(ticket)).then(authObject => {
+            auth = authObject // TODO: validate object before sending forward
+            return this.rivalis.obtain(auth.contextId)
         }).then(context => {
             return context.actors.join(auth.actorId, auth.data)
         })

@@ -7,10 +7,9 @@ import NodePersistence from '../persistence/NodePersistence'
 import Persistence from '../persistence/Persistence'
 import Context from './Context'
 import LoggingFactory from '../structs/LoggingFactory'
-import BasicLogReporter from '../structs/BasicLogReporter'
-import Logger from '../structs/Logger'
+import Logger from './Logger'
 
-class Node {
+class Rivalis {
 
     /**
      * @type {LoggingFactory}
@@ -71,7 +70,7 @@ class Node {
         this.contexts = new Map()
         this.stages = new Map()
         this.logging = new LoggingFactory()
-        this.logger = this.logging.getLogger('node')
+        this.logger = this.logging.getLogger('rivalis')
     }
 
     run() {
@@ -80,7 +79,7 @@ class Node {
             return this.persistence.initialize()
         }).then(() => {
             this.persistence.events.subscribe(this.handleEvent, this)
-            this.logger.info('ready to handle contexts')
+            this.logger.info('node is started successfully')
         })
     }
 
@@ -97,7 +96,7 @@ class Node {
         return Promise.all(promises).then(() => {
             return this.persistence.dispose()
         }).then(() => {
-            this.logger.info('shutdown')
+            this.logger.info('node shutdown...')
             return this.adapter.dispose()
         })
     }
@@ -188,8 +187,7 @@ class Node {
      */
     enable(protocol) {
         Protocol.setNode(protocol, this)
-        Protocol.handle(protocol)
-        return this
+        return Protocol.handle(protocol)
     }
 
     /**
@@ -224,12 +222,12 @@ class Node {
 
 /**
  * 
- * @param {Node} node 
+ * @param {Rivalis} rivalis 
  * @returns {AuthResolver}
  */
-Node.getAuthResolver = node => {
-    return node.authResolver
+Rivalis.getAuthResolver = rivalis => {
+    return rivalis.authResolver
 }
 
-export default Node
+export default Rivalis
 

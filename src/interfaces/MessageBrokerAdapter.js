@@ -1,9 +1,9 @@
+import Exception from '../core/Exception'
+
 /**
  * @callback MessageListener
  * @param {string} message
  */
-
-import Exception from '../core/Exception'
 
 /**
  * @interface MessageBrokerAdapter
