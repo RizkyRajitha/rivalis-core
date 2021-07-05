@@ -59,9 +59,19 @@ class CustomAuthLogic extends AuthResolver {
     }
 }
 
+const webSocketProtocol = new WebSocketProtocol({
+    server: server, // server must be an existing HTTP/HTTP2 server
+    compression: true, // enable or disable built-in compression
+    path: '/game' // [optional] provide path for serving websocket endpoint
+})
+
 const rivalis = new Rivalis(new InMemoryAdapter(), new CustomAuthLogic())
 
-rivalis.initialize()
+rivalis.initialize().then(() => {
+    rivalis.protocols.register(webSocketProtocol)
+})
+
+server.listen(2345)
 
 ```
 
