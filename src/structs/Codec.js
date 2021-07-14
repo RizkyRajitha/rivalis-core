@@ -1,50 +1,58 @@
-import Event from '../core/Event'
-import CodecExecutor from './CodecExecutor'
-import Compression from './Compression'
-
+/**
+ * @template T
+ */
 class Codec {
 
     /**
-     * @type {CodecExecutor.<Event>}
-     */
-    events = null
-
-    /**
-     * @type {CodecExecutor.<Object.<string,any>>}
-     */
-    actions = null
-
-    /**
      * @private
-     * @type {Compression}
+     * @type {Array.<string>}
      */
-    compression = null
+    propertyList = null
 
-    constructor() {
-        this.compression = new Compression()
+    /**
+     * @type {Function}
+     */
+    classType = null
 
-        this.events = new CodecExecutor(this.compression, ['key', 'clock', 'sender', 'data'], message => {
-            return new Event(message[1], message[2]).set(message[0], message[3])
-        })
-
-        this.actions = new CodecExecutor(this.compression, ['key', 'data'], message => {
-            return { key: message[0], data: message[1] }
-        })
+    /**
+     * 
+     * @param {Array.<string>} propertyList 
+     * @param {Function} [classType] 
+     */
+    constructor(propertyList, classType = null) {
+        this.propertyList = propertyList
+        this.classType = classType
     }
 
-}
-
-let instance = null
-
-/**
- * 
- * @returns {Codec}
- */
-Codec.getInstance = () => {
-    if (instance === null) {
-        instance = new Codec()
+    /**
+     * 
+     * @param {T} data 
+     * @returns {Array.<any>}
+     */
+    encode(data) {
+        let list = []
+        for (let property of this.propertyList) {
+            list.push(data[property])
+        }
+        return list
     }
-    return instance
+
+    /**
+     * 
+     * @param {Array.<any>} data 
+     * @returns {T}
+     */
+    decode(data) {
+        let object = {}
+        for (let i = 0; i < data.length; i++) {
+            object[this.propertyList[0]] = data[0]
+        }
+        if (this.classType !== null) {
+            object = new this.classType(object)
+        }
+        return object
+    }
+
 }
 
 export default Codec

@@ -15,14 +15,9 @@ class VectorClock {
     data = {}
 
     /**
-     * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
-     * @author Daniel Kalevski
-     * @since 0.5.0
      * 
-     * Vector Clock implementation used for synchronization of the events
-     * 
-     * @param {string} nodeId unique identifier of the node
-     * @param {Object.<string, number>} data clock data
+     * @param {string} nodeId 
+     * @param {Object.<string, number>} data 
      */
     constructor(nodeId, data = {}) {
         this.nodeId = nodeId
@@ -30,15 +25,15 @@ class VectorClock {
     }
 
     /**
-     * override vector clock data with a new one
-     * @param {Object.<string, number>} object vector clock object that contains versions
+     * 
+     * @param {Object.<string, number>} object 
      */
     setClock(clock = {}) {
         this.data = clock
     }
 
     /**
-     * returns new object of clock data
+     * 
      * @returns {Object.<string, number>}
      */
     getClock() {
@@ -46,7 +41,7 @@ class VectorClock {
     }
 
     /**
-     * override clock version, if nodeId is not provided
+     * 
      * @param {number} version
      * @param {string} nodeId 
      */
@@ -55,7 +50,7 @@ class VectorClock {
     }
 
     /**
-     * returns clock version of provided node, if nodeId is not provided, version of the current vector clock is returned
+     * 
      * @param {string} nodeId
      * @returns {number}
      */
@@ -64,15 +59,15 @@ class VectorClock {
     }
 
     /**
-     * increment version of clock for node that owns the instance
+     * 
      */
     increment() {
         this.data[this.nodeId] = this.getVersion(this.nodeId) + 1
     }
 
     /**
-     * can be used for updating the vector clock using merge operation between current vector clock and provided one, clock data of the instace is overwritten
-     * @param {VectorClock} vectorClock second vector clock used in merge operation
+     * 
+     * @param {VectorClock} vectorClock 
      */
     update(vectorClock) {
         const updated = {}
@@ -83,8 +78,8 @@ class VectorClock {
     }
 
     /**
-     * returns true if this vector clock is chronically after provided vector clock
-     * @param {VectorClock} vectorClock second vector clock for comparation
+     * 
+     * @param {VectorClock} vectorClock 
      * @returns {boolean} 
      */
     isAfter(vectorClock) {
@@ -92,7 +87,7 @@ class VectorClock {
     }
 
     /**
-     * returns true if vector clock is concurrent with provided vector clock
+     * 
      * @param {VectorClock} vectorClock
      * @returns {boolean} 
      */
@@ -101,7 +96,7 @@ class VectorClock {
     }
 
     /**
-     * returns true if instance is before passed vector clock instance
+     * 
      * @param {VectorClock} vectorClock 
      */
     isBefore(vectorClock) {

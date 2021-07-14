@@ -5,24 +5,14 @@ import Exception from '../core/Exception'
  * @param {string} message
  */
 
-/**
- * @interface MessageBrokerAdapter
- * 
- * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
- * @author Daniel Kalevski
- * @since 0.5.0
- * 
- * // TODO: write description
- * 
- */
-class MessageBrokerAdapter {
+class PubSubProvider {
 
     /**
      * 
      * @returns {Promise.<void>}
      */
-    initialize() {
-        return Promise.reject(new Exception('MessageBrokerAdapter#initialize is not implemented'))
+    init() {
+        return Promise.reject(new Exception('PubSubProvider#initialize is not implemented'))
     }
 
     /**
@@ -33,7 +23,7 @@ class MessageBrokerAdapter {
      * @returns {Promise.<void>} 
      */
     subscribe(namespace, address, listener) {
-        return Promise.reject(new Exception('MessageBrokerAdapter#subscribe is not implemented'))
+        return Promise.reject(new Exception('PubSubProvider#subscribe is not implemented'))
     }
  
     /**
@@ -44,7 +34,7 @@ class MessageBrokerAdapter {
      * @returns {Promise.<void>}
      */
     unsubscribe(namespace, address, listener) {
-        return Promise.reject(new Exception('MessageBrokerAdapter#unsubscribe is not implemented'))
+        return Promise.reject(new Exception('PubSubProvider#unsubscribe is not implemented'))
     }
  
     /**
@@ -55,7 +45,7 @@ class MessageBrokerAdapter {
      * @returns {Promise.<void>} 
      */
     publish(namespace, address, message) {
-        return Promise.reject(new Exception('MessageBrokerAdapter#publish is not implemented'))
+        return Promise.reject(new Exception('PubSubProvider#publish is not implemented'))
     }
 
     /**
@@ -63,9 +53,9 @@ class MessageBrokerAdapter {
      * @returns {Promise.<void>}
      */
     dispose() {
-        return Promise.reject(new Exception('MessageBrokerAdapter#dispose is not implemented'))
+        return Promise.reject(new Exception('PubSubProvider#dispose is not implemented'))
     }
 
 }
 
-export default MessageBrokerAdapter
+export default PubSubProvider

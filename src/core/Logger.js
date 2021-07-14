@@ -1,59 +1,12 @@
-import LogReporter from '../interfaces/LogReporter'
-import LoggingFactory from '../structs/LoggingFactory'
-
-/**
- * 
- * @param {any} unit 
- * @returns {string}
- */
-const stringify = (unit) => {
-    if (typeof unit === 'string') {
-        return unit
-    } else if (typeof unit === 'function') {
-        try {
-            return unit.prototype.constructor.toString()
-        } catch (error) {
-            try {
-                return unit.toString()
-            } catch (error) {
-                return ''
-            }
-        }
-    } else if (typeof unit === 'undefined') {
-        return 'undefined'
-    } else if (typeof unit === 'object') {
-        let cache = new Map()
-        let data = JSON.stringify(unit, (key, value) => {
-            if (typeof value === 'object' && value !== null) {
-                if (cache.has(value)) {
-                    return
-                }
-                cache.set(value, 0)
-            }
-            return value
-        })
-        cache.clear()
-        cache = null
-        return data
-    } else {
-        return JSON.stringify(unit)
-    }
-
-}
-
+import LoggerFactory from '../utils/LoggerFactory'
+import stringifyLog from '../utils/stringifyLog'
 class Logger {
 
     /**
      * @private
-     * @type {LoggingFactory}
+     * @type {LoggerFactory}
      */
-    logger = null
-
-    /**
-     * @private
-     * @type {LogReporter}
-     */
-    reporter = null
+    factory = null
 
     /**
      * @private
@@ -62,22 +15,20 @@ class Logger {
     namespace = null
 
     /**
-     * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
-     * @author Daniel Kalevski
-     * @since 0.5.0
      * 
-     * // TODO: write description
-     * 
-     * @param {*} logger 
-     * @param {*} reporter 
-     * @param {*} namespace 
+     * @param {LoggerFactory} factory 
+     * @param {string} namespace 
      */
-    constructor(logger, reporter, namespace) {
-        this.logger = logger
-        this.reporter = reporter
+    constructor(factory, namespace) {
+        this.factory = factory
         this.namespace = namespace
     }
 
+    /**
+     * 
+     * @param  {...any} args 
+     * @returns {void}
+     */
     error(...args) {
         if (this.logger.level < Logger.LEVEL.ERROR) {
             return
@@ -85,6 +36,11 @@ class Logger {
         this.log(Logger.LEVEL.ERROR, ...args)
     }
 
+    /**
+     * 
+     * @param  {...any} args 
+     * @returns {void}
+     */
     warning(...args) {
         if (this.logger.level < Logger.LEVEL.WARNING) {
             return
@@ -92,6 +48,11 @@ class Logger {
         this.log(Logger.LEVEL.WARNING, ...args)
     }
 
+    /**
+     * 
+     * @param  {...any} args 
+     * @returns {void}
+     */
     info(...args) {
         if (this.logger.level < Logger.LEVEL.INFO) {
             return
@@ -99,6 +60,11 @@ class Logger {
         this.log(Logger.LEVEL.INFO, ...args)
     }
 
+    /**
+     * 
+     * @param  {...any} args 
+     * @returns {void}
+     */
     debug(...args) {
         if (this.logger.level < Logger.LEVEL.DEBUG) {
             return
@@ -106,6 +72,11 @@ class Logger {
         this.log(Logger.LEVEL.DEBUG, ...args)
     }
 
+    /**
+     * 
+     * @param  {...any} args 
+     * @returns {void}
+     */
     trace(...args) {
         if (this.logger.level < Logger.LEVEL.TRACE) {
             return
@@ -131,12 +102,16 @@ class Logger {
             if (arg instanceof Error) {
                 logs.push(arg.message)
             } else {
-                logs.push(stringify(arg))
-            }
-            
+                logs.push(stringifyLog(arg))
+            }   
         }
-        this.reporter.log(level, `[${this.namespace}]: ${logs.join(' ')} ${stack}`)
+
+        for (let reporter of this.factory.reporters) {
+            let message = `[${this.namespace}]: ${logs.join(' ')} ${stack}`
+            reporter.log(level, message)
+        }
     }
+
 }
 
 /**
@@ -152,4 +127,3 @@ class Logger {
 }
 
 export default Logger
-export { stringify }

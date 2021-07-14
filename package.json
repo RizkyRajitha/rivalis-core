@@ -47,6 +47,7 @@
   },
   "dependencies": {
     "eventemitter3": "4.0.7",
-    "lz-string": "1.4.4"
+    "lz-string": "1.4.4",
+    "uuid": "^8.3.2"
   }
 }
