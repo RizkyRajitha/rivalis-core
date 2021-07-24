@@ -1,4 +1,4 @@
-import Logger from '../core/Logger'
+import Logger from './Logger'
 import LogReporter from '../interfaces/LogReporter'
 
 class LoggerFactory {

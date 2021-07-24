@@ -1,3 +1,4 @@
+import Exception from '../core/Exception'
 import StorageProvider from './StorageProvider'
 import PubSubProvider from './PubSubProvider'
 import QueueProvider from './QueueProvider'

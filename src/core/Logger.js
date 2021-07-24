@@ -1,4 +1,4 @@
-import LoggerFactory from '../utils/LoggerFactory'
+import LoggerFactory from './LoggerFactory'
 import stringifyLog from '../utils/stringifyLog'
 class Logger {
 

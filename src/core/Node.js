@@ -1,31 +1,50 @@
-import Core from './Core'
+import Broadcaster from '../structs/Broadcaster'
 import Config from './Config'
-import ContextSystem from '../contexts/ContextSystem'
+import LoggerFactory from './LoggerFactory'
 
-class Node extends Core {
+class Node extends Broadcaster {
+
+    logging = null
 
     /**
-     * @type {ContextSystem}
+     * @protected
+     * @type {Config}
      */
-    contexts = null
+    config = null
 
     /**
      * 
      * @param {Config} [config] 
      */
     constructor(config = {}) {
-        super(config)
+        super()
+        this.config = new Config(config)
+        this.logging = new LoggerFactory(this.config.logReporters)
     }
 
     run() {
-        
+
     }
 
     shutdown() {
 
     }
 
+    define() {
+
+    }
+
+    create() {
+
+    }
+
+    obtain() {
+
+    }
+
+    destroy() {
+
+    }
 }
-let r = new Node()
 
 export default Node
