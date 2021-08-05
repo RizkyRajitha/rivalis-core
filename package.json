@@ -6,6 +6,7 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "nodemon -w src --exec npm run build",
+    "demo": "nodemon -w demo --exec babel-node --inspect demo --unhandled-rejections=strict",
     "build": "npm run build:src && npm run build:tsd",
     "test": "npm run test:linter && npm run test:unit",
     "prepublishOnly": "npm run build",

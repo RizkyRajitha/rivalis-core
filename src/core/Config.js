@@ -1,29 +1,12 @@
 class Config {
 
-    /**
-     * @type {Persistence}
-     */
+    auth = null
+
     persistence = null
 
-    /**
-     * @type {Array.<Transport>}
-     */
+    reporters = null
+
     transports = null
-
-    /**
-     * @type {Array.<LogReporters>}
-     */
-    logReporters = null
-
-    authResolver = null
-
-    /**
-     * 
-     * @param {Config} [config] 
-     */
-    constructor(config = {}) {
-        
-    }
 
 }
 

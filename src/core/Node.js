@@ -1,31 +1,17 @@
-import Core from './Core'
 import Config from './Config'
-import ContextSystem from '../contexts/ContextSystem'
 
-class Node extends Core {
-
-    /**
-     * @type {ContextSystem}
-     */
-    contexts = null
+class Node {
 
     /**
      * 
-     * @param {Config} [config] 
+     * @param {Config} config 
      */
-    constructor(config = {}) {
-        super(config)
-    }
-
-    run() {
+    constructor(config) {
         
     }
 
-    shutdown() {
 
-    }
 
 }
-let r = new Node()
 
 export default Node
