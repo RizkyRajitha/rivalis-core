@@ -1,9 +1,15 @@
 import Exception from '../core/Exception'
+<<<<<<< HEAD
 
 /**
  * @callback MessageListener
  * @param {string} message
  */
+=======
+import StorageProvider from './StorageProvider'
+import PubSubProvider from './PubSubProvider'
+import QueueProvider from './QueueProvider'
+>>>>>>> origin/dev
 
 class Persistence {
 
