@@ -1,5 +1,5 @@
 import Persistence from '../interfaces/Persistence'
-import Exception from './Exception'
+import Exception from '../core/Exception'
 import EventEmitter from '../structs/EventEmitter'
 
 /**
