@@ -6,6 +6,7 @@ import Transport from '../interfaces/Transport'
 import { isInstanceOf, isPropertyValid } from '../utils/helpers'
 import InMemoryStore from '../adapters/InMemoryStore'
 import BasicLogReporter from '../adapters/BasicLogReporter'
+import Logger from './Logger'
 
 class Config {
 
@@ -31,6 +32,11 @@ class Config {
     transports = null
 
     /**
+     * @type {number}
+     */
+    loggerLevel = null
+
+    /**
      * 
      * @param {Config} config 
      */
@@ -39,6 +45,7 @@ class Config {
         this.persistence = config.persistence || null
         this.reporters = config.reporters || []
         this.transports = config.transports || []
+        this.loggerLevel = config.loggerLevel || Logger.LEVEL.INFO
     }
 
 }
@@ -81,6 +88,8 @@ Config.validate = config => {
             throw new Exception(`[Config] the transports[${index}] array item must implements Transport`)
         }
     }
+
+    // TODO: validate logger level
 
     if (config.persistence === null) {
         config.persistence = new InMemoryStore()

@@ -11,16 +11,16 @@ class Persistence {
      * initialize persistence layer
      * @returns {Promise.<void>}
      */
-    init() {
-        return Promise.reject(new Exception('Persistence#init is not implemented'))
+    async init() {
+        throw new Exception('Persistence#init is not implemented')
     }
 
     /**
      * dispose persistence layer
      * @returns {Promise.<void>}
      */
-    dispose() {
-        return Promise.reject(new Exception('Persistence#dispose is not implemented'))
+    async dispose() {
+        throw new Exception('Persistence#dispose is not implemented')
     }
 
     /**
@@ -33,8 +33,8 @@ class Persistence {
      * @param {string} value
      * @returns {Promise.<void>} 
      */
-    set(namespace, key, value) {
-        return Promise.reject(new Exception('Persistence#dispose is not implemented'))
+    async set(namespace, key, value) {
+        throw new Exception('Persistence#dispose is not implemented')
     }
 
     /**
@@ -46,8 +46,8 @@ class Persistence {
      * @param {string} value
      * @returns {Promise.<boolean>} 
      */
-    setnx(namespace, key, value) {
-        return Promise.reject(new Exception('Persistence#savenx is not implemented'))
+    async setnx(namespace, key, value) {
+        throw new Exception('Persistence#savenx is not implemented')
     }
 
     /**
@@ -57,8 +57,8 @@ class Persistence {
      * @param {number} milliseconds
      * @returns {Promise.<boolean>}
      */
-    expire(namespace, key, milliseconds) {
-        return Promise.reject(new Exception('Persistence#expire is not implemented'))
+    async expire(namespace, key, milliseconds) {
+        throw new Exception('Persistence#expire is not implemented')
     }
 
     /**
@@ -67,8 +67,8 @@ class Persistence {
      * @param {string} key 
      * @returns {Promise.<number>}
      */
-    ttl(namespace, key) {
-        return Promise.reject(new Exception('Persistence#ttl is not implemented'))
+    async ttl(namespace, key) {
+        throw new Exception('Persistence#ttl is not implemented')
     }
 
     /**
@@ -77,8 +77,18 @@ class Persistence {
      * @param {string} key 
      * @returns {Promise.<string|null>}
      */
-    get(namespace, key) {
-        return Promise.reject(new Exception('Persistence#get is not implemented'))
+    async get(namespace, key) {
+        throw new Exception('Persistence#get is not implemented')
+    }
+
+    /**
+     * Get multiple keys at once
+     * @param {string} namespace 
+     * @param  {...string} keys 
+     * @returns {Promise.<Array.<string>>}
+     */
+     async getmultiple(namespace, ...keys) {
+        throw new Exception('Persistence#getmultiple is not implemented')
     }
 
     /**
@@ -87,10 +97,10 @@ class Persistence {
      * @param {string} namespace 
      * @param {string} key 
      * @param {string} value
-     * @returns {Promise.<void>} 
+     * @returns {Promise.<string>} 
      */
-    getset(namespace, key, value) {
-        return Promise.reject(new Exception('Persistence#getset is not implemented'))
+    async getset(namespace, key, value) {
+        throw new Exception('Persistence#getset is not implemented')
     }
 
     /**
@@ -99,8 +109,8 @@ class Persistence {
      * @param {string} key
      * @returns {Promise.<boolean>} 
      */
-    exist(namespace, key) {
-        return Promise.reject(new Exception('Persistence#exist is not implemented'))
+    async exist(namespace, key) {
+        throw new Exception('Persistence#exist is not implemented')
     }
 
     /**
@@ -109,17 +119,17 @@ class Persistence {
      * @param {string} key
      * @returns {Promise.<void>} 
      */
-    delete(namespace, key) {
-        return Promise.reject(new Exception('Persistence#delete is not implemented'))
+    async delete(namespace, key) {
+        throw new Exception('Persistence#delete is not implemented')
     }
 
     /**
      * Returns all keys
      * @param {string} namespace
-     * @returns {Promise.<Object.<string,string>>} 
+     * @returns {Promise.<Array.<string>>} 
      */
-    keys(namespace) {
-        return Promise.reject(new Exception('Persistence#keys is not implemented'))
+    async keys(namespace) {
+        throw new Exception('Persistence#keys is not implemented')
     }
 
     /**
@@ -129,8 +139,8 @@ class Persistence {
      * @param {number} value 
      * @returns {Promise.<number>}
      */
-    incrby(namespace, key, value) {
-        return Promise.reject(new Exception('Persistence#incrby is not implemented'))
+    async incrby(namespace, key, value) {
+        throw new Exception('Persistence#incrby is not implemented')
     }
 
     /**
@@ -140,17 +150,18 @@ class Persistence {
      * @param {number} value 
      * @returns {Promise.<number>}
      */
-    decrby(namespace, key, value) {
-        return Promise.reject(new Exception('Persistence#decrby is not implemented'))
+    async decrby(namespace, key, value) {
+        throw new Exception('Persistence#decrby is not implemented')
     }
 
     /**
      * 
      * @param {string} namespace 
+     * @param  {...string} keys
      * @returns {Promise.<void>} 
      */
-    clear(namespace) {
-        return Promise.reject(new Exception('Persistence#clear is not implemented'))
+    async deletemultiple(namespace, ...keys) {
+        throw new Exception('Persistence#deletemultiple is not implemented')
     }
 
     /**
@@ -160,8 +171,8 @@ class Persistence {
      * @param {string} value 
      * @returns {Promise.<number>}
      */
-    lpush(namespace, key, value) {
-        return Promise.reject(new Exception('Persistence#lpush is not implemented'))
+    async lpush(namespace, key, value) {
+        throw new Exception('Persistence#lpush is not implemented')
     }
 
     /**
@@ -170,8 +181,8 @@ class Persistence {
      * @param {string} key 
      * @returns {Promise.<string>}
      */
-    lpop(namespace, key) {
-        return Promise.reject(new Exception('Persistence#lpop is not implemented'))
+    async lpop(namespace, key) {
+        throw new Exception('Persistence#lpop is not implemented')
     }
 
     /**
@@ -181,8 +192,8 @@ class Persistence {
      * @param {string} value 
      * @returns {Promise.<number>}
      */
-    rpush(namespace, key, value) {
-        return Promise.reject(new Exception('Persistence#rpush is not implemented'))
+    async rpush(namespace, key, value) {
+        throw new Exception('Persistence#rpush is not implemented')
     }
 
     /**
@@ -191,8 +202,8 @@ class Persistence {
      * @param {string} key
      * @returns {Promise.<string>}
      */
-    rpop(namespace, key) {
-        return Promise.reject(new Exception('Persistence#rpop is not implemented'))
+    async rpop(namespace, key) {
+        throw new Exception('Persistence#rpop is not implemented')
     }
 
     /**
@@ -202,8 +213,8 @@ class Persistence {
      * @param {string} destination 
      * @returns {Promise.<string>}
      */
-    rpoplpush(namespace, source, destination) {
-        return Promise.reject(new Exception('Persistence#rpoplpush is not implemented'))
+    async rpoplpush(namespace, source, destination) {
+        throw new Exception('Persistence#rpoplpush is not implemented')
     }
 
     /**
@@ -212,8 +223,8 @@ class Persistence {
      * @param {string} key 
      * @returns {Promise.<number>}
      */
-    length(namespace, key) {
-        return Promise.reject(new Exception('Persistence#length is not implemented'))
+    async length(namespace, key) {
+        throw new Exception('Persistence#length is not implemented')
     }
 
     /**
@@ -222,8 +233,8 @@ class Persistence {
      * @param {string} key 
      * @returns {Promise.<void>}
      */
-    remove(namespace, key) {
-        return Promise.reject(new Exception('Persistence#remove is not implemented'))
+    async remove(namespace, key) {
+        throw new Exception('Persistence#remove is not implemented')
     }
 
     /**
@@ -233,8 +244,8 @@ class Persistence {
      * @param {MessageListener} listener 
      * @returns {Promise.<void>} 
      */
-    subscribe(namespace, address, listener) {
-        return Promise.reject(new Exception('Persistence#subscribe is not implemented'))
+    async subscribe(namespace, address, listener) {
+        throw new Exception('Persistence#subscribe is not implemented')
     }
 
     /**
@@ -244,8 +255,8 @@ class Persistence {
      * @param {MessageListener} listener 
      * @returns {Promise.<void>} 
      */
-    unsubscribe(namespace, address, listener) {
-        return Promise.reject(new Exception('Persistence#unsubscribe is not implemented'))
+    async unsubscribe(namespace, address, listener) {
+        throw new Exception('Persistence#unsubscribe is not implemented')
     }
 
     /**
@@ -255,8 +266,8 @@ class Persistence {
      * @param {string} message
      * @returns {Promise.<void>} 
      */
-    publish(namespace, address, message) {
-        return Promise.reject(new Exception('Persistence#publish is not implemented'))
+    async publish(namespace, address, message) {
+        throw new Exception('Persistence#publish is not implemented')
     }
 
 

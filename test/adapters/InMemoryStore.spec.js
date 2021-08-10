@@ -1,20 +1,20 @@
 import { expect } from 'chai'
 import Exception from '../../src/core/Exception'
-import InMemoryPersistence from '../../src/adapters/InMemoryPersistence'
+import InMemoryStore from '../../src/adapters/InMemoryStore'
 
 const delay = (ms = 0) => new Promise(resolve => setTimeout(() => resolve(), ms))
 
-describe('core/InMemoryPersistence', () => {
+describe('core/InMemoryStore', () => {
     
     
 
     it('should init properly', async () => {
-        let persistence = new InMemoryPersistence()
+        let persistence = new InMemoryStore()
         await persistence.init()
     })
 
     it('should dispose properly', async () => {
-        let persistence = new InMemoryPersistence()
+        let persistence = new InMemoryStore()
         await persistence.init()
         await persistence.dispose()
         try {
@@ -25,15 +25,19 @@ describe('core/InMemoryPersistence', () => {
     })
 
     it('should set / get properly', async () => {
-        let persistence = new InMemoryPersistence()
+        let persistence = new InMemoryStore()
         await persistence.init()
         await persistence.set('namespace', 'testkey', 'myvalue')
+        await persistence.set('namespace', 'testkey2', 'myvalue2')
+        await persistence.set('namespace', 'testkey3', 'myvalue')
         let value = await persistence.get('namespace', 'testkey')
         expect(value).to.be.eq('myvalue')
+        value = await persistence.getmultiple('namespace', 'testkey', 'testkey2')
+        expect(value).to.be.deep.eq([ 'myvalue', 'myvalue2' ])
     })
 
     it('should setnx properly', async () => {
-        let persistence = new InMemoryPersistence()
+        let persistence = new InMemoryStore()
         await persistence.init()
         let saved = await persistence.setnx('namespace', 'testkey', 'myvalue')
         expect(saved).to.be.true
@@ -44,7 +48,7 @@ describe('core/InMemoryPersistence', () => {
     })
 
     it('should expire / ttl properly', async () => {
-        let persistence = new InMemoryPersistence()
+        let persistence = new InMemoryStore()
         await persistence.init()
         await persistence.set('namespace', 'mykey', 'value')
         await persistence.expire('namespace', 'mykey', 130)
@@ -52,13 +56,13 @@ describe('core/InMemoryPersistence', () => {
         expect(ttl).to.be.lte(ttl)
         let value = await persistence.get('namespace', 'mykey')
         expect(value).to.be.eq('value')
-        await delay(130)
+        await delay(140)
         value = await persistence.get('namespace', 'mykey')
         expect(value).to.be.eq(null)
     })
 
     it('should getset properly', async () => {
-        let persistence = new InMemoryPersistence()
+        let persistence = new InMemoryStore()
         await persistence.init()
         let value = await persistence.getset('namespace', 'test', 'value1')
         expect(value).to.be.eq(null)
@@ -69,7 +73,7 @@ describe('core/InMemoryPersistence', () => {
     })
 
     it('should getset properly', async () => {
-        let persistence = new InMemoryPersistence()
+        let persistence = new InMemoryStore()
         await persistence.init()
         await persistence.getset('namespace', 'test', 'value1')
         let exist = await persistence.exist('namespace', 'test')
@@ -80,7 +84,7 @@ describe('core/InMemoryPersistence', () => {
     })
 
     it('should fetch keys properly', async () => {
-        let persistence = new InMemoryPersistence()
+        let persistence = new InMemoryStore()
         await persistence.init()
         let keys = await persistence.keys('namespace')
         expect(keys).to.be.deep.eq([])
@@ -90,7 +94,7 @@ describe('core/InMemoryPersistence', () => {
     })
 
     it('should incrby / decrby properly', async () => {
-        let persistence = new InMemoryPersistence()
+        let persistence = new InMemoryStore()
         await persistence.init()
         await persistence.set('namespace', 'number', '1')
         await persistence.incrby('namespace', 'number', 1)
@@ -102,11 +106,12 @@ describe('core/InMemoryPersistence', () => {
     })
 
     it('should clear namespace properly', async () => {
-        let persistence = new InMemoryPersistence()
+        let persistence = new InMemoryStore()
         await persistence.init()
         await persistence.set('namespace', 'number', '1')
         await persistence.set('namespace', 'number2', '2')
-        await persistence.clear('namespace')
+        let keys = await persistence.keys('namespace')
+        await persistence.deletemultiple('namespace', ...keys)
         let value = await persistence.get('namespace', 'number')
         expect(value).to.be.null
         value = await persistence.get('namespace', 'number2')
@@ -114,17 +119,18 @@ describe('core/InMemoryPersistence', () => {
     })
 
     it('should clear namespace properly', async () => {
-        let persistence = new InMemoryPersistence()
+        let persistence = new InMemoryStore()
         await persistence.init()
         await persistence.set('namespace', 'number', '1')
         await persistence.set('namespace', 'number2', '2')
-        await persistence.clear('namespace')
+        let keys = await persistence.keys('namespace')
+        await persistence.deletemultiple('namespace', ...keys)
         let value = await persistence.get('namespace', 'number')
         expect(value).to.be.null
     })
 
     it('should push / pop properly', async () => {
-        let persistence = new InMemoryPersistence()
+        let persistence = new InMemoryStore()
         await persistence.init()
         let length = await persistence.lpush('namespace', 'list', 'first')
         expect(length).to.be.eq(1)
@@ -141,7 +147,7 @@ describe('core/InMemoryPersistence', () => {
     })
 
     it('should rpoplpush properly', async () => {
-        let persistence = new InMemoryPersistence()
+        let persistence = new InMemoryStore()
         await persistence.init()
         for (let i = 0; i < 10; i++) {
             await persistence.lpush('namespace', 'list', `item-${i}`)
@@ -155,7 +161,7 @@ describe('core/InMemoryPersistence', () => {
     })
 
     it('should pub / sub properly', (done) => {
-        let persistence = new InMemoryPersistence()
+        let persistence = new InMemoryStore()
         persistence.init()
 
         persistence.subscribe('namespace', 'address', message => {

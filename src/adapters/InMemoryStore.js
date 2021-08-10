@@ -124,12 +124,31 @@ class InMemoryStore extends Persistence {
     }
 
     /**
+     * 
+     * @param {string} namespace 
+     * @param  {...string} keys 
+     * @returns {Promise.<Array.<string>>}
+     */
+     async getmultiple(namespace, ...keys) {
+        if (keys.length === 0) {
+            return []
+        }
+        this.validate(namespace, keys[0])
+        this.checkType('string', namespace, ...keys)
+        let output = []
+        for (let key of keys) {
+            output.push(this.kv[namespace][key])
+        }
+        return output
+    }
+
+    /**
      * Atomically sets key to value and returns the old value stored at key.
      * Returns an error when key exists but does not hold a string value.
      * @param {string} namespace 
      * @param {string} key 
      * @param {string} value
-     * @returns {Promise.<void>} 
+     * @returns {Promise.<string>} 
      */
     async getset(namespace, key, value) {
         this.checkType('string', namespace, key, value)
@@ -220,13 +239,13 @@ class InMemoryStore extends Persistence {
     /**
      * 
      * @param {string} namespace 
+     * @param  {...string} keys
      * @returns {Promise.<void>} 
      */
-    async clear(namespace) {
-        this.checkType('string', namespace)
-        let keys = await this.keys(namespace)
+    async deletemultiple(namespace, ...keys) {
+        this.checkType('string', namespace, ...keys)
         for (let key of keys) {
-            await this.delete(namespace, key)
+            this.delete(namespace, key) 
         }
     }
 

@@ -1,6 +1,20 @@
+import RoomProvider from '../providers/RoomProvider'
 import Config from './Config'
+import Exception from './Exception'
+import Logger from './Logger'
+import LoggerFactory from '../providers/LoggerFactory'
 
 class Node {
+
+    /**
+     * @type {LoggerFactory}
+     */
+    logging = null
+
+    /**
+     * @type {RoomProvider}
+     */
+    rooms = null
 
     /**
      * @private
@@ -9,42 +23,51 @@ class Node {
     config = null
 
     /**
+     * @private
+     * @type {Logger}
+     */
+    logger = null
+
+    /**
      * 
      * @param {Config} config 
      */
     constructor(config = {}) {
-        this.config = new Config(config)
+        this.config = config
     }
 
-    async init() {
+    async run() {
+        if (typeof this.config !== 'object') {
+            throw new Exception('[Node] invalid config, the provided config must be an object')
+        }
+        this.config = new Config(this.config)
         Config.validate(this.config)
-        await this.config.persistence.init()
         for (let reporter of this.config.reporters) {
             await reporter.init()
         }
+        this.logging = new LoggerFactory(this.config.reporters, this.config.loggerLevel)
+        this.logger = this.logging.getLogger('node')
+        this.logger.info('🏴 log reporter layer initialized!')
+        await this.config.persistence.init()
+        this.logger.info('📊 persistence layer initialized!')
         for (let transport of this.config.transports) {
             await transport.init()
         }
+        this.logger.info('🌐 transport layer initialized!')
+        this.logger.info('✔️ ready!')
+
+        this.rooms = new RoomProvider(this)
     }
 
-    destroy() {
-
-    }
-
-    define() {
-
-    }
-
-    create() {
-
-    }
-
-    obtain() {
-
-    }
-
-    destroy() {
-
+    async destroy() {
+        // TODO: log the procedure steps
+        await this.config.persistence.dispose()
+        for (let reporter of this.config.reporters) {
+            await reporter.dispose()
+        }
+        for (let transport of this.config.transports) {
+            await transport.dispose()
+        }
     }
 }
 

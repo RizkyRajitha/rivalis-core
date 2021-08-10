@@ -8,10 +8,10 @@ class AuthResolver {
      * 
      * @param {string} ticket
      * @param {Node} node
-     * @returns {Promise<Actor>|Actor} 
+     * @returns {Promise<Actor>} 
      */
-    onAuth(ticket, node) {
-        throw new Exception('AuthResolver#onAuth is not implemented') // TODO: write error message
+    async onAuth(ticket, node) {
+        throw new Exception('AuthResolver#onAuth is not implemented')
     }
 
 }
