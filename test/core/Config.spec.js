@@ -18,10 +18,12 @@ describe('core/Config', () => {
         let config = new Config({ 
             auth: new AuthResolver(),
             persistence: new Persistence(),
-            reporters: [ new LogReporter() ]
+            reporters: [ new LogReporter() ],
+            transports: [ ]
+
         })
-        
-        config.validate()
+
+        Config.validate(config)
 
         
     })

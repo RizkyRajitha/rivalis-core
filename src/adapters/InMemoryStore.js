@@ -7,7 +7,7 @@ import EventEmitter from '../structs/EventEmitter'
  * @param {string} message
  */
 
-class InMemoryPersistence extends Persistence {
+class InMemoryStore extends Persistence {
 
     /**
      * @type {Object.<string,Object.<string,Array>>}
@@ -421,4 +421,4 @@ class InMemoryPersistence extends Persistence {
 
 }
 
-export default InMemoryPersistence
+export default InMemoryStore

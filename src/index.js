@@ -1,16 +1,21 @@
 import AuthResolver from './interfaces/AuthResolver'
-
+import Persistence from './interfaces/Persistence'
+import LogReporter from './interfaces/LogReporter'
+import Transport from './interfaces/Transport'
 /**
  * @namespace interfaces
  */
 const interfaces = {
-    AuthResolver
+    AuthResolver,
+    Persistence,
+    LogReporter,
+    Transport
 }
 
 import Actor from './core/Actor'
 import Config from './core/Config'
 import Exception from './core/Exception'
 import Node from './core/Node'
-import InMemoryPersistence from './core/InMemoryPersistence'
+import InMemoryStore from './adapters/InMemoryStore'
 
-export { Node, Config, Actor, Exception, InMemoryPersistence, interfaces }
+export { Node, Config, Actor, Exception, InMemoryStore, interfaces }

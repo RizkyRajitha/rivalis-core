@@ -1,5 +1,13 @@
 class LogReporter {
 
+    init() {
+
+    }
+
+    dispose() {
+        
+    }
+
     /**
      * 
      * @param {number} level 

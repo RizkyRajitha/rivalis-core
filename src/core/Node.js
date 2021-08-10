@@ -16,7 +16,20 @@ class Node {
         this.config = new Config(config)
     }
 
+    async init() {
+        Config.validate(this.config)
+        await this.config.persistence.init()
+        for (let reporter of this.config.reporters) {
+            await reporter.init()
+        }
+        for (let transport of this.config.transports) {
+            await transport.init()
+        }
+    }
 
+    destroy() {
+
+    }
 
     define() {
 

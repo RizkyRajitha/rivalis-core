@@ -1,7 +1,9 @@
+import { interfaces } from '../src'
+
 class SimpleAuth extends interfaces.AuthResolver {
     
     onAuth(ticket, node) {
-        node.logger.info('test')
+        
     }
 
 }

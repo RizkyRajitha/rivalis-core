@@ -2,6 +2,9 @@ import Exception from './Exception'
 import AuthResolver from '../interfaces/AuthResolver'
 import Persistence from '../interfaces/Persistence'
 import LogReporter from '../interfaces/LogReporter'
+import Transport from '../interfaces/Transport'
+import { isInstanceOf, isPropertyValid } from '../utils/helpers'
+import InMemoryStore from '../adapters/InMemoryStore'
 import BasicLogReporter from '../adapters/BasicLogReporter'
 
 class Config {
@@ -17,8 +20,14 @@ class Config {
      */
     persistence = null
 
+    /**
+     * @type {Array.<LogReporter>}
+     */
     reporters = null
 
+    /**
+     * @type {Array.<Transport>}
+     */
     transports = null
 
     /**
@@ -32,66 +41,55 @@ class Config {
         this.transports = config.transports || []
     }
 
-    validate() {
-        if (this.auth === null) {
-            throw new Exception('[Config validation] auth property must be provided')
-        }
+}
 
-        if (typeof this.auth !== 'object') {
-            throw new Exception('[Config validation] auth property must be an object')
-        }
-
-        if (!this.isObjectValid(this.auth, AuthResolver)) {
-            throw new Exception(`[Config validation] auth property must be an instance of AuthResolver`)
-        }
-
-        if (this.persistence !== null && typeof this.persistence === 'object') {
-            if (!this.isObjectValid(this.persistence, Persistence)) {
-                throw new Exception('[Config validation] persistence property must be an instance of Persistence')
-            }
-        }
-
-        if (this.persistence !== null && typeof this.persistence !== 'object') {
-            throw new Exception('[Config validation] persistence property must be an object')
-        }
-
-        if (!Array.isArray(this.reporters)) {
-            throw new Exception('[Config validation] reporters property must be an array of LogReporter')
-        }
-
-        for (let [ index, logReporter ] of this.reporters.entries()) {
-            if (!this.isObjectValid(logReporter, LogReporter)) {
-                throw new Exception(`[Config validation] reporters[${index}] must be an instance of LogReporter`)
-            }
-        }
-
-
+/**
+ * 
+ * @param {Config} config 
+ */
+Config.validate = config => {
+    if (!isPropertyValid(config.auth, 'object', true)) {
+        throw new Exception('[Config] the auth property must be an object')
+    } else if (!isInstanceOf(config.auth, AuthResolver)) {
+        throw new Exception('[Config] the auth property must implements AuthResolver')
     }
 
-    /**
-     * @private
-     * @param {object} instance 
-     * @param {Function} Class 
-     * @param {string} property
-     */
-    isObjectValid(instance, Class) {
-        let methods = this.getListOfMethods(Class)
-        for (let method of methods) {
-            if (typeof instance[method] !== 'function') {
-                return false
-            }
-        }
-        return true
+    if (!isPropertyValid(config.persistence, 'object', false)) {
+        throw new Exception('[Config] the persistence property must be an object')
     }
 
-    /**
-     * @private
-     * @param {Function} Class 
-     * @returns {Array.<string>}
-     */
-    getListOfMethods(Class) {
-        return Object.getOwnPropertyNames(Class.prototype).filter(property => property !== 'constructor')
+    if (config.persistence !== null && !isInstanceOf(config.persistence, Persistence)) {
+        throw new Exception('[Config] the persistence property must implements Persistence')
     }
+
+    if (!Array.isArray(config.reporters)) {
+        throw new Exception('[Config] the reporters property must be an array of LogReporter instances')
+    }
+
+    for (let [ index, logReporter ] of config.reporters.entries()) {
+        if (!isInstanceOf(logReporter, LogReporter)) {
+            throw new Exception(`[Config] the reporters[${index}] array item must implements LogReporter`)
+        }
+    }
+
+    if (!Array.isArray(config.transports)) {
+        throw new Exception('[Config] the transports property must be an array of Transport instances')
+    }
+
+    for (let [ index, transport ] of config.transports.entries()) {
+        if (!isInstanceOf(transport, Transport)) {
+            throw new Exception(`[Config] the transports[${index}] array item must implements Transport`)
+        }
+    }
+
+    if (config.persistence === null) {
+        config.persistence = new InMemoryStore()
+    }
+
+    if (config.reporters.length === 0) {
+        config.reporters.push(new BasicLogReporter())
+    }
+
 
 }
 
