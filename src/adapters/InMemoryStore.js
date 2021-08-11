@@ -232,7 +232,7 @@ class InMemoryStore extends Persistence {
             await this.set(namespace, key, caluclated)
             return await this.get(namespace, key)
         } else {
-            throw new Exception('value is not an integer or out of range') // TODO: better message
+            throw new Exception('value is not an integer or out of range')
         }
     }
 

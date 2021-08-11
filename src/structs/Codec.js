@@ -1,3 +1,5 @@
+import Exception from "../core/Exception"
+
 /**
  * @template T
  */
@@ -16,11 +18,16 @@
 
     /**
      * 
-     * @param {Array.<string>} propertyList 
      * @param {Function} [classType] 
      */
-    constructor(propertyList, classType = null) {
-        this.propertyList = propertyList
+    constructor(classType = null) {
+        let instance = null
+        try {
+            instance = new classType()
+        } catch (error) {
+            throw new Exception(`[codec] failed to get property list, ${error.message}`)
+        }
+        this.propertyList = Object.keys(instance)
         this.classType = classType
     }
 

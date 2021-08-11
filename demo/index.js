@@ -1,5 +1,6 @@
-import { Node, Stage } from '../src'
+import { Context, Node } from '../src'
 import Logger from '../src/core/Logger'
+import GameWorld from './GameWorld'
 import SimpleAuth from './SimpleAuth'
 
 const node = new Node({
@@ -7,24 +8,13 @@ const node = new Node({
     loggerLevel: Logger.LEVEL.DEBUG
 })
 
-class World extends Stage {
-
-    
-
-}
-
 node.run().then(async () => {
-    node.rooms.define('world', new World())
+    node.rooms.define('world', new GameWorld())
+    node.rooms.on('create', room => console.log(room))
     await node.rooms.create('world1', 'world', { pvp: false })
-    await node.rooms.create('world2', 'world', { pvp: false })
-    await node.rooms.create('world3', 'world', { pvp: false })
-    await node.rooms.obtain('world1')
-    await node.rooms.omit('world1')
-    await node.rooms.obtain('world1')
     let rooms = await node.rooms.getAll()
     console.log(rooms)
     console.log(node.rooms.list)
 }).catch(error => {
     console.error(error)
-    
 })

@@ -5,12 +5,17 @@ import Node from '../core/Node'
 import Room from '../core/Room'
 import Stage from '../core/Stage'
 import RoomEntry from '../models/RoomEntry'
+import SystemBroadcast from '../persistence/SystemBroadcast'
+import MessageBroker from '../persistence/MessageBroker'
 import SharedStorage from '../persistence/SharedStorage'
-import Broadcaster from '../structs/Broadcaster'
 import Codec from '../structs/Codec'
 import { isInstanceOf } from '../utils/helpers'
+import LoggerFactory from './LoggerFactory'
 
-class RoomProvider extends Broadcaster {
+/**
+ * @extends {SystemBroadcast<RoomEntry>}
+ */
+class RoomProvider extends SystemBroadcast {
 
 
     /**
@@ -44,17 +49,24 @@ class RoomProvider extends Broadcaster {
     config = null
 
     /**
+     * @private
+     * @type {Node}
+     */
+    node = null
+
+    /**
      * 
-     * @param {Node} node 
+     * @param {Node} node
      */
     constructor(node) {
-        super()
+        super(node.config.persistence, 'node-providers', 'rooms', new Codec(RoomEntry))
+        this.node = node
         this.config = node.config
         this.rooms = new Map()
         this.stages = new Map()
         this.logger = node.logging.getLogger('rooms')
-        let codec = new Codec(['id', 'type', 'options'], RoomEntry)
-        this.storage = new SharedStorage(this.config.persistence, 'rivalis-rooms', codec) 
+        this.storage = new SharedStorage(this.config.persistence, 'rivalis-rooms', this.codec)
+        this.on('terminate', this.handleTerminate, this)
     }
 
     /**
@@ -63,8 +75,11 @@ class RoomProvider extends Broadcaster {
      * @param {Stage} stage 
      */
     define(type, stage) {
+        if (this.stages.has(type)) {
+            throw new Exception(`[rooms] define failed, stage type=(${type}) is already defined`)
+        }
         if (!isInstanceOf(stage, Stage)) {
-            throw new Exception('stage must implements Stage')
+            throw new Exception('[rooms] define failed, stage must implements Stage')
         }
         // TODO: check type
         this.stages.set(type, stage)
@@ -90,6 +105,7 @@ class RoomProvider extends Broadcaster {
             throw new Exception(`[rooms] room creation failed, room id=(${id}) already exist!`)
         }
         this.logger.info(`room id=(${id}) of type=(${type}) is created!`)
+        this.broadcast('create', data)
         return data
     }
 
@@ -102,10 +118,16 @@ class RoomProvider extends Broadcaster {
         if (roomEntry === null) {
             throw new Exception(`[rooms] room creation failed, room id=(${id}) doesen't exist!`)
         }
-        let room = new Room(id, this.config)
+        if (!this.stages.has(roomEntry.type)) {
+            throw new Exception(`[rooms] room creation failed, definition type=(${roomEntry.type}) doesen't exist!`)
+        }
+        let logger = this.node.logging.getLogger(`room:${id}`)
+        let stage = this.stages.get(roomEntry.type)
+        let room = new Room(id, roomEntry.type, roomEntry.options, this.config, stage, logger)
         await room.init()
         this.rooms.set(id, room)
         this.logger.info(`room id=(${id}) has became alive!`)
+        this.emit('obtain', roomEntry)
         return room
     }
 
@@ -133,8 +155,26 @@ class RoomProvider extends Broadcaster {
         return list
     }
 
-    destroy() {
+    async terminate(id) {
+        let roomEntry = await this.storage.get(id)
+        if (roomEntry === null) {
+            throw new Exception(`[rooms] room terminate failed, room id=(${id}) doesn't exist`)
+        }
+        await this.storage.delete(id)
+        await this.broadcast('terminate', roomEntry)
+    }
 
+    /**
+     * @private
+     * @param {RoomEntry} entry 
+     */
+    async handleTerminate(entry) {
+        if (!this.rooms.has(entry.id)) {
+            return
+        }
+        let room = this.rooms.get(entry.id)
+        await room.data.wipe()
+        return this.omit(entry.id)
     }
 
 }

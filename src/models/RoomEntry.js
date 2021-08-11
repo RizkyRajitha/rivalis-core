@@ -22,7 +22,7 @@ class RoomEntry {
      * 
      * @param {RoomEntry} data 
      */
-    constructor(data) {
+    constructor(data = {}) {
         this.id = data.id
         this.type = data.type
         this.options = data.options

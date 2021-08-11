@@ -2,7 +2,7 @@ import EventEmitter from './EventEmitter'
 /**
  * @template T
  */
-class Broadcaster {
+class Broadcast {
 
     /**
      * @callback EventListener
@@ -13,11 +13,7 @@ class Broadcaster {
      * @private
      * @type {EventEmitter.<T>}
      */
-    events = null
-
-    constructor() {
-        this.events = new EventEmitter()
-    }
+    events = new EventEmitter()
 
     /**
      * 
@@ -75,4 +71,4 @@ class Broadcaster {
 
 }
 
-export default Broadcaster
+export default Broadcast

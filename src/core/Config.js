@@ -11,6 +11,12 @@ import Logger from './Logger'
 class Config {
 
     /**
+     * @readonly
+     * @type {string}
+     */
+    nodeId = null
+
+    /**
      * 
      * @type {AuthResolver}
      */
@@ -46,6 +52,7 @@ class Config {
         this.reporters = config.reporters || []
         this.transports = config.transports || []
         this.loggerLevel = config.loggerLevel || Logger.LEVEL.INFO
+        this.nodeId = config.nodeId || 'node'
     }
 
 }
@@ -87,6 +94,10 @@ Config.validate = config => {
         if (!isInstanceOf(transport, Transport)) {
             throw new Exception(`[Config] the transports[${index}] array item must implements Transport`)
         }
+    }
+
+    if (typeof config.nodeId !== 'string') {
+        config.nodeId = 'rivalis'
     }
 
     // TODO: validate logger level

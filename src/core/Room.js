@@ -1,27 +1,37 @@
+import Config from './Config'
 import Context from './Context'
+import Logger from './Logger'
+import Stage from './Stage'
 
 class Room extends Context {
 
     /**
-     * @returns {Promise.<void>}
+     * 
+     * @param {string} id 
+     * @param {string} type 
+     * @param {string} options 
+     * @param {Config} config 
+     * @param {Stage} stage
+     * @param {Logger} logger
      */
-    init() {
-
+    constructor(id, type, options, config, stage, logger) {
+        super(id, type, options, config, stage, logger)
     }
 
     /**
      * @returns {Promise.<void>}
      */
-    dispose() {
-
+    async init() {
+        await super.init()
+        this.logger.trace('initialized properly!')
     }
 
-    join(id, data) {
-
-    }
-
-    leave(id, data) {
-        
+    /**
+     * @returns {Promise.<void>}
+     */
+    async dispose() {
+        await super.dispose()
+        this.logger.trace('disposed!')
     }
 
 }

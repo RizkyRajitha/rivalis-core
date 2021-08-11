@@ -50,7 +50,7 @@ class DataProvider {
      */
     getStorage(namespace) {
         if (!this.storages.has(namespace)) {
-            let storage = new SharedStorage(this.persistence, `${this.namespace}:${namespace}`)
+            let storage = new SharedStorage(this.persistence, this.namespace)
             this.storages.set(namespace, storage)
         }
         return this.storages.get(namespace)
@@ -80,6 +80,11 @@ class DataProvider {
             this.lists.set(namespace, list)
         }
         return this.lists.get(namespace)
+    }
+
+    async wipe() {
+        let keys = await this.persistence.keys(this.namespace)
+        return this.persistence.deletemultiple(this.namespace, ...keys)
     }
 
 }

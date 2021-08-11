@@ -45,7 +45,7 @@ class Node {
         for (let reporter of this.config.reporters) {
             await reporter.init()
         }
-        this.logging = new LoggerFactory(this.config.reporters, this.config.loggerLevel)
+        this.logging = new LoggerFactory(this.config.reporters, this.config.loggerLevel, this.config.nodeId)
         this.logger = this.logging.getLogger('node')
         this.logger.info('🏴 log reporter layer initialized!')
         await this.config.persistence.init()
@@ -57,17 +57,23 @@ class Node {
         this.logger.info('✔️ ready!')
 
         this.rooms = new RoomProvider(this)
+        return this
     }
 
-    async destroy() {
-        // TODO: log the procedure steps
+    async shutdown() {
+        this.logger.info('disposing persistence layer...')
         await this.config.persistence.dispose()
+        this.logger.info('disposing log reporter layer...')
         for (let reporter of this.config.reporters) {
             await reporter.dispose()
         }
+        this.logger.info('disposing transport layer...')
         for (let transport of this.config.transports) {
             await transport.dispose()
         }
+        // TODO: dispose rooms
+        // print metrics
+        this.logger.info('was disposed!')
     }
 }
 

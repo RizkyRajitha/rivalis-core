@@ -55,13 +55,13 @@ class MessageBroker extends Broker {
         return this.persistence.unsubscribe(this.namespace, this.address, this.onMessage)
     }
 
-    send(data) {
+    dispatch(data) {
         let message = null
         if (this.codec !== null) {
             message = this.codec.encode(data)
         }
         message = JSON.stringify(message ? message : data)
-        this.provider.publish(this.namespace, this.address, message)
+        this.persistence.publish(this.namespace, this.address, message)
     }
 
     /**

@@ -22,13 +22,20 @@ class LoggerFactory {
     level = null
 
     /**
+     * @private
+     * @type {string}
+     */
+    nodeId = null
+
+    /**
      * 
      * @param {Array.<LogReporter>} reporters 
      * @param {number}
      */
-    constructor(reporters, level) {
+    constructor(reporters, level, nodeId) {
         this.reporters = reporters
         this.level = level
+        this.nodeId = nodeId
         this.loggers = new Map()
     }
 
@@ -40,7 +47,7 @@ class LoggerFactory {
     getLogger(namespace) {
         // TODO: validate namespace, must be a string
         if (!this.loggers.has(namespace)) {
-            let logger = new Logger(namespace, this.reporters, this.level)
+            let logger = new Logger(`${this.nodeId}:${namespace}`, this.reporters, this.level)
             this.loggers.set(namespace, logger)
         }
         return this.loggers.get(namespace)
