@@ -22,6 +22,7 @@ class Logger {
     level = null
 
     /**
+     * @private
      * @type {Map.<number,string>}
      */
     levels = null

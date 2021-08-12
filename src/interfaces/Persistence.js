@@ -155,16 +155,6 @@ class Persistence {
     }
 
     /**
-     * 
-     * @param {string} namespace 
-     * @param  {...string} keys
-     * @returns {Promise.<void>} 
-     */
-    async deletemultiple(namespace, ...keys) {
-        throw new Exception('Persistence#deletemultiple is not implemented')
-    }
-
-    /**
      * Prepend one element to a list
      * @param {string} namespace 
      * @param {string} key

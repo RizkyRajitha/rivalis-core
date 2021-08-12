@@ -1,11 +1,11 @@
 import Event from '../models/Event'
 import MessageBroker from '../persistence/MessageBroker'
 import SystemBroadcast from '../persistence/SystemBroadcast'
-import DataProvider from '../providers/DataProvider'
-import Codec from '../structs/Codec'
+import SharedDataAPI from '../persistence/SharedDataAPI'
 import Config from './Config'
 import Logger from './Logger'
 import Stage from './Stage'
+import Exception from './Exception'
 
 class Context extends SystemBroadcast {
 
@@ -28,9 +28,16 @@ class Context extends SystemBroadcast {
     options = null
 
     /**
-     * @type {DataProvider}
+     * @readonly
+     * @type {SharedDataAPI}
      */
     data = null
+
+    /**
+     * @readonly
+     * @type {Logger}
+     */
+    logger = null
 
     /**
      * @protected
@@ -46,15 +53,9 @@ class Context extends SystemBroadcast {
 
     /**
      * @protected
-     * @type {Logger}
-     */
-    logger = null
-
-    /**
-     * @protected
      * @type {MessageBroker.<Event>}
      */
-    eventBroker = null
+    broker = null
 
     /**
      * 
@@ -73,29 +74,48 @@ class Context extends SystemBroadcast {
         this.config = config
         this.stage = stage
         this.logger = logger
-        this.eventBroker = new MessageBroker(config.persistence, id, 'events', new Codec(Event))
+
+        this.data = new SharedDataAPI(config.persistence, id)
+        this.broker = new MessageBroker(config.persistence, id, 'events')
     }
 
     /**
      * @protected
-     * @returns {Promise.<void>}
+     * @returns {Promise.<number>}
      */
     async init() {
-        this.data = new DataProvider(this.config.persistence, this.id)
-        await this.eventBroker.initialize()
+        await this.broker.initialize()
+        this.broker.subscribe(this.handleEvent, this)
+        await this.stage.onCreate(this)
     }
 
     /**
      * @protected
-     * @returns {Promise.<void>}
+     * @returns {Promise.<number>}
      */
     async dispose() {
+        await this.stage.onDispose(this)
         this.data = null
-        await this.eventBroker.dispose()
+        super.dispose()
+        await this.broker.dispose()
     }
 
-    emit() {
-        
+    /**
+     * 
+     * @param {Event} event 
+     */
+    emit(event) {
+        // TODO: validate
+        return this.broker.dispatch(event)
+    }
+
+    /**
+     * @protected
+     * @param {Event} event
+     */
+    handleEvent(event) {
+        super.emit('event', event)
+        this.stage.onEmit(this, event)
     }
 }
 

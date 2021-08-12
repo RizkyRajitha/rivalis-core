@@ -8,7 +8,7 @@ class Stage extends Actions {
      * 
      * @param {Context} context 
      */
-    async onInit(context) {}
+    async onCreate(context) {}
 
     /**
      * 

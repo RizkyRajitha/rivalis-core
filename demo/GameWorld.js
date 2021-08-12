@@ -2,12 +2,8 @@ import { Context, Stage } from '../src'
 
 class GameWorld extends Stage {
     
-    /**
-     * 
-     * @param {Context} context 
-     */
-    onInit(context) {
-        
+    onCreate(context) {
+        context.logger.error('test')
     }
 
 }

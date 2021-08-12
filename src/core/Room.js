@@ -1,9 +1,17 @@
+import ActorProvider from '../providers/ActorProvider'
 import Config from './Config'
 import Context from './Context'
 import Logger from './Logger'
 import Stage from './Stage'
 
 class Room extends Context {
+
+    
+    /**
+     * @readonly
+     * @type {ActorProvider}
+     */
+    actors = null
 
     /**
      * 
@@ -23,7 +31,8 @@ class Room extends Context {
      */
     async init() {
         await super.init()
-        this.logger.trace('initialized properly!')
+        this.actors = new ActorProvider(this.config, this, this.logger)
+        this.logger.trace(`room id=(${this.id}) type=(${this.type}) options=(${JSON.stringify(this.options)}) initialized!`)
     }
 
     /**
@@ -32,6 +41,16 @@ class Room extends Context {
     async dispose() {
         await super.dispose()
         this.logger.trace('disposed!')
+    }
+
+    /**
+     * @private
+     * @param {Event} event 
+     */
+    handleEvent(event) {
+        super.handleEvent(event)
+        this.logger.debug('event', event)
+        // todo: here shall be 
     }
 
 }

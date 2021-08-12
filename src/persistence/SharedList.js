@@ -1,5 +1,4 @@
 import Persistence from '../interfaces/Persistence'
-import Codec from '../structs/Codec'
 
 /**
  * @template T
@@ -24,19 +23,13 @@ class SharedList {
      */
     key = null
 
-    /**
-     * @private
-     * @type {Codec}
-     */
-    codec = null
-
      /**
       * 
       * @param {Persistence} persistence 
       * @param {string} namespace 
       * @param {string} key 
       */
-    constructor(persistence, namespace, key, codec = null) {
+    constructor(persistence, namespace, key) {
         this.persistence = persistence
         this.namespace = namespace
         this.key = key
@@ -88,9 +81,6 @@ class SharedList {
      * @returns {string}
      */
     encode(data) {
-        if (this.codec !== null) {
-            data = this.codec.encode(data)
-        }
         return JSON.stringify(data)
     }
 
@@ -101,9 +91,6 @@ class SharedList {
      */
     decode(data) {
         data = JSON.parse(data)
-        if (this.codec !== null) {
-            data = this.codec.decode(data)
-        }
         return data
     }
 

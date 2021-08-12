@@ -120,7 +120,14 @@ class InMemoryStore extends Persistence {
     async get(namespace, key) {
         this.checkType('string', namespace, key)
         this.validate(namespace, key)
-        return this.kv[namespace][key] || null
+        let value = this.kv[namespace][key] || null
+        if (value === null) {
+            return null
+        }
+        if (typeof value !== 'string') {
+            throw new Exception('WRONGTYPE Operation against a key holding the wrong kind of value')
+        } 
+        return value
     }
 
     /**
@@ -133,11 +140,16 @@ class InMemoryStore extends Persistence {
         if (keys.length === 0) {
             return []
         }
-        this.validate(namespace, keys[0])
+        
         this.checkType('string', namespace, ...keys)
         let output = []
         for (let key of keys) {
-            output.push(this.kv[namespace][key])
+            let value = this.kv[namespace][key]
+            if (Array.isArray(value)) {
+                output.push(null)
+                continue
+            }
+            output.push(value)
         }
         return output
     }
@@ -187,7 +199,11 @@ class InMemoryStore extends Persistence {
      */
     async keys(namespace) {
         this.checkType('string', namespace)
-        return Object.keys(this.kv[namespace] || {})
+        let keys = Object.keys(this.kv[namespace] || {})
+        for (let key of keys) {
+            this.validate(namespace, key)
+        }
+        return Object.keys(this.kv[namespace] || {}) || []
     }
 
     /**
@@ -207,7 +223,7 @@ class InMemoryStore extends Persistence {
         if (this.isNumber(data)) {
             let caluclated = JSON.stringify(parseInt(data) + value)
             await this.set(namespace, key, caluclated)
-            return await this.get(namespace, key)
+            return parseInt(await this.get(namespace, key), 10)
         } else {
             throw new Exception('is not a number')
         }
@@ -230,22 +246,9 @@ class InMemoryStore extends Persistence {
         if (this.isNumber(data)) {
             let caluclated = JSON.stringify(parseInt(data) - value)
             await this.set(namespace, key, caluclated)
-            return await this.get(namespace, key)
+            return parseInt(await this.get(namespace, key), 10)
         } else {
             throw new Exception('value is not an integer or out of range')
-        }
-    }
-
-    /**
-     * 
-     * @param {string} namespace 
-     * @param  {...string} keys
-     * @returns {Promise.<void>} 
-     */
-    async deletemultiple(namespace, ...keys) {
-        this.checkType('string', namespace, ...keys)
-        for (let key of keys) {
-            this.delete(namespace, key) 
         }
     }
 
@@ -337,7 +340,12 @@ class InMemoryStore extends Persistence {
      */
     async length(namespace, key) {
         this.checkType('string', namespace, key)
-        let field = this.kv[namespace][key]
+        let field = null
+        try {
+            field = this.kv[namespace][key]
+        } catch (error) {
+            field = []
+        }
         if (Array.isArray(field)) {
             return field.length
         } else if (typeof field === 'undefined') {
@@ -357,7 +365,7 @@ class InMemoryStore extends Persistence {
     async subscribe(namespace, address, listener) {
         this.checkType('string', namespace, address)
         this.checkType('function', listener)
-        this.emitter.on(`${namespace}-${address}`, listener)
+        this.emitter.on(`${namespace}:${address}`, listener)
     }
 
     /**
@@ -370,7 +378,7 @@ class InMemoryStore extends Persistence {
     async unsubscribe(namespace, address, listener) {
         this.checkType('string', namespace, address)
         this.checkType('function', listener)
-        this.emitter.off(`${namespace}-${address}`, listener)
+        this.emitter.off(`${namespace}:${address}`, listener)
     }
 
     /**
@@ -382,7 +390,7 @@ class InMemoryStore extends Persistence {
      */
     async publish(namespace, address, message) {
         this.checkType('string', namespace, address, message)
-        this.emitter.emit(`${namespace}-${address}`, message)
+        this.emitter.emit(`${namespace}:${address}`, message)
     }
 
     /**
@@ -405,8 +413,8 @@ class InMemoryStore extends Persistence {
         if (typeof this.exp[namespace][key] === 'number') {
             let now = new Date().getTime()
             if (now >= this.exp[namespace][key]) {
-                this.exp[namespace][key] = undefined
-                this.kv[namespace][key] = undefined
+                delete this.exp[namespace][key]
+                delete this.kv[namespace][key]
             }
         }
         if (isList && typeof this.kv[namespace][key] === 'undefined') {

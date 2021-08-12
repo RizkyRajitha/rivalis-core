@@ -1,5 +1,4 @@
 import Broadcast from '../structs/Broadcast'
-import Codec from '../structs/Codec'
 import Persistence from '../interfaces/Persistence'
 
 /**
@@ -55,24 +54,16 @@ class SystemBroadcast extends Broadcast {
     address = null
 
     /**
-     * @private
-     * @type {Codec.<T>}
-     */
-    codec = null
-
-    /**
      * 
      * @param {Persistence} persistence 
      * @param {string} namespace 
      * @param {string} address 
-     * @param {Codec.<T>} [codec]
      */
-    constructor(persistence, namespace, address, codec = null) {
+    constructor(persistence, namespace, address) {
         super()
         this.persistence = persistence
         this.namespace = namespace
         this.address = address
-        this.codec = codec
         persistence.subscribe(namespace, address, this.onEvent)
     }
 
@@ -83,9 +74,6 @@ class SystemBroadcast extends Broadcast {
      */
     onEvent = (data) => {
         let event = JSON.parse(data)
-        if (this.codec !== null) {
-            event.data = this.codec.decode(event.data)
-        }
         this.emit(event.type, event.data)
     }
 
@@ -95,9 +83,6 @@ class SystemBroadcast extends Broadcast {
      * @param {T} data
      */
     broadcast(type, data) {
-        if (this.codec !== null) {
-            data = this.codec.encode(data)
-        }
         let encoded = JSON.stringify({ type, data })
         return this.persistence.publish(this.namespace, this.address, encoded)
     }

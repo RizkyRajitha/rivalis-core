@@ -6,11 +6,8 @@ import Room from '../core/Room'
 import Stage from '../core/Stage'
 import RoomEntry from '../models/RoomEntry'
 import SystemBroadcast from '../persistence/SystemBroadcast'
-import MessageBroker from '../persistence/MessageBroker'
 import SharedStorage from '../persistence/SharedStorage'
-import Codec from '../structs/Codec'
 import { isInstanceOf } from '../utils/helpers'
-import LoggerFactory from './LoggerFactory'
 
 /**
  * @extends {SystemBroadcast<RoomEntry>}
@@ -59,13 +56,13 @@ class RoomProvider extends SystemBroadcast {
      * @param {Node} node
      */
     constructor(node) {
-        super(node.config.persistence, 'node-providers', 'rooms', new Codec(RoomEntry))
+        super(node.config.persistence, 'rivalis', 'rooms')
         this.node = node
         this.config = node.config
         this.rooms = new Map()
         this.stages = new Map()
         this.logger = node.logging.getLogger('rooms')
-        this.storage = new SharedStorage(this.config.persistence, 'rivalis-rooms', this.codec)
+        this.storage = new SharedStorage(this.config.persistence, 'rivalis:rooms')
         this.on('terminate', this.handleTerminate, this)
     }
 

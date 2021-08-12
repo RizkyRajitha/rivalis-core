@@ -1,6 +1,5 @@
 import Persistence from '../interfaces/Persistence'
 import Broker from '../structs/Broker'
-import Codec from '../structs/Codec'
 
 /**
  * @template T
@@ -27,24 +26,16 @@ class MessageBroker extends Broker {
     address = null
 
     /**
-     * @private
-     * @type {Codec.<T>}
-     */
-    codec = null
-
-    /**
      * 
      * @param {Persistence} persistence 
      * @param {string} namespace 
-     * @param {string} address 
-     * @param {Codec} [codec]
+     * @param {string} address
      */
-    constructor(persistence, namespace, address, codec = null) {
+    constructor(persistence, namespace, address) {
         super()
         this.persistence = persistence
         this.namespace = namespace
         this.address = address
-        this.codec = codec
     }
 
     initialize() {
@@ -55,13 +46,14 @@ class MessageBroker extends Broker {
         return this.persistence.unsubscribe(this.namespace, this.address, this.onMessage)
     }
 
+    /**
+     * 
+     * @param {T} data 
+     */
     dispatch(data) {
         let message = null
-        if (this.codec !== null) {
-            message = this.codec.encode(data)
-        }
         message = JSON.stringify(message ? message : data)
-        this.persistence.publish(this.namespace, this.address, message)
+        return this.persistence.publish(this.namespace, this.address, message)
     }
 
     /**
@@ -70,9 +62,6 @@ class MessageBroker extends Broker {
      */
     onMessage = message => {
         let data = JSON.parse(message)
-        if (this.codec !== null) {
-            data = this.codec.decode(data)
-        }
         this.emit(data)
     }
 }

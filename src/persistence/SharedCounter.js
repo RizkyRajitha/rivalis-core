@@ -30,7 +30,7 @@ class SharedCounter {
     constructor(persistence, namespace, key) {
         this.persistence = persistence
         this.namespace = namespace
-        this.key = `rcount-${key}`
+        this.key = key
     }
 
     async get() {

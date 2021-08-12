@@ -19,21 +19,13 @@ import Persistence from '../interfaces/Persistence'
     namespace = null
 
     /**
-     * @private
-     * @type {Codec.<T>|null}
-     */
-    codec = null
-
-    /**
      * 
      * @param {Persistence} persistence 
      * @param {string} namespace 
-     * @param {Codec} [codec] 
      */
-    constructor(persistence, namespace, codec = null) {
+    constructor(persistence, namespace) {
         this.persistence = persistence
         this.namespace = namespace
-        this.codec = codec
     }
 
     /**
@@ -44,7 +36,10 @@ import Persistence from '../interfaces/Persistence'
         let items = await this.persistence.getmultiple(this.namespace, ...keys)
         let map = new Map()
         for (let [ index, key ] of keys.entries()) {
-            map.set(key, this.decode(items[index]))
+            let value = items[index] || null
+            if (value !== null) {
+                map.set(key, this.decode(value))
+            }
         }
         return map
     }
@@ -111,11 +106,11 @@ import Persistence from '../interfaces/Persistence'
 
     /**
      * 
-     * @param {...string} keys
+     * @param {string} key
      * @returns {Promise.<void>}
      */
-    delete(...keys) {
-        return this.persistence.deletemultiple(this.namespace, ...keys)
+    delete(key) {
+        return this.persistence.delete(this.namespace, key)
     }
 
     /**
@@ -151,9 +146,6 @@ import Persistence from '../interfaces/Persistence'
      * @returns {string}
      */
     encode(data) {
-        if (this.codec !== null) {
-            data = this.codec.encode(data)
-        }
         return JSON.stringify(data)
     }
 
@@ -164,9 +156,6 @@ import Persistence from '../interfaces/Persistence'
      */
     decode(data) {
         data = JSON.parse(data)
-        if (this.codec !== null) {
-            data = this.codec.decode(data)
-        }
         return data
     }
 
