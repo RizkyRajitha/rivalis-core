@@ -111,7 +111,9 @@ describe('core/InMemoryStore', () => {
         await persistence.set('namespace', 'number', '1')
         await persistence.set('namespace', 'number2', '2')
         let keys = await persistence.keys('namespace')
-        await persistence.deletemultiple('namespace', ...keys)
+        for (let key of keys) {
+            await persistence.delete('namespace', key)
+        }
         let value = await persistence.get('namespace', 'number')
         expect(value).to.be.null
         value = await persistence.get('namespace', 'number2')
@@ -124,7 +126,9 @@ describe('core/InMemoryStore', () => {
         await persistence.set('namespace', 'number', '1')
         await persistence.set('namespace', 'number2', '2')
         let keys = await persistence.keys('namespace')
-        await persistence.deletemultiple('namespace', ...keys)
+        for (let key of keys) {
+            await persistence.delete('namespace', key)
+        }
         let value = await persistence.get('namespace', 'number')
         expect(value).to.be.null
     })

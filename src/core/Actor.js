@@ -1,43 +1,58 @@
-import Broker from '../structs/Broker'
+import Broadcast from '../structs/Broadcast'
+import Room from './Room'
 
-class Actor extends Broker {
+class Actor {
 
     id = null
 
     data = null
 
     /**
+     * @private
      * @type {Room}
      */
     room = null
 
     /**
      * @private
+     * @type {Broadcast}
      */
-    on = {
-        dispose: (eventListener, context) => this.events.on('dispose', eventListener, context)
+    events = null
+
+    /**
+     * @private
+     */
+    emit = {
+
+        event: event => this.events.emit('event', event),
+
+        leave: () => this.events.emit('leave')
     }
 
     constructor(id, data, room) {
-        super()
         this.id = id
         this.data = data
         this.room = room
-
+        this.events = new Broadcast()
     }
 
     send(event) {
-
+        this.events.emit('event', event)
     }
 
     /**
      * @private
      */
     dispose() {
-        this.events.emit('dispose', this)
-        this.events.removeAllListeners()
+        this.events.dispose()
     }
-
+}
+/**
+ * 
+ * @param {Actor} actor 
+ */
+Actor.dispose = actor => {
+    actor.dispose()
 }
 
 export default Actor

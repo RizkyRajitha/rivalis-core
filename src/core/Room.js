@@ -1,6 +1,8 @@
+import Event from '../models/Event'
 import ActorProvider from '../providers/ActorProvider'
 import Config from './Config'
 import Context from './Context'
+import Exception from './Exception'
 import Logger from './Logger'
 import Stage from './Stage'
 
@@ -43,14 +45,33 @@ class Room extends Context {
         this.logger.trace('disposed!')
     }
 
+    async execute(actor, key, data) {
+        let exist = this.actors.list.includes(actor)
+        if (!exist) {
+            throw new Exception(`[room] execution failed, actor=(${JSON.stringify(actor)}) doesn't exist!`)
+        }
+        let handler = Stage.getHandler(this.stage, key)
+        if (handler === null) {
+            throw new Exception(`[room] execution failed, handler for action key=(${key}) doesn't exist!`)
+        }
+        return handler(actor, key, data, this)
+    }
+
     /**
      * @private
      * @param {Event} event 
      */
     handleEvent(event) {
         super.handleEvent(event)
-        this.logger.debug('event', event)
-        // todo: here shall be 
+        this.logger.debug('emitted event:', event)
+        let filter = Stage.getFilter(this.stage, event.key)
+        this.actors.list.forEach(actor => {
+            if (filter === null) {
+                actor.send(event)
+            } else {
+                filter(actor, event, this)
+            }
+        })        
     }
 
 }

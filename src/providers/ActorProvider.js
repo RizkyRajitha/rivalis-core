@@ -2,7 +2,6 @@ import Actor from '../core/Actor'
 import Config from '../core/Config'
 import Context from '../core/Context'
 import Exception from '../core/Exception'
-import Node from '../core/Node'
 import ActorEntry from '../models/ActorEntry'
 import SharedStorage from '../persistence/SharedStorage'
 import SystemBroadcast from '../persistence/SystemBroadcast'
@@ -49,7 +48,7 @@ class ActorProvider extends SystemBroadcast {
             throw new Exception(`[actors] join failed, actor id=(${id}) already exist!`)
         }
         this.logger.info(`actor id=(${id}) data=(${JSON.stringify(data)}) has just joined the room!`)
-        let actor = new Actor(id, data)
+        let actor = new Actor(id, data, this.context)
         this.actors.set(id, actor)
         return actor
     }
@@ -64,7 +63,8 @@ class ActorProvider extends SystemBroadcast {
         }
         await this.storage.delete(actor.id)
         actor = this.actors.get(actor.id)
-        // TODO: invoke something for disposing actor
+        actor.emit.leave()
+        Actor.dispose(actor)
         this.actors.delete(actor.id)
         this.logger.info(`actor id=(${actor.id}) has left the room!`)
     }
