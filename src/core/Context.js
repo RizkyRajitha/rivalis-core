@@ -1,4 +1,4 @@
-import Event from '../models/Event'
+import Event from './Event'
 import MessageBroker from '../persistence/MessageBroker'
 import SystemBroadcast from '../persistence/SystemBroadcast'
 import SharedDataAPI from '../persistence/SharedDataAPI'
@@ -104,8 +104,9 @@ class Context extends SystemBroadcast {
      * 
      * @param {Event} event 
      */
-    emit(event) {
+    emit(key, data) {
         // TODO: validate
+        let event = new Event({ key, data, sender: null })
         return this.broker.dispatch(event)
     }
 

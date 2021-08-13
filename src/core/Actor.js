@@ -1,4 +1,5 @@
 import Broadcast from '../structs/Broadcast'
+import Event from './Event'
 import Room from './Room'
 
 class Actor {
@@ -36,7 +37,14 @@ class Actor {
         this.events = new Broadcast()
     }
 
-    send(event) {
+    /**
+     * 
+     * @param {string} key 
+     * @param {any} data 
+     * @param {string} [sender] 
+     */
+    send(key, data, sender = null) {
+        let event = new Event({ key, data, sender: this.id })
         this.events.emit('event', event)
     }
 

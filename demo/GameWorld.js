@@ -1,5 +1,4 @@
-import { Actions, Context, Stage } from '../src'
-import Event from '../src/models/Event'
+import { Actions, Context, Stage, Event } from '../src'
 
 class GameWorld extends Stage {
     

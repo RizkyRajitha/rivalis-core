@@ -27,6 +27,12 @@ class ActorProvider extends SystemBroadcast {
     context = null
 
     /**
+     * @private
+     * @type {Config}
+     */
+    config = null
+
+    /**
      * 
      * @param {Config} config 
      * @param {Context} context 
@@ -37,21 +43,38 @@ class ActorProvider extends SystemBroadcast {
         this.actors = new Map()
         this.logger = logger
         this.context = context
+        this.config = config
         this.on('kick', this.handleKick, this)
     }
 
     async join(id, data) {
         // TODO: validate id & data
-        let actorEntry = new ActorEntry({ id, data })
+
+        if (this.actors.has(id)) {
+            return this.actors.get(id)
+        }
+        let actorEntry = new ActorEntry({ id, data, ownedBy: this.config.nodeId })
         let persisted = await this.storage.savenx(id, actorEntry)
         if (!persisted) {
-            throw new Exception(`[actors] join failed, actor id=(${id}) already exist!`)
+            throw new Exception(`[actors] join failed, actor id=(${id}) already exist!`, 'actor_already_exist')
         }
+        // await this.storage.expire(id, 20000)
         this.logger.info(`actor id=(${id}) data=(${JSON.stringify(data)}) has just joined the room!`)
         let actor = new Actor(id, data, this.context)
         this.actors.set(id, actor)
         return actor
     }
+
+    // async exist(id) {
+    //     let actorEntry = await this.storage.get(id)
+    //     if (actorEntry === null) {
+    //         return false
+    //     }
+    //     if (actorEntry.ownedBy === this.config.nodeId && this.actors.has(id)) {
+    //         await this.storage.expire(id, 20000)
+    //     }
+    //     return true
+    // }
 
     /**
      * 

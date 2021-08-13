@@ -1,4 +1,4 @@
-import Event from '../models/Event'
+import Event from './Event'
 import ActorProvider from '../providers/ActorProvider'
 import Config from './Config'
 import Context from './Context'
@@ -54,6 +54,7 @@ class Room extends Context {
         if (handler === null) {
             throw new Exception(`[room] execution failed, handler for action key=(${key}) doesn't exist!`)
         }
+        this.logger.debug(`action executed key=(${key}) data=(${JSON.stringify(data)}) by actor id=(${actor.id})`)
         return handler(actor, key, data, this)
     }
 
@@ -67,7 +68,7 @@ class Room extends Context {
         let filter = Stage.getFilter(this.stage, event.key)
         this.actors.list.forEach(actor => {
             if (filter === null) {
-                actor.send(event)
+                actor.send(event.key, event.data, event.sender)
             } else {
                 filter(actor, event, this)
             }

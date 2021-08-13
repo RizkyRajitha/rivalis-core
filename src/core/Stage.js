@@ -1,4 +1,4 @@
-import Event from '../models/Event'
+import Event from './Event'
 import Actions from './Actions'
 import Context from './Context'
 

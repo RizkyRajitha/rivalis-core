@@ -11,7 +11,7 @@ class Exception extends Error {
      * @param {string} [message] 
      * @param {string} [code]
      */
-    constructor(message, code = null) {
+    constructor(message, code = 'internal') {
         super(message)
         this.code = code
     }

@@ -113,10 +113,10 @@ class RoomProvider extends SystemBroadcast {
         }
         let roomEntry = await this.storage.get(id)
         if (roomEntry === null) {
-            throw new Exception(`[rooms] room creation failed, room id=(${id}) doesen't exist!`)
+            throw new Exception(`[rooms] room initialization failed, room id=(${id}) doesen't exist!`, 'room_not_exist')
         }
         if (!this.stages.has(roomEntry.type)) {
-            throw new Exception(`[rooms] room creation failed, definition type=(${roomEntry.type}) doesen't exist!`)
+            throw new Exception(`[rooms] room initialization failed, definition type=(${roomEntry.type}) doesen't exist!`)
         }
         let logger = this.node.logging.getLogger(`room:${id}`)
         let stage = this.stages.get(roomEntry.type)

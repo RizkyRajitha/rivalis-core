@@ -3,6 +3,9 @@ import Config from './Config'
 import Exception from './Exception'
 import Logger from './Logger'
 import LoggerFactory from '../providers/LoggerFactory'
+import { isInstanceOf } from '../utils/helpers'
+import Actor from './Actor'
+import Clock from '../structs/Clock'
 
 class Node {
 
@@ -29,6 +32,12 @@ class Node {
     logger = null
 
     /**
+     * @private
+     * @type {Clock}
+     */
+    clock = null
+
+    /**
      * 
      * @param {Config} config 
      */
@@ -49,9 +58,10 @@ class Node {
         this.logger = this.logging.getLogger('node')
         this.logger.info('🏴 log reporter layer initialized!')
         await this.config.persistence.init()
+        this.clock = new Clock(this.config.clockInterval)
         this.logger.info('📊 persistence layer initialized!')
         for (let transport of this.config.transports) {
-            await transport.init()
+            await transport.init(this)
         }
         this.logger.info('🌐 transport layer initialized!')
         this.logger.info('✔️ ready!')
@@ -61,6 +71,9 @@ class Node {
     }
 
     async shutdown() {
+        this.clock.dispose()
+        // TODO: dispose rooms
+        // print metrics
         this.logger.info('disposing persistence layer...')
         await this.config.persistence.dispose()
         this.logger.info('disposing log reporter layer...')
@@ -71,9 +84,26 @@ class Node {
         for (let transport of this.config.transports) {
             await transport.dispose()
         }
-        // TODO: dispose rooms
-        // print metrics
         this.logger.info('was disposed!')
+    }
+
+    /**
+     * 
+     * @param {string} ticket 
+     * @returns {Promise.<Actor>}
+     */
+    async authorize(ticket) {
+        let actor = null
+        try {
+            actor = await this.config.auth.onAuth(ticket, this)
+        } catch (error) {
+            throw new Exception(`authorization failed, ${error.message}`)// TODO: implement this
+        }
+        if (isInstanceOf(actor, Actor)) {
+            return actor
+        } else {
+            throw new Exception('') // TODO: write message
+        }
     }
 }
 

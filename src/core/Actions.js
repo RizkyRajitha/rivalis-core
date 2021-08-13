@@ -1,6 +1,6 @@
 import Actor from './Actor'
 import Context from './Context'
-import Event from '../models/Event'
+import Event from './Event'
 import Exception from './Exception'
 import { isInstanceOf } from '../utils/helpers'
 

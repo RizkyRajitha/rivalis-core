@@ -7,6 +7,7 @@ import { isInstanceOf, isPropertyValid } from '../utils/helpers'
 import InMemoryStore from '../adapters/InMemoryStore'
 import BasicLogReporter from '../adapters/BasicLogReporter'
 import Logger from './Logger'
+import Compression from '../interfaces/Compression'
 
 class Config {
 
@@ -43,6 +44,11 @@ class Config {
     loggerLevel = null
 
     /**
+     * @type {number}
+     */
+    clockInterval = null
+
+    /**
      * 
      * @param {Config} config 
      */
@@ -53,6 +59,7 @@ class Config {
         this.transports = config.transports || []
         this.loggerLevel = config.loggerLevel || Logger.LEVEL.INFO
         this.nodeId = config.nodeId || 'node'
+        this.clockInterval = config.clockInterval || 1000
     }
 
 }
@@ -64,7 +71,7 @@ class Config {
 Config.validate = config => {
     if (!isPropertyValid(config.auth, 'object', true)) {
         throw new Exception('[Config] the auth property must be an object')
-    } else if (!isInstanceOf(config.auth, AuthResolver)) {
+    } else if (!isInstanceOf(config.auth || {}, AuthResolver)) {
         throw new Exception('[Config] the auth property must implements AuthResolver')
     }
 
@@ -98,6 +105,10 @@ Config.validate = config => {
 
     if (typeof config.nodeId !== 'string') {
         config.nodeId = 'rivalis'
+    }
+    
+    if (typeof config.clockInterval !== 'number') {
+        config.clockInterval = 1000
     }
 
     // TODO: validate logger level
