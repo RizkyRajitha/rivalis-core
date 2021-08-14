@@ -53,7 +53,7 @@ class RoomProvider extends SystemBroadcast {
 
     /**
      * 
-     * @param {Node} node
+     * @param {Node} node 
      */
     constructor(node) {
         super(node.config.persistence, 'rivalis', 'rooms')
@@ -109,6 +109,11 @@ class RoomProvider extends SystemBroadcast {
         return data
     }
 
+    /**
+     * 
+     * @param {string} id 
+     * @returns {Promise.<Room>}
+     */
     async obtain(id) {
         // TODO: validate id
         if (this.rooms.has(id)) {
@@ -134,20 +139,25 @@ class RoomProvider extends SystemBroadcast {
     /**
      * 
      * @param {Room} room 
+     * @returns {Promise.<void>}
      */
     async omit(room) {
         if (!isInstanceOf(room, Room)) {
             throw new Exception('[rooms] room omit failed, room must be an instance of Room')
         }
         if (!this.rooms.has(room.id)) {
-            throw new Exception(`[rooms] room omit failed, room id=(${id}) is not obtained`)
+            throw new Exception(`[rooms] room omit failed, room id=(${room.id}) is not obtained`)
         }
         room = this.rooms.get(room.id)
         await room.dispose()
-        this.logger.info(`room id=(${id}) was disposed!`)
-        this.rooms.delete(id)
+        this.logger.info(`room id=(${room.id}) was disposed!`)
+        this.rooms.delete(room.id)
     }
 
+    /**
+     * 
+     * @returns {Promise.<Array.<RoomEntry>>}
+     */
     async getAll() {
         let list = []
         let rooms = await this.storage.getAll()
@@ -164,6 +174,10 @@ class RoomProvider extends SystemBroadcast {
         return list
     }
 
+    /**
+     * 
+     * @param {string} id 
+     */
     async terminate(id) {
         let roomEntry = await this.storage.get(id)
         if (roomEntry === null) {

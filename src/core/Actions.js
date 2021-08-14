@@ -29,7 +29,7 @@ class Actions {
      * @private
      * @type {RegExp}
      */
-    keyRegExp = new RegExp(/^[a-z0-9\-\_]+$/)
+    keyRegExp = new RegExp(/^[a-z0-9\-_]+$/)
 
     /**
      * @private

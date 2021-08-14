@@ -1,3 +1,5 @@
+import Exception from '../core/Exception'
+
 class Compression {
 
     /**
