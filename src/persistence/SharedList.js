@@ -43,6 +43,10 @@ class SharedList {
         return this.persistence.rpush(this.namespace, this.key, this.encode(value))
     }
 
+    /**
+     * 
+     * @returns {Promise.<T>}
+     */
     async pop() {
         let value = await this.persistence.rpop(this.namespace, this.key)
         if (value === null) {
@@ -59,6 +63,10 @@ class SharedList {
         return this.persistence.rpush(this.namespace, this.key, this.encode(value))
     }
 
+    /**
+     * 
+     * @returns {Promise.<T>}
+     */
     async unshift() {
         let value = await this.persistence.rpop(this.namespace, this.key)
         if (value === null) {
@@ -67,12 +75,37 @@ class SharedList {
         return this.decode(value)
     }
 
+    /**
+     * 
+     * @returns {Promise.<number>}
+     */
     getLength() {
         return this.persistence.length(this.namespace, this.key)
     }
 
+    /**
+     * 
+     * @returns {Promise.<void>}
+     */
     clear() {
         return this.persistence.delete(this.namespace, this.key)
+    }
+
+    /**
+     * 
+     * @param {number} milliseconds 
+     * @returns {Promise.<boolean>}
+     */
+    expire(milliseconds) {
+        return this.persistence.expire(this.namespace, this.key, milliseconds)
+    }
+
+    /**
+     * 
+     * @returns {Promise.<number>}
+     */
+    ttl() {
+        return this.persistence.ttl(this.namespace, this.key)
     }
 
     /**

@@ -1,19 +1,24 @@
 class ActorEntry {
 
+    /**
+     * @readonly
+     * @type {string}
+     */
     id = null
 
+    /**
+     * @readonly
+     * @type {Object.<string,any>}
+     */
     data = null
-
-    ownedBy = null
 
     /**
      * 
-     * @param {ActorEntry} data 
+     * @param {ActorEntry} actorEntry 
      */
-    constructor(data = {}) {
-        this.id = data.id
-        this.data = data.data
-        this.ownedBy = data.ownedBy
+    constructor(actorEntry = {}) {
+        this.id = actorEntry.id
+        this.data = actorEntry.data
     }
 
 }

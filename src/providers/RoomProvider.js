@@ -72,6 +72,9 @@ class RoomProvider extends SystemBroadcast {
      * @param {Stage} stage 
      */
     define(type, stage) {
+        if (typeof type !== 'string') {
+            throw new Exception('[rooms] define failed, provided type must be a string')
+        }
         if (this.stages.has(type)) {
             throw new Exception(`[rooms] define failed, stage type=(${type}) is already defined`)
         }
@@ -128,12 +131,18 @@ class RoomProvider extends SystemBroadcast {
         return room
     }
 
-    async omit(id) {
-        // TODO: validate id
-        if (!this.rooms.has(id)) {
+    /**
+     * 
+     * @param {Room} room 
+     */
+    async omit(room) {
+        if (!isInstanceOf(room, Room)) {
+            throw new Exception('[rooms] room omit failed, room must be an instance of Room')
+        }
+        if (!this.rooms.has(room.id)) {
             throw new Exception(`[rooms] room omit failed, room id=(${id}) is not obtained`)
         }
-        let room = this.rooms.get(id)
+        room = this.rooms.get(room.id)
         await room.dispose()
         this.logger.info(`room id=(${id}) was disposed!`)
         this.rooms.delete(id)
@@ -146,6 +155,9 @@ class RoomProvider extends SystemBroadcast {
         return list
     }
 
+    /**
+     * @returns {Array.<Room>}
+     */
     get list() {
         let list = []
         this.rooms.forEach(room => list.push(room))

@@ -45,6 +45,12 @@ class Room extends Context {
         this.logger.trace('disposed!')
     }
 
+    /**
+     * 
+     * @param {Actor} actor 
+     * @param {string} key 
+     * @param {any} data 
+     */
     async execute(actor, key, data) {
         let exist = this.actors.list.includes(actor)
         if (!exist) {
@@ -55,7 +61,11 @@ class Room extends Context {
             throw new Exception(`[room] execution failed, handler for action key=(${key}) doesn't exist!`)
         }
         this.logger.debug(`action executed key=(${key}) data=(${JSON.stringify(data)}) by actor id=(${actor.id})`)
-        return handler(actor, key, data, this)
+        try {
+            await handler(actor, key, data, this)
+        } catch (error) {
+            this.logger.warning(`action execution failed, key=(${key}) data=(${JSON.stringify(data)}) executed by actor id=(${actor.id}) reason:`, error.message)
+        }
     }
 
     /**
@@ -64,13 +74,15 @@ class Room extends Context {
      */
     handleEvent(event) {
         super.handleEvent(event)
-        this.logger.debug('emitted event:', event)
+        this.logger.debug(`emitted event key=(${event.key}) data=(${event.data}) sender=(${event.sender})`)
         let filter = Stage.getFilter(this.stage, event.key)
-        this.actors.list.forEach(actor => {
-            if (filter === null) {
-                actor.send(event.key, event.data, event.sender)
+        this.actors.list.forEach(async actor => {
+            let filtered = await filter(actor, event, this) || false
+            if (!filtered) {
+                this.logger.trace(`event key=(${event.key}) data=(${event.data}) sender=(${event.sender}) sent to ${actor.id}`)
+                actor.emit.event(event)
             } else {
-                filter(actor, event, this)
+                this.logger.trace(`event key=(${event.key}) data=(${event.data}) sender=(${event.sender}) filtered for ${actor.id}`)
             }
         })        
     }

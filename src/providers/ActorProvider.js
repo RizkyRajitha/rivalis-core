@@ -5,6 +5,7 @@ import Exception from '../core/Exception'
 import ActorEntry from '../models/ActorEntry'
 import SharedStorage from '../persistence/SharedStorage'
 import SystemBroadcast from '../persistence/SystemBroadcast'
+import { isInstanceOf } from '../utils/helpers'
 
 class ActorProvider extends SystemBroadcast {
     
@@ -27,12 +28,6 @@ class ActorProvider extends SystemBroadcast {
     context = null
 
     /**
-     * @private
-     * @type {Config}
-     */
-    config = null
-
-    /**
      * 
      * @param {Config} config 
      * @param {Context} context 
@@ -43,17 +38,26 @@ class ActorProvider extends SystemBroadcast {
         this.actors = new Map()
         this.logger = logger
         this.context = context
-        this.config = config
         this.on('kick', this.handleKick, this)
     }
 
-    async join(id, data) {
-        // TODO: validate id & data
+    async join(id, data = {}) {
+        if (typeof id !== 'string') {
+            throw new Exception('[actors] join failed, the actor id must be a string')
+        }
+        if (typeof data !== 'object') {
+            throw new Exception('[actors] join failed, the actor data must be an object')
+        }
+        try {
+            await this.context.stage.onJoin(this.context, id, data)
+        } catch (error) {
+            throw new Exception(`Stage#onJoin failed, ${error.message}`)
+        }
 
         if (this.actors.has(id)) {
-            return this.actors.get(id)
+            throw new Exception(`[actors] join failed, actor id=(${id}) already exist!`)
         }
-        let actorEntry = new ActorEntry({ id, data, ownedBy: this.config.nodeId })
+        let actorEntry = new ActorEntry({ id, data })
         let persisted = await this.storage.savenx(id, actorEntry)
         if (!persisted) {
             throw new Exception(`[actors] join failed, actor id=(${id}) already exist!`, 'actor_already_exist')
@@ -65,22 +69,14 @@ class ActorProvider extends SystemBroadcast {
         return actor
     }
 
-    // async exist(id) {
-    //     let actorEntry = await this.storage.get(id)
-    //     if (actorEntry === null) {
-    //         return false
-    //     }
-    //     if (actorEntry.ownedBy === this.config.nodeId && this.actors.has(id)) {
-    //         await this.storage.expire(id, 20000)
-    //     }
-    //     return true
-    // }
-
     /**
      * 
      * @param {Actor} actor 
      */
     async leave(actor) {
+        if (!isInstanceOf(actor, Actor)) {
+            throw new Exception('[rooms] define failed, provided actor must be instance of Actor')
+        }
         if (!this.actors.has(actor.id)) {
             return
         }
@@ -89,6 +85,11 @@ class ActorProvider extends SystemBroadcast {
         actor.emit.leave()
         Actor.dispose(actor)
         this.actors.delete(actor.id)
+        try {
+            this.context.stage.onLeave(this.context, actor.id, actor.data)
+        } catch (error) {
+            throw new Exception(`Stage#onLeave failed, ${error.message}`)
+        }
         this.logger.info(`actor id=(${actor.id}) has left the room!`)
     }
 

@@ -1,19 +1,31 @@
 class Event {
 
+    /**
+     * @readonly
+     * @type {string}
+     */
     key = null
 
+    /**
+     * @readonly
+     * @type {any}
+     */
     data = null
 
+    /**
+     * @readonly
+     * @type {string}
+     */
     sender = null
 
     /**
      * 
-     * @param {Event} data 
+     * @param {Event} event 
      */
-    constructor(data = {}) {
-        this.key = data.key
-        this.data = data.data
-        this.sender = data.sender
+    constructor(event = {}) {
+        this.key = event.key
+        this.data = event.data
+        this.sender = event.sender
     }
 
 }

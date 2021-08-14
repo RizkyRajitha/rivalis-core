@@ -4,8 +4,16 @@ import Room from './Room'
 
 class Actor {
 
+    /**
+     * @readonly
+     * @type {string}
+     */
     id = null
 
+    /**
+     * @readonly
+     * @type {Object.<string,any>}
+     */
     data = null
 
     /**
@@ -30,6 +38,12 @@ class Actor {
         leave: () => this.events.emit('leave')
     }
 
+    /**
+     * 
+     * @param {string} id 
+     * @param {Object.<string,any>} data 
+     * @param {Room} room 
+     */
     constructor(id, data, room) {
         this.id = id
         this.data = data
@@ -41,9 +55,8 @@ class Actor {
      * 
      * @param {string} key 
      * @param {any} data 
-     * @param {string} [sender] 
      */
-    send(key, data, sender = null) {
+    send(key, data) {
         let event = new Event({ key, data, sender: this.id })
         this.events.emit('event', event)
     }

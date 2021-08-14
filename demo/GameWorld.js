@@ -6,8 +6,7 @@ class GameWorld extends Stage {
         context.logger.error('test')
         let actions = new Actions()
         actions.handle('test', async (actor, key, data, context) => {
-            await context.data.getList('mylist').push(data)
-            context.emit(new Event(key, data, actor.id))
+            actor.send(key, data)
         })
         this.use('actions', actions)
         

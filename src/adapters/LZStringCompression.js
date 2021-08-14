@@ -7,6 +7,7 @@ class LZStringCompression extends Compression {
      * 
      * @param {string} data 
      * @returns {Uint8Array}
+     * @returns {Uint8Array}
      */
     compress(data) {
         return LZString.compressToUint8Array(data)
@@ -15,6 +16,7 @@ class LZStringCompression extends Compression {
     /**
      * 
      * @param {Uint8Array} data 
+     * @returns {string}
      * @returns {string}
      */
     decompress(data) {

@@ -10,14 +10,15 @@ import Clock from '../structs/Clock'
 class Node {
 
     /**
-     * @type {LoggerFactory}
-     */
-    logging = null
-
-    /**
      * @type {RoomProvider}
      */
     rooms = null
+
+    /**
+     * @private
+     * @type {LoggerFactory}
+     */
+    logging = null
 
     /**
      * @private
@@ -45,6 +46,10 @@ class Node {
         this.config = config
     }
 
+    /**
+     * 
+     * @returns {Promise.<void>}
+     */
     async run() {
         if (typeof this.config !== 'object') {
             throw new Exception('[Node] invalid config, the provided config must be an object')
@@ -70,10 +75,14 @@ class Node {
         return this
     }
 
+    /**
+     * @returns {Promise.<void>}
+     */
     async shutdown() {
         this.clock.dispose()
-        // TODO: dispose rooms
-        // print metrics
+        for (let room of this.rooms.list) {
+            await this.rooms.omit(room)
+        }
         this.logger.info('disposing persistence layer...')
         await this.config.persistence.dispose()
         this.logger.info('disposing log reporter layer...')
@@ -97,12 +106,12 @@ class Node {
         try {
             actor = await this.config.auth.onAuth(ticket, this)
         } catch (error) {
-            throw new Exception(`authorization failed, ${error.message}`)// TODO: implement this
+            throw new Exception(`authorization failed, ${error.message}`)
         }
         if (isInstanceOf(actor, Actor)) {
             return actor
         } else {
-            throw new Exception('') // TODO: write message
+            throw new Exception('AuthResolver#onAuth must return an instance of Actor')
         }
     }
 }

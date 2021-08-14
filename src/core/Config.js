@@ -7,7 +7,6 @@ import { isInstanceOf, isPropertyValid } from '../utils/helpers'
 import InMemoryStore from '../adapters/InMemoryStore'
 import BasicLogReporter from '../adapters/BasicLogReporter'
 import Logger from './Logger'
-import Compression from '../interfaces/Compression'
 
 class Config {
 
@@ -58,7 +57,7 @@ class Config {
         this.reporters = config.reporters || []
         this.transports = config.transports || []
         this.loggerLevel = config.loggerLevel || Logger.LEVEL.INFO
-        this.nodeId = config.nodeId || 'node'
+        this.nodeId = config.nodeId || 'rivalis'
         this.clockInterval = config.clockInterval || 1000
     }
 
@@ -111,7 +110,9 @@ Config.validate = config => {
         config.clockInterval = 1000
     }
 
-    // TODO: validate logger level
+    if (typeof config.loggerLevel !== 'number') {
+        throw new Exception('[Config] logger level must be a number')
+    }
 
     if (config.persistence === null) {
         config.persistence = new InMemoryStore()

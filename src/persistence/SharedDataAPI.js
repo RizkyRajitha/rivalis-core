@@ -1,4 +1,3 @@
-import Persistence from '../interfaces/Persistence'
 import SharedCounter from './SharedCounter'
 import SharedList from './SharedList'
 import SharedStorage from './SharedStorage'
@@ -49,6 +48,10 @@ class SharedDataAPI extends SharedStorage {
         return this.lists.get(key)
     }
 
+    /**
+     * 
+     * @returns {Promise.<void>}
+     */
     async wipe() {
         let keys = await super.keys()
         for (let key of keys) {

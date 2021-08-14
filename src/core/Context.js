@@ -1,13 +1,14 @@
 import Event from './Event'
 import MessageBroker from '../persistence/MessageBroker'
-import SystemBroadcast from '../persistence/SystemBroadcast'
 import SharedDataAPI from '../persistence/SharedDataAPI'
 import Config from './Config'
 import Logger from './Logger'
 import Stage from './Stage'
+import Actor from './Actor'
+import { isInstanceOf } from '../utils/helpers'
 import Exception from './Exception'
 
-class Context extends SystemBroadcast {
+class Context {
 
     /**
      * @readonly
@@ -67,7 +68,6 @@ class Context extends SystemBroadcast {
      * @param {Logger} logger
      */
     constructor(id, type, options, config, stage, logger) {
-        super(config.persistence, id, 'system')
         this.id = id
         this.type = type
         this.options = options
@@ -86,7 +86,11 @@ class Context extends SystemBroadcast {
     async init() {
         await this.broker.initialize()
         this.broker.subscribe(this.handleEvent, this)
-        await this.stage.onCreate(this)
+        try {
+            await this.stage.onCreate(this)
+        } catch (error) {
+            this.logger.warning('Stage#onCreate failed,', error.message)
+        }
     }
 
     /**
@@ -94,7 +98,11 @@ class Context extends SystemBroadcast {
      * @returns {Promise.<number>}
      */
     async dispose() {
-        await this.stage.onDispose(this)
+        try {
+            await this.stage.onDispose(this)
+        } catch (error) {
+            this.logger.warning('Stage#onDispose failed,', error.message)
+        }
         this.data = null
         super.dispose()
         await this.broker.dispose()
@@ -102,21 +110,30 @@ class Context extends SystemBroadcast {
 
     /**
      * 
-     * @param {Event} event 
+     * @param {Actor|Context} sender
+     * @param {string} key
+     * @param {any} data 
      */
-    emit(key, data) {
-        // TODO: validate
-        let event = new Event({ key, data, sender: null })
+    broadcast(sender, key, data = null) {
+        if (!isInstanceOf(sender, Actor) && !isInstanceOf(sender, Context)) {
+            throw new Exception('Context#emit failed, sender must be specified')
+        }
+        let event = new Event({ key, data, sender: sender.id })
         return this.broker.dispatch(event)
     }
+
+    
 
     /**
      * @protected
      * @param {Event} event
      */
     handleEvent(event) {
-        super.emit('event', event)
-        this.stage.onEmit(this, event)
+        try {
+            this.stage.onEmit(this, event)
+        } catch (error) {
+            this.logger.warning('Stage#onEmit failed,', error.message)
+        }
     }
 }
 

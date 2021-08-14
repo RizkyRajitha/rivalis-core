@@ -1,16 +1,24 @@
 class Action {
 
+    /**
+     * @readonly
+     * @type {string}
+     */
     key = null
 
+    /**
+     * @readonly
+     * @type {string}
+     */
     data = null
 
     /**
      * 
-     * @param {Action} data 
+     * @param {Action} action 
      */
-    constructor(data = {}) {
-        this.key = data.key
-        this.data = data.data
+    constructor(action = {}) {
+        this.key = action.key
+        this.data = action.data
     }
 
 }

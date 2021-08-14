@@ -38,10 +38,18 @@ class MessageBroker extends Broker {
         this.address = address
     }
 
+    /**
+     * 
+     * @returns {Promise.<void>}
+     */
     initialize() {
         return this.persistence.subscribe(this.namespace, this.address, this.onMessage)
     }
 
+    /**
+     * 
+     * @returns {Promise.<void>}
+     */
     dispose() {
         return this.persistence.unsubscribe(this.namespace, this.address, this.onMessage)
     }

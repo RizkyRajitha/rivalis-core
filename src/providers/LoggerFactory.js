@@ -1,5 +1,6 @@
 import LogReporter from '../interfaces/LogReporter'
 import Logger from '../core/Logger'
+import Exception from '../core/Exception'
 
 class LoggerFactory {
 
@@ -45,7 +46,9 @@ class LoggerFactory {
      * @returns {Logger}
      */
     getLogger(namespace) {
-        // TODO: validate namespace, must be a string
+        if (typeof namespace !== 'string') {
+            throw new Exception('[logging] getLogger failed, namespace must be a string')
+        }
         if (!this.loggers.has(namespace)) {
             let logger = new Logger(`${this.nodeId}:${namespace}`, this.reporters, this.level)
             this.loggers.set(namespace, logger)
