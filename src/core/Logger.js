@@ -1,59 +1,7 @@
 import LogReporter from '../interfaces/LogReporter'
-import LoggingFactory from '../structs/LoggingFactory'
-
-/**
- * 
- * @param {any} unit 
- * @returns {string}
- */
-const stringify = (unit) => {
-    if (typeof unit === 'string') {
-        return unit
-    } else if (typeof unit === 'function') {
-        try {
-            return unit.prototype.constructor.toString()
-        } catch (error) {
-            try {
-                return unit.toString()
-            } catch (error) {
-                return ''
-            }
-        }
-    } else if (typeof unit === 'undefined') {
-        return 'undefined'
-    } else if (typeof unit === 'object') {
-        let cache = new Map()
-        let data = JSON.stringify(unit, (key, value) => {
-            if (typeof value === 'object' && value !== null) {
-                if (cache.has(value)) {
-                    return
-                }
-                cache.set(value, 0)
-            }
-            return value
-        })
-        cache.clear()
-        cache = null
-        return data
-    } else {
-        return JSON.stringify(unit)
-    }
-
-}
+import stringify from '../utils/stringify'
 
 class Logger {
-
-    /**
-     * @private
-     * @type {LoggingFactory}
-     */
-    logger = null
-
-    /**
-     * @private
-     * @type {LogReporter}
-     */
-    reporter = null
 
     /**
      * @private
@@ -62,52 +10,89 @@ class Logger {
     namespace = null
 
     /**
-     * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
-     * @author Daniel Kalevski
-     * @since 0.5.0
-     * 
-     * // TODO: write description
-     * 
-     * @param {*} logger 
-     * @param {*} reporter 
-     * @param {*} namespace 
+     * @private
+     * @type {Array.<LogReporter>}
      */
-    constructor(logger, reporter, namespace) {
-        this.logger = logger
-        this.reporter = reporter
+    reporters = null
+
+    /**
+     * @private
+     * @type {number}
+     */
+    level = null
+
+    /**
+     * @private
+     * @type {Map.<number,string>}
+     */
+    levels = null
+
+    constructor(namespace, reporters, level = Logger.LEVEL.INFO) {
         this.namespace = namespace
+        this.reporters = reporters
+        this.level = level
+    
+        this.levels = new Map()
+        for (let level in Logger.LEVEL) {
+            this.levels.set(Logger.LEVEL[level], level)
+        }
     }
 
-    error(...args) {
-        if (this.logger.level < Logger.LEVEL.ERROR) {
+    /**
+     * 
+     * @param  {...any} args 
+     * @returns {void}
+     */
+     error(...args) {
+        if (this.level < Logger.LEVEL.ERROR) {
             return
         }
         this.log(Logger.LEVEL.ERROR, ...args)
     }
 
+    /**
+     * 
+     * @param  {...any} args 
+     * @returns {void}
+     */
     warning(...args) {
-        if (this.logger.level < Logger.LEVEL.WARNING) {
+        if (this.level < Logger.LEVEL.WARNING) {
             return
         }
         this.log(Logger.LEVEL.WARNING, ...args)
     }
 
+    /**
+     * 
+     * @param  {...any} args 
+     * @returns {void}
+     */
     info(...args) {
-        if (this.logger.level < Logger.LEVEL.INFO) {
+        if (this.level < Logger.LEVEL.INFO) {
             return
         }
         this.log(Logger.LEVEL.INFO, ...args)
     }
 
+    /**
+     * 
+     * @param  {...any} args 
+     * @returns {void}
+     */
     debug(...args) {
-        if (this.logger.level < Logger.LEVEL.DEBUG) {
+        if (this.level < Logger.LEVEL.DEBUG) {
             return
         }
         this.log(Logger.LEVEL.DEBUG, ...args)
     }
 
+    /**
+     * 
+     * @param  {...any} args 
+     * @returns {void}
+     */
     trace(...args) {
-        if (this.logger.level < Logger.LEVEL.TRACE) {
+        if (this.level < Logger.LEVEL.TRACE) {
             return
         }
         this.log(Logger.LEVEL.TRACE, ...args)
@@ -132,11 +117,15 @@ class Logger {
                 logs.push(arg.message)
             } else {
                 logs.push(stringify(arg))
-            }
-            
+            }   
         }
-        this.reporter.log(level, `[${this.namespace}]: ${logs.join(' ')} ${stack}`)
+
+        for (let reporter of this.reporters) {
+            let message = `${logs.join(' ')} ${stack}`
+            reporter.log(this.levels.get(level), this.namespace, message)
+        }
     }
+
 }
 
 /**
@@ -152,4 +141,3 @@ class Logger {
 }
 
 export default Logger
-export { stringify }

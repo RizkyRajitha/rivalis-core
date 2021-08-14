@@ -1,23 +1,18 @@
-import VectorClock from '../structs/VectorClock'
-
 class Event {
 
     /**
-     * 
      * @readonly
      * @type {string}
      */
     key = null
 
     /**
-     * 
      * @readonly
-     * @type {Object.<string,number>}
+     * @type {any}
      */
-    clock = null
+    data = null
 
     /**
-     * 
      * @readonly
      * @type {string}
      */
@@ -25,46 +20,14 @@ class Event {
 
     /**
      * 
-     * @readonly
-     * @type {any}
+     * @param {Event} event 
      */
-    data = null
-
-    /**
-     * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
-     * @author Daniel Kalevski
-     * @since 0.5.0
-     * 
-     * // TODO: write description
-     * 
-     * @param {Object.<string,number>} clock 
-     * @param {string} sender 
-     */
-    constructor(clock, sender) {
-        this.clock = clock
-        this.sender = sender
+    constructor(event = {}) {
+        this.key = event.key
+        this.data = event.data
+        this.sender = event.sender
     }
 
-    /**
-     * 
-     * @param {string} key 
-     * @param {any} data 
-     * @param {boolean} emit 
-     * @returns {this}
-     */
-    set(key, data) {
-        this.key = key
-        this.data = data
-        return this
-    }
-
-    /**
-     * 
-     * @returns {VectorClock}
-     */
-    getVectorClock() {
-        return new VectorClock(this.sender, this.clock)
-    }
 }
 
 export default Event

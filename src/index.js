@@ -1,60 +1,72 @@
-import Adapter from './interfaces/Adapter'
-import MessageBrokerAdapter from './interfaces/MessageBrokerAdapter'
-import SharedStorageAdapter from './interfaces/SharedStorageAdapter'
-import Protocol from './interfaces/Protocol'
+import AuthResolver from './interfaces/AuthResolver'
+import Persistence from './interfaces/Persistence'
 import LogReporter from './interfaces/LogReporter'
+import Transport from './interfaces/Transport'
+import Compression from './interfaces/Compression'
+
 /**
  * @namespace interfaces
  */
-export const interfaces = {
-    Adapter,
-    MessageBrokerAdapter,
-    SharedStorageAdapter,
-    Protocol,
-    LogReporter
+const interfaces = {
+    AuthResolver,
+    Persistence,
+    LogReporter,
+    Transport,
+    Compression
 }
 
-import MessageBroker from './structs/MessageBroker'
-import SharedStorage from './structs/SharedStorage'
-import VectorClock from './structs/VectorClock'
-import EventEmitter from './structs/EventEmitter'
-import CodecExecutor from './structs/CodecExecutor'
+import ActorEntry from './models/ActorEntry'
+import RoomEntry from './models/RoomEntry'
+
+/**
+ * @namespace models
+ */
+const models = {
+    ActorEntry, RoomEntry
+}
+
+import Broadcast from './structs/Broadcast'
+import Broker from './structs/Broker'
+import Clock from './structs/Clock'
 import Codec from './structs/Codec'
-import LoggingFactory from './structs/LoggingFactory'
-import BasicLogReporter from './structs/BasicLogReporter'
+import EventEmitter from './structs/EventEmitter'
+import VectorClock from './structs/VectorClock'
 
 /**
  * @namespace structs
  */
-export const structs = {
-    MessageBroker,
-    SharedStorage,
-    VectorClock,
-    EventEmitter,
-    CodecExecutor,
-    Codec,
-    LoggingFactory,
-    BasicLogReporter
+const structs = {
+    Broadcast, Broker, Clock, Codec, EventEmitter, VectorClock
 }
 
-import Context from './core/Context'
-import Activity from './core/Activity'
+import TransportCodec from './utils/TransportCodec'
+/**
+ * @namespace utils
+ */
+const utils = {
+    TransportCodec
+}
+
+import Action from './core/Action'
+import Actions from './core/Actions'
 import Actor from './core/Actor'
+import Config from './core/Config'
+import Context from './core/Context'
 import Event from './core/Event'
-import Rivalis from './core/Rivalis'
 import Exception from './core/Exception'
 import Logger from './core/Logger'
+import Node from './core/Node'
+import Room from './core/Room'
 import Stage from './core/Stage'
-import AuthResolver from './core/AuthResolver'
-
+import InMemoryStore from './adapters/InMemoryStore'
+import BasicLogReporter from './adapters/BasicLogReporter'
+import LZStringCompression from './adapters/LZStringCompression'
 export {
-    Context,
-    Activity,
-    Actor,
-    Event,
-    Rivalis,
-    Exception,
-    Logger,
-    Stage,
-    AuthResolver
+    Action, Actions, Actor, Config, Context, Event,
+    Exception, Logger, Node, Room, Stage, InMemoryStore,
+    BasicLogReporter, LZStringCompression,
+    interfaces,
+    models,
+    structs,
+    utils
 }

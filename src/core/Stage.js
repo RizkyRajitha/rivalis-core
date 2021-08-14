@@ -1,23 +1,14 @@
-import Context from './Context'
 import Event from './Event'
+import Actions from './Actions'
+import Context from './Context'
 
-/**
- * @interface stage
- * 
- * @license {@link https://github.com/rivalis/rivalis-core/blob/main/LICENSE}
- * @author Daniel Kalevski
- * @since 0.5.0
- * 
- * // TODO: write description
- * 
- */
-class Stage {
+class Stage extends Actions {
 
     /**
      * 
      * @param {Context} context 
      */
-    onInit(context) {}
+    async onCreate(context) {}
 
     /**
      * 
@@ -25,28 +16,28 @@ class Stage {
      * @param {string} id 
      * @param {Object.<string,any>} data 
      */
-    onJoin(context, id, data) {}
-
-    /**
-     * 
-     * @param {Context} context 
-     * @param {string} id 
-     * @param {Object.<string,any>} data 
-     */
-    onLeave(context, id, data) {}
+    async onJoin(context, id, data) {}
 
     /**
      * 
      * @param {Context} context 
      * @param {Event} event 
      */
-    onEmit(context, event) {}
+    async onEmit(context, event) {}
+
+    /**
+     * 
+     * @param {Context} context 
+     * @param {string} id 
+     * @param {Object.<string,any>} data 
+     */
+    async onLeave(context, id, data) {}
 
     /**
      * 
      * @param {Context} context 
      */
-    onDispose(context) {}
+    async onDispose(context) {}
 
 }
 

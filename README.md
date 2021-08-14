@@ -19,8 +19,7 @@
 
 Rivalis is open source framework for building multiplayer game servers.
 - **Extensible** - Rivalis can work with multiple protocols at same time.
-- **Scalable** - Rivalis provides interfaces for integration with any external services
-- **Partial event ordering** - Rivalis has built-in implementation for partial event ordering using [Vector Clock](https://en.wikipedia.org/wiki/Vector_clock) data structure
+- **Scalable** - Rivalis provides interfaces for integration with any external databases and services
 - **Easy to use** - Rivalis provides extensible & well designed API, read more about that in the [documentation](https://rivalis.io/docs)
 
 ---
@@ -29,23 +28,21 @@ Rivalis is open source framework for building multiplayer game servers.
 
 ### Prerequisites
 - JavaScript & NodeJS knowledge
-- NodeJS installed on your local machine
+- NodeJS (14.17.+) installed on your local machine
 - Code Editor
 
 ### New Project
 
 - Create empty npm project using `npm init` in empty directory
 - Install rivalis-core library using `npm i --save @rivalis/core`
-- Install rivalis websocket protocol library using `npm i --save @rivalis/protocol-websocket`
-- Install inMemory adapter using `npm i --save @rivalis/adapter-inmemory`
+- Install rivalis websocket protocol library using `npm i --save @rivalis/transport-websocket`
 - Create simple entrypoint for your project like:
 
 **server.js**
 ```js
 
 const http = require('http')
-const { Logger, Rivalis, AuthResolver } = require('@rivalis/core')
-const { InMemoryAdapter } = require('@rivalis/adapter-inmemory')
+const { Node, AuthResolver } = require('@rivalis/core')
 const { WebSocketProtocol } = require('@rivalis/protocol-websocket')
 
 // http server is used only for websocket protocol
@@ -53,24 +50,19 @@ const server = http.createServer()
 
 // AuthResolver is the place where you need to implement your authentication/authorization logic.
 class CustomAuthLogic extends AuthResolver {
-    onAuth(ticket) {
-        // --- YOUR AUTH LOGIC HERE ---
-        return { contextId, authorId, data }
+    async onAuth(ticket, node) {
+        // --- EXAMPLE (IMPLEMENT YOUR LOGIC HERE) ---
+        let { roomId, actorId, data } = this.getFromTicket(ticket)
+        let room = await node.rooms.obtain(roomId)
+        return room.actors.join(actorId, data)
     }
 }
 
-const webSocketProtocol = new WebSocketProtocol({
-    server: server, // server must be an existing HTTP/HTTP2 server
-    compression: true, // enable or disable built-in compression
-    path: '/game' // [optional] provide path for serving websocket endpoint
+const webSocketProtocol = new WebSocketProtocol({ server })
+const rivalis = new Node({
+    transports: [ webSocketProtocol ]
 })
-
-const rivalis = new Rivalis(new InMemoryAdapter(), new CustomAuthLogic())
-
-rivalis.initialize().then(() => {
-    rivalis.protocols.register(webSocketProtocol)
-})
-
+rivalis.run()
 server.listen(2345)
 
 ```

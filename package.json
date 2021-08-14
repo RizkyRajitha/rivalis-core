@@ -1,11 +1,12 @@
 {
   "name": "@rivalis/core",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "description": "Rivalis, scalable & scriptable multiplayer game logic framework",
   "main": "lib/index.js",
   "scripts": {
     "start": "npm run dev",
     "dev": "nodemon -w src --exec npm run build",
+    "demo": "nodemon -w demo --exec babel-node --inspect demo --unhandled-rejections=strict",
     "build": "npm run build:src && npm run build:tsd",
     "test": "npm run test:linter && npm run test:unit",
     "prepublishOnly": "npm run build",
@@ -42,11 +43,13 @@
     "@types/node": "14.17.3",
     "chai": "4.3.4",
     "eslint": "7.30.0",
-    "jest": "27.0.6",
+    "jest": "^27.0.6",
     "nodemon": "2.0.9"
   },
   "dependencies": {
     "eventemitter3": "4.0.7",
-    "lz-string": "1.4.4"
+    "lz-string": "1.4.4",
+    "signals": "^1.0.0",
+    "uuid": "^8.3.2"
   }
 }
