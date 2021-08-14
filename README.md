@@ -35,7 +35,7 @@ Rivalis is open source framework for building multiplayer game servers.
 
 - Create empty npm project using `npm init` in empty directory
 - Install rivalis-core library using `npm i --save @rivalis/core`
-- Install rivalis websocket protocol library using `npm i --save @rivalis/transport-websocket`
+- Install rivalis websocket protocol library using `npm i --save @rivalis/protocol-websocket`
 - Create simple entrypoint for your project like:
 
 **server.js**
