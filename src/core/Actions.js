@@ -104,6 +104,18 @@ class Actions {
     }
 
     /**
+     * 
+     * @param {string} key 
+     * @param {string} value 
+     */
+    rename(key, value) {
+        let list = key.split('.')
+        list.pop()
+        list.push(value)
+        return list.join('.')
+    }
+
+    /**
      * @private
      * @param {string} key 
      */

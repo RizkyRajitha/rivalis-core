@@ -21,18 +21,6 @@ class Action {
         this.data = action.data
     }
 
-    /**
-     * 
-     * @param {string} key 
-     * @param {string} value 
-     */
-    rename(key, value) {
-        let list = key.split('.')
-        list.pop()
-        list.push(value)
-        return list.join('.')
-    }
-
 }
 
 export default Action
