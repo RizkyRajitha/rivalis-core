@@ -68,12 +68,15 @@ class Room extends Context {
         this.logger.debug(`emitted event key=(${event.key}) data=(${event.data}) sender=(${event.sender})`)
         let filter = Stage.getFilter(this.stage, event.key)
         this.actors.list.forEach(async actor => {
-            let filtered = await filter(actor, event, this) || false
-            if (!filtered) {
+            let filtered = false
+            if (filter !== null) {
+                filtered = await filter(actor, event, this) || false
+            }
+            if (filtered) {
+                this.logger.trace(`event key=(${event.key}) data=(${event.data}) sender=(${event.sender}) filtered for ${actor.id}`)
+            } else {
                 this.logger.trace(`event key=(${event.key}) data=(${event.data}) sender=(${event.sender}) sent to ${actor.id}`)
                 actor.emit.event(event)
-            } else {
-                this.logger.trace(`event key=(${event.key}) data=(${event.data}) sender=(${event.sender}) filtered for ${actor.id}`)
             }
         })        
     }
