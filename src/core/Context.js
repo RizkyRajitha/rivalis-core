@@ -7,6 +7,7 @@ import Stage from './Stage'
 import Actor from './Actor'
 import { isInstanceOf } from '../utils/helpers'
 import Exception from './Exception'
+import ActorProvider from '../providers/ActorProvider'
 
 class Context {
 
@@ -39,6 +40,12 @@ class Context {
      * @type {Logger}
      */
     logger = null
+
+    /**
+     * @readonly
+     * @type {ActorProvider}
+     */
+    actors = null
 
     /**
      * @protected
@@ -91,6 +98,7 @@ class Context {
         } catch (error) {
             this.logger.warning('Stage#onCreate failed,', error.message)
         }
+        this.actors = new ActorProvider(this.config, this, this.logger)
     }
 
     /**

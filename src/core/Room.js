@@ -1,5 +1,4 @@
 import Event from './Event'
-import ActorProvider from '../providers/ActorProvider'
 import Config from './Config'
 import Context from './Context'
 import Exception from './Exception'
@@ -7,13 +6,6 @@ import Logger from './Logger'
 import Stage from './Stage'
 
 class Room extends Context {
-
-    
-    /**
-     * @readonly
-     * @type {ActorProvider}
-     */
-    actors = null
 
     /**
      * 
@@ -33,7 +25,6 @@ class Room extends Context {
      */
     async init() {
         await super.init()
-        this.actors = new ActorProvider(this.config, this, this.logger)
         this.logger.trace(`room id=(${this.id}) type=(${this.type}) options=(${JSON.stringify(this.options)}) initialized!`)
     }
 
