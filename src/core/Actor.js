@@ -1,4 +1,4 @@
-import Broadcast from '../structs/Broadcast'
+import EventEmitter from '../structs/EventEmitter'
 import Event from './Event'
 import Room from './Room'
 
@@ -30,7 +30,7 @@ class Actor {
 
     /**
      * @private
-     * @type {Broadcast}
+     * @type {EventEmitter}
      */
     events = null
 
@@ -54,7 +54,7 @@ class Actor {
         this.id = id
         this.data = data
         this.room = room
-        this.events = new Broadcast()
+        this.events = new EventEmitter()
         this.cache = new Map()
     }
 
@@ -72,7 +72,8 @@ class Actor {
      * @private
      */
     dispose() {
-        this.events.dispose()
+        this.events.removeAllListeners()
+        this.events = null
     }
 }
 /**
