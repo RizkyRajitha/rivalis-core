@@ -17,6 +17,12 @@ class Actor {
     data = null
 
     /**
+     * @readonly
+     * @type {Map.<string,any>}
+     */
+    cache = null
+
+    /**
      * @private
      * @type {Room}
      */
@@ -49,6 +55,7 @@ class Actor {
         this.data = data
         this.room = room
         this.events = new Broadcast()
+        this.cache = new Map()
     }
 
     /**
