@@ -1,6 +1,6 @@
 import { expect } from 'chai'
-import Exception from '../../src/core/Exception'
-import InMemoryStore from '../../src/adapters/InMemoryStore'
+import { Exception } from '../../src'
+import { InMemoryStore } from '../../src'
 
 const delay = (ms = 0) => new Promise(resolve => setTimeout(() => resolve(), ms))
 

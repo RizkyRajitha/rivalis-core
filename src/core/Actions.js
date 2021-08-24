@@ -10,7 +10,7 @@ import { isInstanceOf } from '../utils/helpers'
  * @callback HandlerCallback
  * @param {Actor} actor
  * @param {string} key
- * @param {any} data
+ * @param {any} payload
  * @param {Context} context
  */
 
@@ -104,18 +104,6 @@ class Actions {
     }
 
     /**
-     * 
-     * @param {string} key 
-     * @param {string} value 
-     */
-    rename(key, value) {
-        let list = key.split('.')
-        list.pop()
-        list.push(value)
-        return list.join('.')
-    }
-
-    /**
      * @private
      * @param {string} key 
      */
@@ -185,3 +173,16 @@ Actions.getFilter = (actions, key = '') => {
 }
 
 export default Actions
+
+/**
+ * 
+ * @param {string} key 
+ * @param {string} value 
+ * @returns {string}
+ */
+Actions.changeLastKey = (key, value) => {
+    let list = key.split('.')
+    list.pop()
+    list.push(value)
+    return list.join('.')
+}

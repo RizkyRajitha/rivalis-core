@@ -10,7 +10,7 @@ class Action {
      * @readonly
      * @type {string}
      */
-    data = null
+    payload = null
 
     /**
      * 
@@ -18,7 +18,7 @@ class Action {
      */
     constructor(action = {}) {
         this.key = action.key
-        this.data = action.data
+        this.payload = action.payload
     }
 
 }

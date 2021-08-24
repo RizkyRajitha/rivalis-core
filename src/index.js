@@ -61,10 +61,12 @@ import Stage from './core/Stage'
 import InMemoryStore from './adapters/InMemoryStore'
 import BasicLogReporter from './adapters/BasicLogReporter'
 import LZStringCompression from './adapters/LZStringCompression'
+import Plugin from './core/Plugin'
+
 export {
     Action, Actions, Actor, Config, Context, Event,
     Exception, Logger, Node, Room, Stage, InMemoryStore,
-    BasicLogReporter, LZStringCompression,
+    BasicLogReporter, LZStringCompression, Plugin,
     interfaces,
     models,
     structs,

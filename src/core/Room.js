@@ -42,7 +42,7 @@ class Room extends Context {
      * @param {string} key 
      * @param {any} data 
      */
-    async execute(actor, key, data) {
+    async execute(actor, key, payload) {
         let exist = this.actors.list.includes(actor)
         if (!exist) {
             throw new Exception(`[room] execution failed, actor=(${JSON.stringify(actor)}) doesn't exist!`)
@@ -51,11 +51,11 @@ class Room extends Context {
         if (handler === null) {
             throw new Exception(`[room] execution failed, handler for action key=(${key}) doesn't exist!`)
         }
-        this.logger.debug(`action executed key=(${key}) data=(${JSON.stringify(data)}) by actor id=(${actor.id})`)
+        this.logger.debug(`action executed key=(${key}) payload=(${JSON.stringify(payload)}) by actor id=(${actor.id})`)
         try {
-            await handler(actor, key, data, this)
+            await handler(actor, key, payload, this)
         } catch (error) {
-            this.logger.warning(`action execution failed, key=(${key}) data=(${JSON.stringify(data)}) executed by actor id=(${actor.id}) reason:`, error.message)
+            this.logger.warning(`action execution failed, key=(${key}) data=(${JSON.stringify(payload)}) executed by actor id=(${actor.id}) reason:`, error.message)
         }
     }
 

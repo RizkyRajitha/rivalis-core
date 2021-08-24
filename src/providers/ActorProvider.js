@@ -48,21 +48,21 @@ class ActorProvider extends SystemBroadcast {
         if (typeof data !== 'object') {
             throw new Exception('[actors] join failed, the actor data must be an object')
         }
-        try {
-            await this.context.stage.onJoin(this.context, id, data)
-        } catch (error) {
-            throw new Exception(`Stage#onJoin failed, ${error.message}`)
-        }
 
         if (this.actors.has(id)) {
-            throw new Exception(`[actors] join failed, actor id=(${id}) already exist!`)
+            throw new Exception(`[actors] join failed, actor id=(${id}) already exist!`, 'actor_already_exist')
         }
+
         let actorEntry = new ActorEntry({ id, data })
         let persisted = await this.storage.savenx(id, actorEntry)
         if (!persisted) {
             throw new Exception(`[actors] join failed, actor id=(${id}) already exist!`, 'actor_already_exist')
         }
-        // await this.storage.expire(id, 20000)
+        try {
+            await this.context.stage.onJoin(this.context, id, data)
+        } catch (error) {
+            throw new Exception(`Stage#onJoin failed, ${error.message}`)
+        }
         this.logger.info(`actor id=(${id}) data=(${JSON.stringify(data)}) has just joined the room!`)
         let actor = new Actor(id, data, this.context)
         this.actors.set(id, actor)

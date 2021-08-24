@@ -76,7 +76,7 @@ class Impulse {
         this.counter++
         if (this.counter % this.ticks === 0) {
             this.counter = 0
-            this.dispatch()
+            this.signal.dispatch()
         }
     }
 
@@ -101,6 +101,9 @@ class Clock {
         this.intervalId = setInterval(() => this.tick(), interval)
     }
 
+    /**
+     * @private
+     */
     dispose() {
         clearInterval(this.intervalId)
         this.impulses.forEach(impulse => impulse.removeAll())
