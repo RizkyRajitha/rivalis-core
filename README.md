@@ -14,6 +14,7 @@
 [![npm downloads](https://img.shields.io/npm/dw/@rivalis/core?label=downloads&style=for-the-badge)](https://www.npmjs.com/package/@rivalis/core)
 [![Read docs](https://img.shields.io/badge/READ-DOCS-green?style=for-the-badge)](https://rivalis.io/docs)
 [![Visit website](https://img.shields.io/badge/Official-Website-blue?style=for-the-badge)](https://rivalis.io)
+[![Discord](https://img.shields.io/discord/793996342934372384?style=for-the-badge&logo=discord)](https://discord.gg/bdtRHVkm5b)
 
 ---
 
