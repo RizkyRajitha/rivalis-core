@@ -1,5 +1,7 @@
 import { expect } from 'chai'
-import VectorClock from '../../src/structs/VectorClock'
+import { structs } from '../../src'
+
+const VectorClock = structs.VectorClock
 
 describe('structs/VectorClock', () => {
     

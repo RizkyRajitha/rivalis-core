@@ -33,7 +33,7 @@ class Context {
      * @readonly
      * @type {SharedDataAPI}
      */
-    data = null
+    store = null
 
     /**
      * @readonly
@@ -82,7 +82,7 @@ class Context {
         this.stage = stage
         this.logger = logger
 
-        this.data = new SharedDataAPI(config.persistence, id)
+        this.store = new SharedDataAPI(config.persistence, id)
         this.broker = new MessageBroker(config.persistence, id, 'events')
     }
 

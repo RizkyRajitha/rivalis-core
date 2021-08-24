@@ -57,7 +57,7 @@ class Config {
         this.reporters = config.reporters || []
         this.transports = config.transports || []
         this.loggerLevel = config.loggerLevel || Logger.LEVEL.INFO
-        this.nodeId = config.nodeId || 'rivalis'
+        this.nodeId = config.nodeId || 'main'
         this.clockInterval = config.clockInterval || 1000
     }
 

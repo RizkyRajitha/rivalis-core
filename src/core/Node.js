@@ -6,6 +6,7 @@ import LoggerFactory from '../providers/LoggerFactory'
 import { isInstanceOf } from '../utils/helpers'
 import Actor from './Actor'
 import Clock from '../structs/Clock'
+import Plugin from './Plugin'
 
 class Node {
 
@@ -39,12 +40,19 @@ class Node {
     clock = null
 
     /**
+     * @private
+     * @type {Array.<Plugin>}
+     */
+    plugins = null
+
+    /**
      * 
      * @param {Config} config 
      */
     constructor(config = {}) {
         this.config = config
     }
+
 
     /**
      * 
@@ -70,7 +78,8 @@ class Node {
         }
         this.logger.info('🌐 transport layer initialized!')
         this.logger.info('✔️ ready!')
-
+        this.plugins = []
+        this.clock = new Clock(this.config.clockInterval || 1000)
         this.rooms = new RoomProvider(this)
         return this
     }
@@ -93,6 +102,10 @@ class Node {
         for (let transport of this.config.transports) {
             await transport.dispose()
         }
+        for (let plugin of this.plugins) {
+            await plugin.dispose()
+        }
+        this.plugins = null
         this.logger.info('was disposed!')
     }
 
@@ -113,6 +126,19 @@ class Node {
         } else {
             throw new Exception('AuthResolver#onAuth must return an instance of Actor')
         }
+    }
+
+    /**
+     * 
+     * @param {Plugin} plugin 
+     * @returns {Promise.<void>}
+     */
+    async register(plugin) {
+        if (!isInstanceOf(plugin, Plugin)) {
+            throw new Exception('plugin must be an instance of Plugin')
+        }
+        this.plugins.push(plugin)
+        return plugin.init(this, this.clock)
     }
 }
 
