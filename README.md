@@ -29,7 +29,7 @@ Rivalis is open source framework for building multiplayer game servers.
 
 ### Prerequisites
 - JavaScript & NodeJS knowledge
-- NodeJS (14.17.+) installed on your local machine
+- NodeJS (v12.0 or higher) installed on your local machine
 - Code Editor
 
 ### New Project
