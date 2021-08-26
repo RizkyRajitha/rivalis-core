@@ -1,6 +1,6 @@
 {
   "name": "@rivalis/core",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "description": "Rivalis, high performance & scalable framework for real-time applications",
   "main": "lib/index.js",
   "scripts": {
