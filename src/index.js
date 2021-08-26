@@ -39,6 +39,17 @@ const structs = {
     Broadcast, Broker, Clock, Codec, EventEmitter, VectorClock
 }
 
+import SharedStorage from './persistence/SharedStorage'
+import SharedList from './persistence/SharedList'
+import SharedCounter from './persistence/SharedCounter'
+import MessageBroker from './persistence/MessageBroker'
+/**
+ * @namespace
+ */
+const persistence = {
+    SharedStorage, SharedList, SharedCounter, MessageBroker
+}
+
 import TransportCodec from './utils/TransportCodec'
 /**
  * @namespace utils
@@ -70,5 +81,6 @@ export {
     interfaces,
     models,
     structs,
-    utils
+    utils,
+    persistence
 }
