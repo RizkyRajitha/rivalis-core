@@ -95,7 +95,12 @@ class RoomProvider extends SystemBroadcast {
      * @returns {Promise.<RoomEntry>}
      */
     async create(id, type, options = {}) {
-        // TODO: validate id & options
+        if (typeof id !== 'string') {
+            throw new Exception(`[rooms] room creation failed, room id must be a string`)
+        }
+        if (typeof options !== 'object') {
+            throw new Exception(`[rooms] room creation failed, room options must be an object`)
+        }
         if (!this.stages.has(type)) {
             throw new Exception(`[rooms] room creation failed, room type=(${type}) is not defined`)
         }
